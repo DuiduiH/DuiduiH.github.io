@@ -1,0 +1,1376 @@
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人主页</title>
+  <style>
+    :root {
+      --bg-page: #f0f6fb;
+      --bg-card: #fff;
+      --primary: #1e3a5f;
+      --accent: #0ea5e9;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Microsoft YaHei", "Inter", -apple-system, sans-serif;
+      background: var(--bg-page);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ----- 导航 ----- */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      min-height: 56px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem 1.5rem;
+      padding: 0.75rem 1rem;
+      z-index: 1000;
+    }
+
+    .nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .nav a:hover {
+      color: var(--accent);
+    }
+
+    .nav-sub {
+      display: flex;
+      gap: 1rem;
+    }
+
+    main {
+      padding-top: 56px;
+    }
+
+    /* ----- 通用区块 ----- */
+    section {
+      padding: 3rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    section h2 {
+      font-size: 1.75rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 3px solid var(--accent);
+    }
+
+    section h3 {
+      font-size: 1.25rem;
+      color: var(--text);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .placeholder {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ========== 1. Who am I ========== */
+    #whoami {
+      background: linear-gradient(180deg, #fff 0%, #f0f4f8 100%);
+    }
+
+    /* ----- 1.1 关于兴趣 (翻翻乐) ----- */
+    .interest-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 20px;
+    }
+
+    .interest-section h1 {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .interest-section .game-board {
+      display: grid;
+      grid-template-columns: repeat(5, 100px);
+      gap: 10px;
+      max-width: 550px;
+    }
+
+    .interest-section .card {
+      width: 100px;
+      height: 120px;
+      perspective: 600px;
+    }
+
+    .interest-section .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    .interest-section .card.flipped .card-inner,
+    .interest-section .card.matched .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .interest-section .card-front,
+    .interest-section .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      padding: 5px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .interest-section .card-front {
+      color: white;
+      transform: rotateY(180deg);
+      justify-content: space-between;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .interest-section .category-name { font-size: 12px; opacity: 0.9; }
+    .interest-section .category-logo { width: 40px; height: 40px; fill: white; }
+    .interest-section .item-name { font-size: 14px; font-weight: bold; }
+    .interest-section .card-back {
+      background-color: #f0f0f0;
+      border: 2px solid #ccc;
+      font-size: 24px;
+      color: #aaa;
+    }
+    .interest-section .status {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    /* ----- 1.2 关于事业 (双栏) ----- */
+    .career-wrap {
+      display: flex;
+      min-height: 420px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .career-pane {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    #career-left {
+      background: linear-gradient(135deg, #e0eaec 0%, #cfdef3 100%);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    #career-right {
+      background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);
+    }
+
+    .career-tooltip {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    .career-tooltip.visible { opacity: 1; transform: translateY(0); }
+
+    .money-bag-container {
+      position: relative;
+      width: 200px;
+      height: 350px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .money-bag-container .money-bag {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-origin: center bottom;
+    }
+    .money-bag-container .money-bag.inverted {
+      transform: rotate(180deg) translateY(-150px);
+    }
+    .money-bag-container .coin {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle at 30% 30%, #ffd700, #fdb931);
+      border: 2px solid #d4af37;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: #b8860b;
+      font-size: 16px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+    }
+    .money-bag-container.active .coin { opacity: 1; }
+    .money-bag-container.active .coin:nth-child(2) {
+      left: 15px; top: 260px;
+      transform: translate(0, 0) scale(1) rotate(15deg);
+      transition-delay: 0.1s;
+    }
+    .money-bag-container.active .coin:nth-child(3) {
+      left: 70px; top: 280px;
+      transform: translate(0, 0) scale(1) rotate(-10deg);
+      transition-delay: 0.2s;
+    }
+    .money-bag-container.active .coin:nth-child(4) {
+      left: 130px; top: 280px;
+      transform: translate(0, 0) scale(1) rotate(20deg);
+      transition-delay: 0.3s;
+    }
+    .money-bag-container.active .coin:nth-child(5) {
+      left: 185px; top: 260px;
+      transform: translate(0, 0) scale(1) rotate(-5deg);
+      transition-delay: 0.4s;
+    }
+
+    .egg-container {
+      position: relative;
+      width: 200px;
+      height: 260px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .egg-top, .egg-bottom {
+      position: absolute;
+      width: 180px;
+      height: 120px;
+      background: radial-gradient(circle at 40% 80%, #ffefd5, #f5deb3);
+      left: 10px;
+      z-index: 20;
+      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s;
+    }
+    .egg-top {
+      top: 10px;
+      height: 130px;
+      border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+      background: radial-gradient(circle at 40% 40%, #ffefd5, #f5deb3);
+      transform-origin: bottom right;
+    }
+    .egg-bottom {
+      bottom: 10px;
+      height: 110px;
+      border-radius: 0 0 50% 50% / 0 0 40% 40%;
+      background: radial-gradient(circle at 40% 10%, #ffefd5, #f5deb3);
+      transform-origin: top left;
+    }
+    .egg-container.active .egg-top {
+      transform: rotate(-30deg) translate(-50px, -50px);
+      opacity: 0;
+    }
+    .egg-container.active .egg-bottom {
+      transform: rotate(30deg) translate(50px, 50px);
+      opacity: 0;
+    }
+    .egg-container .cloud {
+      position: absolute;
+      width: 140px;
+      height: 80px;
+      background: #fff;
+      border-radius: 50px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      z-index: 15;
+      transform: scale(0);
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .egg-container .cloud::before,
+    .egg-container .cloud::after {
+      content: '';
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .egg-container .cloud::before {
+      width: 60px; height: 60px;
+      top: -30px; left: 20px;
+    }
+    .egg-container .cloud::after {
+      width: 40px; height: 40px;
+      top: -15px; right: 20px;
+    }
+    .egg-container.active .cloud {
+      transform: scale(1.5);
+    }
+
+    #dynamic-tooltip {
+      position: fixed;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 1001;
+      transition: all 0.3s;
+    }
+    #dynamic-tooltip.visible { opacity: 1; }
+
+    /* ----- 1.3 学习泡泡 Knowledge Spores ----- */
+    .knowledge-spores {
+      position: relative;
+      height: 450px;
+      background: linear-gradient(135deg, #0f2744 0%, #1a3a52 100%);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .spores-hint {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.1rem;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .spores-hint.visible { opacity: 1; }
+    .spores-hint.faded { opacity: 0; transition: opacity 1.5s ease; }
+    .spores-canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .spores-bubbles {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .spores-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 39, 68, 0.75);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 4;
+      transition: opacity 0.4s ease;
+    }
+    .spores-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .spores-overlay-content {
+      max-width: 70%;
+      padding: 1.75rem 2rem;
+      background: rgba(30, 58, 95, 0.95);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(15, 39, 68, 0.6);
+      text-align: center;
+      color: #f0f6fb;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(14, 165, 233, 0.2);
+    }
+    .spores-overlay-term {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .spores-overlay-desc {
+      font-size: 0.98rem;
+      line-height: 1.7;
+      color: rgba(219, 234, 254, 0.95);
+    }
+    .spore-bubble {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 50%;
+      box-sizing: border-box;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      pointer-events: auto;
+      transition: transform 0.15s ease;
+    }
+    .spore-bubble:hover {
+      transform: scale(1.05);
+    }
+
+    /* ----- 1.4 占位 ----- */
+    .whoami-placeholders {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    /* ========== 2. 基本信息 ========== */
+    #basic-info {
+      background: #fff;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+      border-left: 3px solid var(--accent);
+      margin: 1rem 0;
+    }
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1.5rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 0.35rem;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-left: -4px;
+    }
+    .timeline-item time { color: var(--text-muted); font-size: 0.9rem; }
+    .timeline-item strong { display: block; margin-top: 0.25rem; }
+
+    .skill-tree {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .skill-tag {
+      background: linear-gradient(135deg, #e8f4fc 0%, #d6eaf8 100%);
+      color: var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    /* ========== 3. Takeaway ========== */
+    #takeaway {
+      background: linear-gradient(180deg, #f0f4f8 0%, #e8eef5 100%);
+    }
+
+    .contact-list {
+      list-style: none;
+      margin-top: 1rem;
+    }
+    .contact-list li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .contact-list a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .contact-list a:hover { text-decoration: underline; }
+
+    .last-word {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <a href="#whoami">1. Who am I</a>
+    <span class="nav-sub">
+      <a href="#interest">1.1 兴趣</a>
+      <a href="#career">1.2 事业</a>
+      <a href="#study">1.3 学习</a>
+      <a href="#aboutme">1.4 关于我</a>
+    </span>
+    <a href="#basic-info">2. 基本信息</a>
+    <span class="nav-sub">
+      <a href="#edu">2.1 学业</a>
+      <a href="#work">2.2 工作</a>
+      <a href="#project">2.3 项目</a>
+      <a href="#culture">2.4 文化</a>
+      <a href="#honors">2.5 荣誉</a>
+      <a href="#skills">2.6 技能树</a>
+    </span>
+    <a href="#takeaway">3. Takeaway</a>
+    <span class="nav-sub">
+      <a href="#contact">3.1 联系方式</a>
+      <a href="#lastword">3.2 最后一句话</a>
+    </span>
+  </nav>
+
+  <main>
+    <!-- ========== 1. Who am I ========== -->
+    <section id="whoami">
+      <h2>1. Who am I?</h2>
+
+      <div id="interest">
+        <h3>1.1 关于兴趣</h3>
+        <div class="interest-section">
+          <h1>兴趣爱好翻翻乐</h1>
+          <div class="game-board" id="gameBoard"><div class="card" data-category="experience" data-name="摄影">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #3498DB">
+            <span class="category-name">体验类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"></path></svg></div>
+            <span class="item-name">摄影</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="experience" data-name="旅行">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #3498DB">
+            <span class="category-name">体验类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"></path></svg></div>
+            <span class="item-name">旅行</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="music" data-name="合唱">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #9B59B6">
+            <span class="category-name">音乐类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+            <span class="item-name">合唱</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="sports" data-name="游泳">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #2ECC71">
+            <span class="category-name">运动类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"></path></svg></div>
+            <span class="item-name">游泳</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="arts" data-name="写作">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #E67E22">
+            <span class="category-name">文艺类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"></path></svg></div>
+            <span class="item-name">写作</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="music" data-name="音乐剧">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #9B59B6">
+            <span class="category-name">音乐类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+            <span class="item-name">音乐剧</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="sports" data-name="长跑">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #2ECC71">
+            <span class="category-name">运动类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"></path></svg></div>
+            <span class="item-name">长跑</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="music" data-name="钢琴">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #9B59B6">
+            <span class="category-name">音乐类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+            <span class="item-name">钢琴</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="sports" data-name="骑行">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #2ECC71">
+            <span class="category-name">运动类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"></path></svg></div>
+            <span class="item-name">骑行</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="arts" data-name="电影">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #E67E22">
+            <span class="category-name">文艺类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"></path></svg></div>
+            <span class="item-name">电影</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="sports" data-name="铁三">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #2ECC71">
+            <span class="category-name">运动类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"></path></svg></div>
+            <span class="item-name">铁三</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="arts" data-name="国际象棋">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #E67E22">
+            <span class="category-name">文艺类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"></path></svg></div>
+            <span class="item-name">国际象棋</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="experience" data-name="KTV">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #3498DB">
+            <span class="category-name">体验类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"></path></svg></div>
+            <span class="item-name">KTV</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="music" data-name="小提琴">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #9B59B6">
+            <span class="category-name">音乐类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></div>
+            <span class="item-name">小提琴</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="sports" data-name="健身">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #2ECC71">
+            <span class="category-name">运动类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"></path></svg></div>
+            <span class="item-name">健身</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="experience" data-name="轰趴">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #3498DB">
+            <span class="category-name">体验类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"></path></svg></div>
+            <span class="item-name">轰趴</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="sports" data-name="徒步">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #2ECC71">
+            <span class="category-name">运动类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"></path></svg></div>
+            <span class="item-name">徒步</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="arts" data-name="阅读">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #E67E22">
+            <span class="category-name">文艺类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"></path></svg></div>
+            <span class="item-name">阅读</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="experience" data-name="美食探店">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #3498DB">
+            <span class="category-name">体验类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"></path></svg></div>
+            <span class="item-name">美食探店</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div><div class="card" data-category="experience" data-name="做小手工">
+        <div class="card-inner">
+          <div class="card-front" style="background-color: #3498DB">
+            <span class="category-name">体验类</span>
+            <div class="category-logo"><svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"></path></svg></div>
+            <span class="item-name">做小手工</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      </div></div>
+          <div class="status" id="status">翻开两张卡片试试看！</div>
+        </div>
+      </div>
+
+      <div id="career">
+        <h3>1.2 关于事业</h3>
+        <div class="career-wrap">
+          <div class="career-pane" id="career-left">
+            <div class="money-bag-container active" id="finance-trigger">
+              <svg class="money-bag inverted" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40,30 Q30,30 25,20 Q30,10 50,10 Q70,10 75,20 Q70,30 60,30" fill="#c0392b"></path>
+                <rect x="42" y="5" width="16" height="25" fill="#e74c3c" rx="2"></rect>
+                <path d="M25,25 Q10,40 10,80 Q10,110 50,110 Q90,110 90,80 Q90,40 75,25" fill="#f1c40f" stroke="#d4ac0d" stroke-width="2"></path>
+                <text x="50" y="80" text-anchor="middle" font-size="40" fill="#b7950b" font-weight="bold">$</text>
+              </svg>
+              <div class="coin" data-text="期货">期货</div>
+              <div class="coin" data-text="律所IPO">律所</div>
+              <div class="coin" data-text="私募">私募</div>
+              <div class="coin" data-text="券商投行">投行</div>
+              <div class="career-tooltip" id="finance-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">金融经历</div>
+            </div>
+          </div>
+          <div class="career-pane" id="career-right">
+            <div class="egg-container active" id="startup-trigger">
+              <div class="egg-top"></div>
+              <div class="egg-bottom"></div>
+              <div class="cloud" data-text="沄视科技">☁️</div>
+              <div class="career-tooltip" id="startup-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">初创经历</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="study">
+        <h3>1.3 关于学习</h3>
+        <div class="knowledge-spores" id="knowledgeSpores">
+          <div class="spores-hint visible faded" id="sporesHint">戳开泡泡试试看</div>
+          <canvas class="spores-canvas" id="sporesCanvas" width="626" height="900" style="width: 313px; height: 450px;"></canvas>
+          <div class="spores-bubbles" id="sporesBubbles"><div class="spore-bubble" data-topic-id="creativity-art" style="width: 96.5994px; height: 96.5994px; left: 87.2798px; top: 87.5178px; border-radius: 52.0967% 47.9033% 57.618% 50.3703%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%), radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15), transparent 45%), linear-gradient(135deg, rgb(236, 72, 153) 0%, rgb(236, 72, 153) 60%, rgba(255, 112, 193, 0.9) 100%); box-shadow: rgba(0, 0, 0, 0.2) -2px -2px 8px inset, rgba(255, 255, 255, 0.2) 2px 2px 8px inset;">创意与艺术</div><div class="spore-bubble" data-topic-id="tech-basics" style="width: 98.6848px; height: 98.6848px; left: 122.187px; top: 88.9028px; border-radius: 53.1906% 46.8094% 56.1544% 51.3944%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%), radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15), transparent 45%), linear-gradient(135deg, rgb(139, 92, 246) 0%, rgb(139, 92, 246) 60%, rgba(179, 132, 255, 0.9) 100%); box-shadow: rgba(0, 0, 0, 0.2) -2px -2px 8px inset, rgba(255, 255, 255, 0.2) 2px 2px 8px inset;">技术入门</div><div class="spore-bubble" data-topic-id="music-harmony" style="width: 87.1508px; height: 87.1508px; left: 124.658px; top: 83.4782px; border-radius: 54.6826% 45.3174% 52.7541% 53.0976%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%), radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15), transparent 45%), linear-gradient(135deg, rgb(168, 85, 247) 0%, rgb(168, 85, 247) 60%, rgba(208, 125, 255, 0.9) 100%); box-shadow: rgba(0, 0, 0, 0.2) -2px -2px 8px inset, rgba(255, 255, 255, 0.2) 2px 2px 8px inset;">音乐与协调</div><div class="spore-bubble" data-topic-id="music-harmony" style="width: 70.7134px; height: 70.7134px; left: 133.561px; top: 75.606px; border-radius: 48.2504% 51.7496% 50.5552% 55.9601%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%), radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15), transparent 45%), linear-gradient(135deg, rgb(168, 85, 247) 0%, rgb(168, 85, 247) 60%, rgba(208, 125, 255, 0.9) 100%); box-shadow: rgba(0, 0, 0, 0.2) -2px -2px 8px inset, rgba(255, 255, 255, 0.2) 2px 2px 8px inset;">音乐与协调</div><div class="spore-bubble" data-topic-id="creativity-art" style="width: 64.4026px; height: 64.4026px; left: 189.051px; top: 72.793px; border-radius: 51.6321% 48.3679% 57.7728% 54.2063%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%), radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15), transparent 45%), linear-gradient(135deg, rgb(236, 72, 153) 0%, rgb(236, 72, 153) 60%, rgba(255, 112, 193, 0.9) 100%); box-shadow: rgba(0, 0, 0, 0.2) -2px -2px 8px inset, rgba(255, 255, 255, 0.2) 2px 2px 8px inset;">创意与艺术</div></div>
+          <div class="spores-overlay visible" id="sporesOverlay" style="background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.18), transparent 55%), rgba(236, 72, 153, 0.55);">
+            <div class="spores-overlay-content">
+              <div class="spores-overlay-term" id="sporesOverlayTerm">设计思维</div>
+              <div class="spores-overlay-desc" id="sporesOverlayDesc">以人为中心，先理解问题再设计解决方案，这是硅谷设计师的工作方式。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="aboutme">
+        <h3>1.4 关于我</h3>
+        <div class="placeholder">用一段话介绍你自己，性格、价值观或座右铭等。</div>
+      </div>
+    </section>
+
+    <!-- ========== 2. 基本信息 ========== -->
+    <section id="basic-info">
+      <h2>2. 基本信息</h2>
+
+      <div id="edu">
+        <h3>2.1 学业时间轴</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <time>20XX — 20XX</time>
+            <strong>学校名称 · 专业/学位</strong>
+            <span>简要描述</span>
+          </div>
+          <div class="timeline-item">
+            <time>20XX — 20XX</time>
+            <strong>学校名称 · 专业/学位</strong>
+            <span>简要描述</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="work">
+        <h3>2.2 工作时间轴</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <time>20XX — 至今</time>
+            <strong>公司/机构 · 职位</strong>
+            <span>工作内容简述</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="project">
+        <h3>2.3 项目时间轴</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <time>20XX</time>
+            <strong>项目名称</strong>
+            <span>项目描述与你的角色</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="culture">
+        <h3>2.4 文化时间轴</h3>
+        <div class="placeholder">旅行、活动、文化交流等时间线可放在这里。</div>
+      </div>
+
+      <div id="honors">
+        <h3>2.5 所获荣誉</h3>
+        <ul style="margin-left:1.5rem; margin-top:0.5rem;">
+          <li>荣誉/奖项 1</li>
+          <li>荣誉/奖项 2</li>
+        </ul>
+      </div>
+
+      <div id="skills">
+        <h3>2.6 技能树</h3>
+        <div class="skill-tree">
+          <span class="skill-tag">技能A</span>
+          <span class="skill-tag">技能B</span>
+          <span class="skill-tag">技能C</span>
+          <span class="skill-tag">技能D</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3. Takeaway ========== -->
+    <section id="takeaway">
+      <h2>3. Takeaway</h2>
+
+      <div id="contact">
+        <h3>3.1 联系方式</h3>
+        <ul class="contact-list">
+          <li>📧 邮箱：your@email.com</li>
+          <li>🔗 微信 / 其他：请填写</li>
+          <li>💼 LinkedIn / 个人链接：请填写</li>
+        </ul>
+      </div>
+
+      <div id="lastword">
+        <h3>3.2 最后一句话</h3>
+        <div class="last-word">
+          在这里写一句你想对访客说的最后一句话，可以是座右铭、期待或感谢。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="career-tooltip" id="dynamic-tooltip" style="left: 341px; top: 287px;">沄视科技</div>
+
+  <script>
+    // ========== 1.1 兴趣翻翻乐 ==========
+    const categoryStyles = {
+      music: { label: '音乐类', color: '#9B59B6',
+        logo: '<svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>' },
+      sports: { label: '运动类', color: '#2ECC71',
+        logo: '<svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.2-2L14.8 12C15.5 12 16.1 12 16.5 12V6h-1.4v6l-2-2.1-1.3 1.3L12 9l-1 1-1.2-1.1zM5 13l-1.6-1.5 2.1-3 1.5 1.4L5 13z"/></svg>' },
+      experience: { label: '体验类', color: '#3498DB',
+        logo: '<svg viewBox="0 0 24 24"><path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 3.5h6V6H9V3.5zM19 19H5V8h14v11z"/></svg>' },
+      arts: { label: '文艺类', color: '#E67E22',
+        logo: '<svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>' }
+    };
+    const items = [
+      { name: '合唱', category: 'music' }, { name: '钢琴', category: 'music' }, { name: '小提琴', category: 'music' }, { name: '音乐剧', category: 'music' },
+      { name: '铁三', category: 'sports' }, { name: '骑行', category: 'sports' }, { name: '长跑', category: 'sports' }, { name: '游泳', category: 'sports' }, { name: '徒步', category: 'sports' }, { name: '健身', category: 'sports' },
+      { name: '旅行', category: 'experience' }, { name: '摄影', category: 'experience' }, { name: '美食探店', category: 'experience' }, { name: '做小手工', category: 'experience' }, { name: '轰趴', category: 'experience' }, { name: 'KTV', category: 'experience' },
+      { name: '阅读', category: 'arts' }, { name: '电影', category: 'arts' }, { name: '国际象棋', category: 'arts' }, { name: '写作', category: 'arts' }
+    ];
+    let cards = [...items];
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    shuffle(cards);
+    const gameBoard = document.getElementById('gameBoard');
+    const statusEl = document.getElementById('status');
+    let flippedCards = [], matchedCount = 0, canFlip = true;
+    cards.forEach((item) => {
+      const style = categoryStyles[item.category];
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.category = item.category;
+      card.dataset.name = item.name;
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="card-front" style="background-color: ${style.color}">
+            <span class="category-name">${style.label}</span>
+            <div class="category-logo">${style.logo}</div>
+            <span class="item-name">${item.name}</span>
+          </div>
+          <div class="card-back">?</div>
+        </div>
+      `;
+      card.addEventListener('click', () => flipCard(card));
+      gameBoard.appendChild(card);
+    });
+    function flipCard(card) {
+      if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      card.classList.add('flipped');
+      flippedCards.push(card);
+      if (flippedCards.length === 2) {
+        canFlip = false;
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.category === card2.dataset.category) {
+          card1.classList.add('matched');
+          card2.classList.add('matched');
+          flippedCards = [];
+          matchedCount += 2;
+          statusEl.textContent = '配对成功！🎉';
+          canFlip = true;
+          if (matchedCount === cards.length) statusEl.textContent = '恭喜你完成全部配对！🏆';
+        } else {
+          statusEl.textContent = '不匹配，再试一次！';
+          setTimeout(() => {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+            flippedCards = [];
+            canFlip = true;
+            statusEl.textContent = '继续翻开两张卡片吧！';
+          }, 1000);
+        }
+      }
+    }
+
+    // ========== 1.2 事业交互 ==========
+    document.addEventListener('DOMContentLoaded', () => {
+      const dynamicTooltip = document.getElementById('dynamic-tooltip');
+      let pinnedElement = null;
+      function setupInteraction(element, text, localTooltipEl) {
+        const tl = localTooltipEl || dynamicTooltip;
+        const updatePosition = (e) => {
+          tl.style.left = (e.clientX + 15) + 'px';
+          tl.style.top = (e.clientY + 15) + 'px';
+        };
+        element.addEventListener('mouseenter', (e) => {
+          if (!pinnedElement || pinnedElement === element) {
+            tl.textContent = text;
+            tl.classList.add('visible');
+            updatePosition(e);
+          }
+        });
+        element.addEventListener('mousemove', (e) => {
+          if (!pinnedElement || pinnedElement === element) updatePosition(e);
+        });
+        element.addEventListener('mouseleave', () => {
+          if (pinnedElement !== element) tl.classList.remove('visible');
+        });
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (pinnedElement === element) pinnedElement = null;
+          else {
+            pinnedElement = element;
+            tl.textContent = text;
+            tl.classList.add('visible');
+            updatePosition(e);
+          }
+        });
+      }
+      document.addEventListener('click', (e) => {
+        if (pinnedElement && !pinnedElement.contains(e.target)) {
+          pinnedElement = null;
+          dynamicTooltip.classList.remove('visible');
+        }
+      });
+
+      const financeTrigger = document.getElementById('finance-trigger');
+      const moneyBag = financeTrigger.querySelector('.money-bag');
+      const coins = financeTrigger.querySelectorAll('.coin');
+      const financeTooltip = document.getElementById('finance-tooltip');
+      financeTrigger.addEventListener('mouseenter', () => {
+        if (!financeTrigger.classList.contains('active')) {
+          financeTooltip.style.left = '50%';
+          financeTooltip.style.top = '-40px';
+          financeTooltip.style.transform = 'translateX(-50%)';
+          financeTooltip.style.opacity = '1';
+        }
+      });
+      financeTrigger.addEventListener('mouseleave', () => { financeTooltip.style.opacity = '0'; });
+      financeTrigger.addEventListener('click', (e) => {
+        if (e.target.closest('.coin')) return;
+        financeTrigger.classList.toggle('active');
+        moneyBag.classList.toggle('inverted');
+        if (financeTrigger.classList.contains('active')) financeTooltip.style.opacity = '0';
+      });
+      coins.forEach(coin => setupInteraction(coin, coin.getAttribute('data-text')));
+
+      const startupTrigger = document.getElementById('startup-trigger');
+      const startupTooltip = document.getElementById('startup-tooltip');
+      const cloud = startupTrigger.querySelector('.cloud');
+      startupTrigger.addEventListener('mouseenter', () => {
+        if (!startupTrigger.classList.contains('active')) {
+          startupTooltip.style.left = '50%';
+          startupTooltip.style.top = '-40px';
+          startupTooltip.style.transform = 'translateX(-50%)';
+          startupTooltip.style.opacity = '1';
+        }
+      });
+      startupTrigger.addEventListener('mouseleave', () => { startupTooltip.style.opacity = '0'; });
+      startupTrigger.addEventListener('click', () => {
+        if (!startupTrigger.classList.contains('active')) {
+          startupTrigger.classList.add('active');
+          startupTooltip.style.opacity = '0';
+        }
+      });
+      setupInteraction(cloud, cloud.getAttribute('data-text'));
+
+      // ========== 1.3 学习泡泡 Knowledge Spores ==========
+      const sporesContainer = document.getElementById('knowledgeSpores');
+      if (!sporesContainer) return;
+      const sporesCanvas = document.getElementById('sporesCanvas');
+      const sporesBubbles = document.getElementById('sporesBubbles');
+      const sporesHint = document.getElementById('sporesHint');
+      const sporesOverlay = document.getElementById('sporesOverlay');
+      const sporesOverlayTerm = document.getElementById('sporesOverlayTerm');
+      const sporesOverlayDesc = document.getElementById('sporesOverlayDesc');
+      const SPORES_DATA = {
+        topics: [
+          {
+            id: 'product-biz',
+            name: '产品与商业',
+            color: '#0ea5e9',
+            entries: [
+              { term: 'PMF', desc: '产品与市场的完美契合（Product-Market Fit），这是初创公司活下来的分水岭。' },
+              { term: 'MVP', desc: '最小化可行产品，用最少资源验证想法，学学 SpaceX 就明白了——先开枪，再瞄准。' },
+              { term: '日活用户（DAU）', desc: '每天都来用你产品的人数，是判断用户粘性最直接的指标。' },
+              { term: '成交总额（GMV）', desc: '平台上所有交易的金额加总，电商人每天都在看这个数字。' },
+              { term: '留存率', desc: '新来的用户有多少人还会回来？这决定了你的产品是否真的解决了问题。' },
+              { term: '鸡尾酒会效应', desc: '在嘈杂的信息世界里，人们只关注少数"信号频道"——选品、选赛道也是这个道理。' },
+              { term: '赛道', desc: '一个产品/商业能容纳的市场空间大小，选对赛道比高效执行更重要。' }
+            ]
+          },
+          {
+            id: 'tech-basics',
+            name: '技术入门',
+            color: '#8b5cf6',
+            entries: [
+              { term: '机器学习', desc: '让机器从数据中学习规律，而不是靠人手工写死的规则。' },
+              { term: '深度学习', desc: '一种强大的机器学习方式，用多层神经网络去理解复杂的数据结构，ChatGPT 就是用它做的。' },
+              { term: '反向传播', desc: '神经网络的"自我纠正"机制——通过误差一层层反推回去，自动调整每一层的权重。' },
+              { term: '大模型（LLM）', desc: '在海量文本上训练出来的"语言大脑"，能理解和生成人类语言，GPT 和 Claude 都是。' },
+              { term: '幻觉（Hallucination）', desc: '大模型有时会自信地编造东西，就像人类有时也会记错。' },
+              { term: '张量（Tensor）', desc: '神经网络世界的基本数据单元，维度越高越能表达复杂的信息。' },
+              { term: '激活函数', desc: '让神经网络产生非线性，没它的话神经网络就退化成简单的线性变换。' }
+            ]
+          },
+          {
+            id: 'social-econ',
+            name: '社会经济',
+            color: '#10b981',
+            entries: [
+              { term: '边际效用递减', desc: '第一块披萨最香，第十块就只是填肚子——经济学最直观的规律。' },
+              { term: '信息不对称', desc: '买家和卖家掌握的信息不一样，导致交易中一方被坑——二手车市场是经典案例。' },
+              { term: '沉没成本谬误', desc: '因为已经投入了时间/钱就继续投入，其实应该看未来，而不是过去。' },
+              { term: '权力分立', desc: '立法、行政、司法互相制衡，没有这个制衡就容易出现权力滥用。' },
+              { term: '羊群效应', desc: '一个人买股票，十个人跟着买，就成了泡沫——人群会放弃独立思考。' },
+              { term: '帕累托法则', desc: '"80/20 法则"——20% 的努力产生 80% 的结果，专注在关键的少数。' },
+              { term: '复利', desc: '钱生钱，利息再生利息——时间越长威力越大，这是巴菲特变富的秘诀。' }
+            ]
+          },
+          {
+            id: 'culture-media',
+            name: '文化与传播',
+            color: '#f59e0b',
+            entries: [
+              { term: 'Meme（文化基因）', desc: '像基因一样在文化中传播的单位——一句话、一张图都能变成 meme。' },
+              { term: '符号消费', desc: '买的不是产品本身，而是它代表的身份和品味——为什么人们花大价钱买奢侈品？' },
+              { term: '讲故事的力量', desc: '数据会被遗忘，故事会被记住——营销的核心就是讲一个好故事。' },
+              { term: '从众心理', desc: '看别人都在买，就忍不住也要买——商人就是靠这个赚钱的。' },
+              { term: '代际差异', desc: '不同年代出生的人，看世界的方式完全不同，这影响他们的消费习惯和价值观。' },
+              { term: '内容为王', desc: '互联网的铁律——烂内容怎么宣传都没用，好内容自然会传播。' },
+              { term: '网红经济', desc: '个人影响力的货币化——粉丝多，带货能力就强。' }
+            ]
+          },
+          {
+            id: 'creativity-art',
+            name: '创意与艺术',
+            color: '#ec4899',
+            entries: [
+              { term: '艺术创意过程', desc: '创意往往不是凭空想象，而是已知元素的新组合——乔布斯说"创意就是连接"。' },
+              { term: '设计思维', desc: '以人为中心，先理解问题再设计解决方案，这是硅谷设计师的工作方式。' },
+              { term: '具身体验', desc: '演员用身体和呼吸去诠释角色，观众在现场共同参与创作这一时刻。' },
+              { term: '审美品味', desc: '什么叫"高级"？没有绝对答案，但品味决定了你的视觉和消费选择。' },
+              { term: '留白的艺术', desc: '日本美学里，空白空间本身就是美——好设计往往是删繁就简。' },
+              { term: '用户故事', desc: '产品团队用"作为……的我，想要……"这种方式理解真实的用户需求。' }
+            ]
+          },
+          {
+            id: 'music-harmony',
+            name: '音乐与协调',
+            color: '#a855f7',
+            entries: [
+              { term: '和弦', desc: '多个音同时发出，每个音都不同但合在一起就产生了新的感受。' },
+              { term: '节奏与节拍', desc: '节拍是时间框架（一二三四），节奏是音符在框架内的分布——就像生活的韵律。' },
+              { term: '音色', desc: '同一个音，用小提琴拉和用长笛吹听起来完全不同——这就是音色的魔力。' },
+              { term: '对位法', desc: '多条旋律线同时进行但各自独立，交织在一起产生复杂的音乐美感。' },
+              { term: '乐队分工', desc: '弦乐铺陈，木管出旋律，铜管点高光，打击乐煽情——一个好乐团就是个好公司。' },
+              { term: '调性系统', desc: '不同的调有不同的情绪色彩，作曲家就像用色板选色一样选择调性。' }
+            ]
+          },
+          {
+            id: 'learning-growth',
+            name: '学习与成长',
+            color: '#06b6d4',
+            entries: [
+              { term: '增长心态', desc: '相信能力可以通过努力改进的心态，而不是觉得天生聪明就够了。' },
+              { term: '刻意练习', desc: '在舒适区外、有反馈、不断改进的练习，这才能真正提高水平。' },
+              { term: '元认知', desc: '对自己学习过程的认知——知道自己怎么学，比盲目学效率高。' },
+              { term: '迁移学习', desc: '把一个领域学到的东西用在另一个领域，跨界创新往往来自这个。' },
+              { term: '费曼学习法', desc: '用最简洁的语言解释复杂概念，如果你能解释得清楚，说明真的懂了。' },
+              { term: '反思', desc: '做完不是结束，回头想想为什么这样做、学到了什么，才是真正成长。' },
+              { term: '结构化思维', desc: '把复杂问题分解成小问题，从不同角度系统地分析，比乱想效率高百倍。' }
+            ]
+          },
+          {
+            id: 'future-trends',
+            name: '未来与趋势',
+            color: '#f97316',
+            entries: [
+              { term: '元宇宙', desc: '虚拟与现实融合的数字世界，还在早期探索阶段，但可能改变社交和工作。' },
+              { term: '碳中和', desc: '实现二氧化碳排放与吸收的平衡，几十年内要做到这个是全球大挑战。' },
+              { term: '生成式AI', desc: '能"生成"新内容的人工智能，不只是分类数据——ChatGPT 开启了这个时代。' },
+              { term: '生物科技', desc: '用生物学方法解决实际问题，从基因编辑到人工器官，未来医学靠它。' },
+              { term: '创意经济', desc: '从工业经济到知识经济，现在进入创意经济阶段——个人品牌和内容创作成了新财富来源。' },
+              { term: '可持续发展', desc: '不只赚钱，还要为地球和社会负责——这成了企业和个人的新责任。' }
+            ]
+          }
+        ]
+      };
+      const SINE_AMPLITUDE = 25;
+      const MIN_BUBBLES = 5;
+      const MAX_BUBBLES = 8;
+      const FLOAT_DURATION_BASE = 4;
+
+      let sporesBubbleList = [];
+      let sporesParticles = [];
+      let sporesT0 = 0;
+      let sporesRaf = 0;
+      let sporesFocused = false;
+
+      function sporesResize() {
+        const rect = sporesContainer.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        sporesCanvas.width = rect.width * dpr;
+        sporesCanvas.height = rect.height * dpr;
+        sporesCanvas.style.width = rect.width + 'px';
+        sporesCanvas.style.height = rect.height + 'px';
+        const ctx = sporesCanvas.getContext('2d');
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      }
+
+      function parseColor(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+      }
+
+      function triggerParticleExplosion(cx, cy, colorHex) {
+        const c = parseColor(colorHex);
+        const count = 10 + Math.floor(Math.random() * 6);
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+          const speed = 2 + Math.random() * 4;
+          sporesParticles.push({
+            x: cx,
+            y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            decay: 0.02 + Math.random() * 0.02,
+            r: c.r, g: c.g, b: c.b
+          });
+        }
+      }
+
+      function showTermAt(containerX, containerY, text) {
+        const termEl = document.createElement('div');
+        termEl.className = 'spore-term';
+        termEl.textContent = text;
+        termEl.style.left = containerX + 'px';
+        termEl.style.top = containerY + 'px';
+        sporesContainer.appendChild(termEl);
+        setTimeout(() => termEl.remove(), 1500);
+      }
+
+      function createBubble() {
+        const topic = SPORES_DATA.topics[Math.floor(Math.random() * SPORES_DATA.topics.length)];
+        const rect = sporesContainer.getBoundingClientRect();
+        const size = 60 + Math.random() * 40;
+        const baseX = size + Math.random() * (rect.width - size * 2);
+        const x = baseX;
+        const y = rect.height + size;
+        const phase = Math.random() * Math.PI * 2;
+        const speed = (rect.height + 100) / (FLOAT_DURATION_BASE * 60);
+        const el = document.createElement('div');
+        el.className = 'spore-bubble';
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = (x - size / 2) + 'px';
+        el.style.top = (y - size / 2) + 'px';
+        const br = 48 + Math.random() * 8;
+        el.style.borderRadius = br + '% ' + (100 - br) + '% ' + (50 + Math.random() * 10) + '% ' + (50 + Math.random() * 10) + '%';
+        const r = parseInt(topic.color.slice(1, 3), 16);
+        const g = parseInt(topic.color.slice(3, 5), 16);
+        const b = parseInt(topic.color.slice(5, 7), 16);
+        el.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 50%), radial-gradient(circle at 70% 70%, rgba(255,255,255,0.15), transparent 45%), linear-gradient(135deg, ' + topic.color + ' 0%, ' + topic.color + ' 60%, rgba(' + Math.min(255, r + 40) + ',' + Math.min(255, g + 40) + ',' + Math.min(255, b + 40) + ',0.9) 100%)';
+        el.style.boxShadow = 'inset -2px -2px 8px rgba(0,0,0,0.2), inset 2px 2px 8px rgba(255,255,255,0.2)';
+        el.textContent = topic.name;
+        el.dataset.topicId = topic.id;
+        const state = { el, x: x - size / 2, y: y - size / 2, baseX, phase, speed, topic, size };
+        sporesBubbleList.push(state);
+        sporesBubbles.appendChild(el);
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const rect = sporesContainer.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const clickY = e.clientY - rect.top;
+          triggerParticleExplosion(clickX, clickY, state.topic.color);
+          const entries = state.topic.entries || [];
+          if (entries.length) {
+            const entry = entries[Math.floor(Math.random() * entries.length)];
+            sporesOverlayTerm.textContent = entry.term;
+            sporesOverlayDesc.textContent = entry.desc;
+            const c = parseColor(state.topic.color);
+            sporesOverlay.style.background = 'radial-gradient(circle at 50% 20%, rgba(255,255,255,0.18), transparent 55%), rgba(' + c.r + ',' + c.g + ',' + c.b + ',0.55)';
+            sporesOverlay.classList.add('visible');
+            sporesFocused = true;
+          }
+          state.el.remove();
+          sporesBubbleList = sporesBubbleList.filter(b => b !== state);
+        });
+        return state;
+      }
+
+      function sporesTick(t) {
+        if (!sporesContainer.isConnected) {
+          cancelAnimationFrame(sporesRaf);
+          return;
+        }
+        const rect = sporesContainer.getBoundingClientRect();
+        const dt = (t - sporesT0) / 1000;
+        sporesT0 = t;
+
+        const ctx = sporesCanvas.getContext('2d');
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        sporesParticles = sporesParticles.filter(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.98;
+          p.vy *= 0.98;
+          p.life -= p.decay;
+          if (p.life <= 0) return false;
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = 'rgb(' + p.r + ',' + p.g + ',' + p.b + ')';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          return true;
+        });
+
+        const speedFactor = sporesFocused ? 0.15 : 1;
+        sporesBubbleList.forEach(b => {
+          b.y -= b.speed * 60 * dt * speedFactor;
+          const newX = b.baseX + SINE_AMPLITUDE * Math.sin(t * 0.002 + b.phase);
+          b.el.style.left = (newX - b.size / 2) + 'px';
+          b.el.style.top = (b.y) + 'px';
+        });
+        sporesBubbleList = sporesBubbleList.filter(b => {
+          if (b.y < -b.size) {
+            b.el.remove();
+            return false;
+          }
+          return true;
+        });
+
+        if (sporesBubbleList.length < MIN_BUBBLES) createBubble();
+        sporesRaf = requestAnimationFrame(sporesTick);
+      }
+
+      function sporesInit() {
+        sporesResize();
+        window.addEventListener('resize', sporesResize);
+        sporesHint.classList.add('visible');
+        setTimeout(() => { sporesHint.classList.add('faded'); }, 2000);
+        for (let i = 0; i < MIN_BUBBLES; i++) {
+          setTimeout(() => createBubble(), i * 400);
+        }
+        sporesT0 = performance.now();
+        sporesRaf = requestAnimationFrame(sporesTick);
+        sporesOverlay.addEventListener('click', () => {
+          sporesOverlay.classList.remove('visible');
+          sporesFocused = false;
+        });
+      }
+      sporesInit();
+    });
+  </script>
+
+
+
+</body></html>

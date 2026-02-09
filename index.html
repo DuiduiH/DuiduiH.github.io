@@ -51,6 +51,9 @@
           <h3>1.1 关于兴趣</h3>
           <div class="interest-section">
             <h1>兴趣爱好翻翻乐</h1>
+            <div class="game-controls" style="margin-bottom:12px;">
+              <button id="shuffleBtn" class="map-zoom-btn">一键打乱</button>
+            </div>
             <div class="game-board" id="gameBoard"></div>
             <div class="status" id="status">翻开两张卡片试试看！</div>
           </div>
@@ -69,10 +72,36 @@
                   <path d="M50,30 Q30,50 32,75 Q35,95 50,103" fill="none" stroke="#B8860B" stroke-width="1.5" opacity="0.3" />
                   <text x="50" y="70" text-anchor="middle" font-size="35" fill="#8B4513" font-weight="bold">$</text>
                 </svg>
-                <div class="coin" data-text="期货">💰</div>
-                <div class="coin" data-text="律所IPO">💰</div>
-                <div class="coin" data-text="私募">💰</div>
-                <div class="coin" data-text="券商投行">💰</div>
+                <div class="coin" data-text="期货">
+                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <radialGradient id="g1" cx="30%" cy="30%" r="70%">
+                        <stop offset="0%" stop-color="#fff7cc" />
+                        <stop offset="100%" stop-color="#ffd24d" />
+                      </radialGradient>
+                    </defs>
+                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
+                    <text x="32" y="38" text-anchor="middle" font-size="20" fill="#8b4513" font-weight="700">$</text>
+                  </svg>
+                </div>
+                <div class="coin" data-text="律所IPO">
+                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
+                    <text x="32" y="38" text-anchor="middle" font-size="12" fill="#8b4513" font-weight="700">IPO</text>
+                  </svg>
+                </div>
+                <div class="coin" data-text="私募">
+                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
+                    <text x="32" y="36" text-anchor="middle" font-size="12" fill="#8b4513" font-weight="700">私募</text>
+                  </svg>
+                </div>
+                <div class="coin" data-text="券商投行">
+                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
+                    <text x="32" y="36" text-anchor="middle" font-size="10" fill="#8b4513" font-weight="700">券商</text>
+                  </svg>
+                </div>
                 <div class="career-tooltip" id="finance-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">点击金币查看经历</div>
               </div>
             </div>
@@ -96,6 +125,15 @@
                   <ellipse class="egg-white" cx="100" cy="150" rx="44" ry="36" fill="#FFFCE6" opacity="0" />
                   <circle class="egg-yolk" cx="100" cy="140" r="18" fill="#FFD24D" opacity="0" />
                 </svg>
+                <div class="cloud" data-text="沄视科技" style="display:none;align-items:center;justify-content:center;padding:8px 12px;font-weight:700;color:#08306b;">
+                  <svg viewBox="0 0 64 40" width="160" height="80" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#ffffff" stroke="#d6e9ff" stroke-width="2">
+                      <ellipse cx="22" cy="24" rx="12" ry="8" />
+                      <ellipse cx="38" cy="20" rx="14" ry="9" />
+                      <ellipse cx="30" cy="18" rx="18" ry="10" />
+                    </g>
+                  </svg>
+                </div>
                 <div class="career-tooltip" id="startup-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">点击鸡蛋查看经历</div>
               </div>
             </div>
