@@ -46,7 +46,7 @@
     .theme-toggle{width:30px;padding:0;border-radius:50%}
     .theme-toggle svg{width:15px;height:15px}
 
-    .sw{max-width:1100px;margin:0 auto;padding:0 1.5rem;width:100%}
+    .sw{max-width:1100px;margin:0 auto;padding:0 1.5rem;width:100%;box-sizing:border-box}
     .btn{padding:.5rem 1.4rem;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.08);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.4rem}
     .btn:hover{background:rgba(56,189,248,.18);border-color:rgba(56,189,248,.5);transform:scale(1.04)}
     .btn:active{transform:scale(.97)}
@@ -56,10 +56,11 @@
     .map-star{transition:opacity .35s}.map-sun{display:none;transition:opacity .35s}
     [data-theme="light"] .map-star{opacity:0!important}
     [data-theme="light"] .map-sun{display:inline!important}
-    .section-page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px 1.5rem 40px;position:relative;scroll-snap-align:start}
+    .section-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:80px 1.5rem 40px;position:relative;scroll-snap-align:start;box-sizing:border-box}
+    .section-page>.sw{margin-top:auto;margin-bottom:auto}
 
     /* ===== INTRO PAGE (buffer) ===== */
-    .section-intro-page{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 2rem 40px;scroll-snap-align:start;position:relative}
+    .section-intro-page{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 2rem 40px;scroll-snap-align:start;position:relative;box-sizing:border-box}
     .section-intro-page .section-welcome{font-size:2.4rem;margin-bottom:1.2rem}
     .section-intro-page .section-desc{font-size:1.08rem;max-width:520px;margin:0 auto;line-height:2.2}
     .scroll-hint{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);text-align:center;opacity:.35;padding:1.5rem 3rem;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -71,7 +72,7 @@
     .section-welcome{font-size:1.6rem;font-weight:800;color:var(--accent);margin-bottom:.6rem}
     .section-desc{font-size:.88rem;color:var(--muted);line-height:1.9}
 
-    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:1.5rem;width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s}
+    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:1.5rem;width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s;box-sizing:border-box}
     .section-header{text-align:center;margin-bottom:1rem}
     .section-title{font-size:1.25rem;font-weight:700;color:var(--primary);margin-bottom:.3rem}
     .section-rules{font-size:.78rem;color:var(--muted);opacity:.6}
@@ -81,22 +82,22 @@
     /* ===== HERO ===== */
     #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,var(--hero-grad1),var(--hero-grad2) 70%);overflow:hidden;padding-top:52px;position:relative}
     #hero-kw{position:absolute;inset:0}
-    .hkw{position:absolute;color:var(--hkw-color);font-weight:700;white-space:nowrap;animation:kwf 8s ease-in-out infinite alternate;pointer-events:auto;cursor:pointer;transition:color .25s,text-shadow .25s;user-select:none;z-index:5;padding:10px 14px;border-radius:6px}
+    .hkw{position:absolute;color:var(--hkw-color);font-weight:700;white-space:nowrap;animation:kwf 6s ease-in-out infinite;pointer-events:auto;cursor:pointer;transition:color .25s,text-shadow .25s;user-select:none;z-index:5;padding:10px 14px;border-radius:6px}
     .hkw:hover{color:var(--hkw-hover);text-shadow:0 0 20px rgba(251,191,36,.2);z-index:100;background:rgba(251,191,36,.06)}
-    @keyframes kwf{0%{transform:translateY(0)}100%{transform:translateY(-10px)}}
+    @keyframes kwf{0%{transform:translateY(4px)}50%{transform:translateY(-6px)}100%{transform:translateY(4px)}}
     #hero-c{position:relative;z-index:1;text-align:center;pointer-events:none}
     #hero-c h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .hero-sub-hint{color:var(--muted);font-size:.85rem;margin-top:.8rem;opacity:.5}
-    .hero-overlay{position:fixed;inset:0;z-index:100;background:var(--overlay-bg);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
-    .hero-overlay.show{opacity:1;pointer-events:auto}
+    .hero-overlay{position:fixed;inset:0;z-index:100;background:var(--overlay-bg);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+    .hero-overlay.show{display:flex;opacity:1;pointer-events:auto}
     .hero-ov-content{text-align:center;max-width:500px;padding:2.5rem;cursor:pointer}
     .hero-ov-word{font-size:2.2rem;font-weight:800;color:var(--accent);margin-bottom:1rem}
     .hero-ov-desc{font-size:1.05rem;color:var(--muted);line-height:2}
     .hero-ov-dismiss{margin-top:1.5rem;font-size:.75rem;color:var(--muted);opacity:.3}
 
     /* ===== CARD GAME ===== */
-    .interest-s{display:flex;flex-direction:column;align-items:center;padding:.5rem 0 1rem}
-    .game-board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:500px}
+    .interest-s{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5rem 0 1rem;width:100%}
+    .game-board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:min(500px,80vw);margin:0 auto}
     .card{width:100%;aspect-ratio:4/5;perspective:600px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1}
     .card-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform .5s;transform-style:preserve-3d;pointer-events:none}
     .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
@@ -112,11 +113,10 @@
     .shuffle-link:hover{color:var(--gold);text-decoration-style:wavy}
 
     /* ===== CAREER ===== */
-    .career-wrap{display:flex;min-height:380px;border-radius:var(--radius);overflow:hidden;position:relative}
+    .career-wrap{display:flex;min-height:min(380px,55vh);border-radius:var(--radius);overflow:hidden;position:relative}
     .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem .8rem}
     .career-pane:first-child{border-right:1px solid var(--frame-border)}
     #cl,#cr{background:var(--bg2)}
-    .career-hint{font-size:.72rem;color:var(--muted);margin-bottom:.6rem;opacity:.5}
     .mbag-area{position:relative;width:170px;height:280px;display:flex;flex-direction:column;align-items:center}
     .mbag-svg{width:140px;height:180px;transition:transform .7s cubic-bezier(.175,.885,.32,1.275);flex-shrink:0;transform-origin:center center;cursor:pointer}
     .mbag-area.open .mbag-svg{transform:scaleY(-1) translateY(-10px)}
@@ -160,7 +160,7 @@
     /* ===== LEAFLET MAP ===== */
     .map-inner-frame{border-radius:var(--radius);overflow:hidden}
     #leafletMap{height:400px}
-    .map-footer{padding:.7rem 1rem;background:var(--bg2);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;transition:background .35s}
+    .map-footer{padding:.7rem 1rem;background:var(--bg2);display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:background .35s}
     .map-legend{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;justify-content:center}
     .map-legend-btn{display:flex;align-items:center;gap:.4rem;padding:.3rem .6rem;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .2s;font-size:.75rem;color:var(--muted)}
     .map-legend-btn:hover,.map-legend-btn.active{border-color:var(--frame-border);background:var(--toggle-bg);color:var(--primary)}
@@ -188,7 +188,7 @@
     .tl-legend-hint{text-align:center;font-size:.68rem;color:var(--muted);opacity:.35;margin-bottom:.6rem}
 
     /* ===== SKILL TREE ===== */
-    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:.5rem 0}
+    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:.5rem 0;max-height:calc(100vh - 280px);overflow-y:auto}
     .tree-svg{max-width:700px;width:100%}
 
     /* ===== CONTACT ===== */
@@ -201,31 +201,33 @@
     .contact-list a:hover{color:var(--primary);border-color:var(--accent)}
 
     /* ===== COMPLETION OVERLAY ===== */
-    .completion-overlay{position:fixed;inset:0;z-index:2400;background:var(--overlay-bg);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .5s;cursor:pointer;text-align:center;padding:2rem}
-    .completion-overlay.show{opacity:1;pointer-events:auto}
+    .completion-overlay{position:fixed;inset:0;z-index:2400;background:var(--overlay-bg);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .5s;cursor:pointer;text-align:center;padding:2rem}
+    .completion-overlay.show{display:flex;opacity:1;pointer-events:auto}
     .completion-overlay h2{font-size:1.8rem;color:var(--gold);font-weight:700;margin-bottom:1.2rem;animation:unlockPulse .6s ease both}
     .completion-overlay p{font-size:1rem;color:var(--muted);line-height:2.2}
     .completion-overlay .unlock-dismiss{margin-top:2rem;font-size:.75rem;color:var(--muted);opacity:.3}
 
     /* ===== ENDING + REPLAY ===== */
-    .ending-section{text-align:center;padding:3rem 1.5rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;scroll-snap-align:start;position:relative;z-index:5}
-    .ending-btns{display:flex;flex-direction:column;gap:1.2rem;align-items:center;margin-top:1rem;position:relative;z-index:10}
-    .quote-trigger,.replay-btn{padding:.7rem 2rem;border:1.5px solid var(--frame-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .3s;letter-spacing:.5px;position:relative;z-index:10}
+    .ending-section{text-align:center;padding:3rem 1.5rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;scroll-snap-align:start;position:relative;z-index:100}
+    .ending-btns{display:flex;flex-direction:column;gap:1.2rem;align-items:center;margin-top:1rem;position:relative;z-index:200}
+    .quote-trigger,.replay-btn{padding:.7rem 2rem;border:1.5px solid var(--frame-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .3s;letter-spacing:.5px;position:relative;z-index:200;-webkit-tap-highlight-color:transparent}
     .quote-trigger:hover,.replay-btn:hover{color:var(--accent);border-color:var(--accent);background:rgba(56,189,248,.06)}
 
     /* ===== QUOTE OVERLAY ===== */
-    .quote-overlay{position:fixed;inset:0;z-index:2600;background:var(--overlay-bg);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;cursor:pointer}
-    .quote-overlay.show{opacity:1;pointer-events:auto}
-    .quote-ov-content{text-align:center;max-width:560px;padding:3rem 2rem;pointer-events:auto;cursor:default}
+    .quote-overlay{position:fixed;inset:0;z-index:2600;background:var(--overlay-bg);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;cursor:pointer}
+    .quote-overlay.show{display:flex;opacity:1;pointer-events:auto}
+    .quote-ov-content{text-align:center;max-width:560px;padding:3rem 2rem;pointer-events:auto;cursor:default;position:relative;z-index:1;border-radius:var(--radius)}
+    .quote-ov-close{position:absolute;top:.5rem;right:.8rem;font-size:1.6rem;color:var(--muted);cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s;opacity:.5;z-index:3}
+    .quote-ov-close:hover{opacity:1;color:var(--accent)}
     .quote-ov-text{font-size:1.4rem;font-weight:600;color:var(--primary);line-height:2.2;min-height:3rem;transition:opacity .3s}
-    .quote-ov-controls{display:flex;gap:1rem;justify-content:center;margin-top:2rem}
-    .quote-ov-btn{padding:.5rem 1.5rem;border:1px solid var(--frame-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s}
+    .quote-ov-controls{display:flex;gap:1rem;justify-content:center;margin-top:2rem;position:relative;z-index:2}
+    .quote-ov-btn{padding:.5rem 1.5rem;border:1px solid var(--frame-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;position:relative;z-index:2;-webkit-tap-highlight-color:transparent}
     .quote-ov-btn:hover{color:var(--accent);border-color:var(--accent)}
-    .quote-ov-dismiss{margin-top:1.8rem;font-size:.72rem;color:var(--muted);opacity:.3}
+    .quote-ov-dismiss{margin-top:1.8rem;font-size:.72rem;color:var(--muted);opacity:.3;cursor:pointer}
 
     /* ===== MAP OVERLAYS ===== */
-    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
-    .map-overlay.open{opacity:1;pointer-events:auto}
+    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+    .map-overlay.open{display:flex;opacity:1;pointer-events:auto}
     .map-close{position:absolute;top:20px;right:28px;font-size:2rem;color:var(--muted);cursor:pointer;z-index:10;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--toggle-bg);transition:all .2s}
     .map-close:hover{color:var(--primary)}
     .map-overlay-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;font-family:"Courier New",monospace;opacity:.7}
@@ -265,8 +267,8 @@
     #map-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,0,0,.3);border-color:var(--accent)}
     #map-btn svg{display:block}
 
-    .unlock-overlay{position:fixed;inset:0;z-index:2500;background:var(--overlay-bg2);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .5s;cursor:pointer}
-    .unlock-overlay.show{opacity:1;pointer-events:auto}
+    .unlock-overlay{position:fixed;inset:0;z-index:2500;background:var(--overlay-bg2);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .5s;cursor:pointer}
+    .unlock-overlay.show{display:flex;opacity:1;pointer-events:auto}
     .unlock-congrats{font-size:.9rem;color:var(--muted);margin-bottom:.8rem;letter-spacing:2px}
     .unlock-scene{font-size:1.8rem;font-weight:800;color:var(--gold);animation:unlockPulse .6s ease both}
     .unlock-dismiss{margin-top:2rem;font-size:.75rem;color:var(--muted);opacity:.3}
@@ -279,13 +281,13 @@
       .lang-toggle{font-size:.6rem;padding:.2rem .4rem}
       .theme-toggle{width:26px;height:26px}
       .theme-toggle svg{width:12px;height:12px}
-      .section-page{padding:62px .5rem 30px}
+      .section-page{padding:56px .5rem 24px}
       .section-intro-page{padding:62px 1.5rem 30px}
       .section-intro-page .section-welcome{font-size:1.6rem}
       .section-intro-page .section-desc{font-size:.92rem}
       .section-welcome{font-size:1.3rem}
-      .game-board{grid-template-columns:repeat(5,58px);gap:4px}
-      .card{aspect-ratio:4/5}.clogo{width:18px;height:18px}.iname{font-size:8px}.cname{font-size:7px}.game-board{gap:4px}
+      .game-board{grid-template-columns:repeat(5,58px);gap:4px;margin:0 auto}
+      .card{aspect-ratio:4/5}.clogo{width:18px;height:18px}.iname{font-size:8px}.cname{font-size:7px}
       .career-wrap{flex-direction:column;min-height:auto}
       .career-pane:first-child{border-right:none;border-bottom:1px solid var(--frame-border)}
       .illustrated-map{width:98%}
@@ -299,14 +301,14 @@
 <body>
 
 <nav class="nav">
-  <a href="#hero" data-i18n="nav-hero">我是谁</a>
+  <a href="#hero" data-i18n="nav-hero">关于</a>
   <a href="#interest" data-i18n="nav-interest">兴趣</a>
   <a href="#career" data-i18n="nav-career">工作</a>
   <a href="#study" data-i18n="nav-study">学习</a>
   <a href="#worldmap" data-i18n="nav-worldmap">足迹</a>
   <a href="#timelines" data-i18n="nav-timelines">经历</a>
   <a href="#skills" data-i18n="nav-skills">技能</a>
-  <a href="#takeaway" data-i18n="nav-takeaway">联系XD</a>
+  <a href="#takeaway" data-i18n="nav-takeaway">联系</a>
 </nav>
 <div class="toggle-group">
   <div class="lang-toggle" id="langToggle">EN</div>
@@ -362,7 +364,7 @@
 <div class="section-intro-page" id="career" data-map-id="career">
   <div class="sw">
     <div class="section-welcome" data-i18n="career-welcome">欢迎来到事业大楼</div>
-    <div class="section-desc" data-i18n-html="career-desc">小对的职业版图就藏在这里<br>点开钱袋和鸡蛋，来一探究竟</div>
+    <div class="section-desc" data-i18n-html="career-desc">小对的职业版图就藏在这里<br>来一探究竟吧</div>
   </div>
   <div class="scroll-hint"><div class="scroll-hint-text" data-i18n="scroll-hint">向下滑动</div><div class="scroll-hint-arrow">&#8964;</div></div>
 </div>
@@ -371,12 +373,11 @@
   <div class="sw">
     <div class="section-frame">
       <div class="section-header">
-        <div class="section-title" data-i18n="career-title">金融 × 初创</div>
+        <div class="section-title" data-i18n="career-title">我的经历：金融 × 初创</div>
         <div class="section-rules" data-i18n="career-rules">点击左边的钱袋和右边的鸡蛋，探索小对的事业版图</div>
       </div>
       <div class="career-wrap" id="careerWrap">
         <div class="career-pane" id="cl">
-          <div class="career-hint" data-i18n="career-hint-bag">点击钱袋</div>
           <div class="mbag-area" id="mbag">
             <svg class="mbag-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -400,7 +401,6 @@
           </div>
         </div>
         <div class="career-pane" id="cr">
-          <div class="career-hint" data-i18n="career-hint-egg">点击鸡蛋</div>
           <div class="egg-area" id="eggArea">
             <div class="egg-wrap">
               <svg class="egg-bottom-half" viewBox="0 0 130 170"><defs><radialGradient id="eg1" cx=".45" cy=".45"><stop offset="0%" stop-color="#faf5eb"/><stop offset="50%" stop-color="#ede0cc"/><stop offset="100%" stop-color="#c4a77d"/></radialGradient></defs><ellipse cx="65" cy="92" rx="55" ry="72" fill="url(#eg1)"/><ellipse cx="50" cy="62" rx="16" ry="22" fill="rgba(255,255,255,.15)" transform="rotate(-15 50 62)"/></svg>
@@ -472,7 +472,7 @@
         <div class="map-footer">
           <div class="map-legend">
             <div class="map-legend-btn active" data-mode="visit">
-              <span data-i18n="map-visit">我去过</span>
+              <span data-i18n="map-visit">我去过这里</span>
               <div class="ml-scale">
                 <span class="ml-dot" style="background:#bfdbfe"></span><small data-i18n="map-transit">途经</small>
                 <span class="ml-dot" style="background:#93c5fd"></span><small data-i18n="map-travel">旅行</small>
@@ -503,7 +503,7 @@
 <div class="section-intro-page" id="timelines" data-map-id="timelines">
   <div class="sw">
     <div class="section-welcome" data-i18n="timelines-welcome">欢迎来到经历钟楼</div>
-    <div class="section-desc" data-i18n-html="timelines-desc">每一段经历都值得被记住<br>跟着时间轴，回顾小对的成长足迹</div>
+    <div class="section-desc" data-i18n-html="timelines-desc">叮咚——<br>伴着钟声，回顾小对的经历时间轴</div>
   </div>
   <div class="scroll-hint"><div class="scroll-hint-text" data-i18n="scroll-hint">向下滑动</div><div class="scroll-hint-arrow">&#8964;</div></div>
 </div>
@@ -513,7 +513,7 @@
     <div class="section-frame">
       <div class="section-header">
         <div class="section-title" data-i18n="timelines-title">时间轴</div>
-        <div class="section-rules" data-i18n="timelines-rules">按时间顺序记录学业、工作、项目、文化和荣誉</div>
+        <div class="section-rules" data-i18n="timelines-rules">学业、工作、项目、文化、荣誉都在这里啦，点击标签试试看</div>
       </div>
       <div class="tl-legend">
         <div class="tl-legend-item" data-type="edu"><div class="tl-legend-dot" style="background:#3b82f6"></div><span data-i18n="tl-edu">学业</span></div>
@@ -522,7 +522,6 @@
         <div class="tl-legend-item" data-type="culture"><div class="tl-legend-dot" style="background:#f59e0b"></div><span data-i18n="tl-culture">文化</span></div>
         <div class="tl-legend-item" data-type="honor"><div class="tl-legend-dot" style="background:#a855f7"></div><span data-i18n="tl-honor">荣誉</span></div>
       </div>
-      <div class="tl-legend-hint" data-i18n="tl-hint">点击上方标签可显示/隐藏对应内容</div>
       <div class="tl-wrap" id="tlWrap"><div class="tl-line"></div></div>
     </div>
   </div>
@@ -553,10 +552,10 @@
 <!-- ═══════════ COMPLETION OVERLAY ═══════════ -->
 <div class="completion-overlay" id="completionOverlay">
   <h2 data-i18n="completion-title">恭喜你顺利通关！</h2>
-  <p data-i18n="completion-p1">认识小对的小游戏到这里就结束啦，</p>
-  <p data-i18n="completion-p2">但小对和你的故事才刚刚开始，</p>
-  <p data-i18n="completion-p3">让我们一起继续探索吧，</p>
-  <p data-i18n="completion-p4">相信她一定会给你带来惊喜！</p>
+  <p data-i18n="completion-p1">小对的小游戏到这里就结束啦</p>
+  <p data-i18n="completion-p2">但小对和你的故事才刚刚开始</p>
+  <p data-i18n="completion-p3">让我们一起继续探索吧</p>
+  <p data-i18n="completion-p4">她一定会给你带来惊喜！</p>
   <div class="unlock-dismiss" data-i18n="unlock-dismiss">点击任意处继续</div>
 </div>
 
@@ -587,24 +586,87 @@
 
 <!-- ═══════════ ENDING ═══════════ -->
 <div class="ending-section" id="ending" data-map-id="ending">
-  <p style="color:var(--muted);font-size:.85rem;opacity:.6;letter-spacing:1px;line-height:2" data-i18n-html="ending-label">不知不觉就到最后啦<br>请查看小对给你的最后一个惊喜</p>
+  <p style="color:var(--muted);font-size:.85rem;opacity:.6;letter-spacing:1px;line-height:2" data-i18n-html="ending-label">不知不觉就到最后啦<br>请查看小对给你的最后一个彩蛋</p>
   <div class="ending-btns">
-    <button class="quote-trigger" id="quoteTrigger" data-i18n="quote-trigger" onclick="if(window._openQuote)window._openQuote()">点击查看</button>
-    <button class="replay-btn" id="replayBtn" data-i18n="replay-btn" onclick="if(window.resetApp)window.resetApp()">再玩一次</button>
+    <button type="button" class="quote-trigger" id="quoteTrigger" data-i18n="quote-trigger">点击查看</button>
+    <button type="button" class="replay-btn" id="replayBtn" data-i18n="replay-btn">再玩一次</button>
   </div>
 </div>
+<script>
+(function(){
+  var qBtn=document.getElementById('quoteTrigger');
+  var rBtn=document.getElementById('replayBtn');
+  if(qBtn) qBtn.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    var ov=document.getElementById('quoteOverlay');
+    if(!ov)return;
+    // Show a random quote
+    var Q=(window.SITE_TEXT&&window.SITE_TEXT.quotes)||[];
+    var idx=Math.floor(Math.random()*Q.length);
+    var txt=document.getElementById('quoteOvText');
+    if(txt&&Q.length){
+      var lang=document.documentElement.lang==='en'?'en':'cn';
+      var q=Q[idx];
+      txt.textContent=typeof q==='string'?q:(lang==='en'?(q.en||q.cn):(q.cn||q.en));
+      txt.style.opacity='1';
+    }
+    ov.classList.add('show');
+    document.body.style.overflow='hidden';
+    document.documentElement.style.overflow='hidden';
+    // Store index globally for prev/next
+    window._quoteIdx=idx;
+  });
+  if(rBtn) rBtn.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    if(window.resetApp){window.resetApp();return;}
+    // Inline fallback reset
+    document.querySelectorAll('.unlock-overlay,.quote-overlay,.completion-overlay,.map-overlay').forEach(function(o){o.classList.remove('show','open');});
+    document.body.style.overflow='';document.documentElement.style.overflow='';
+    document.documentElement.style.scrollBehavior='auto';
+    window.scrollTo(0,0);
+    setTimeout(function(){document.documentElement.style.scrollBehavior='';},50);
+  });
+})();
+</script>
 
 <!-- ═══════════ QUOTE OVERLAY ═══════════ -->
 <div id="quoteOverlay" class="quote-overlay">
   <div class="quote-ov-content">
+    <div class="quote-ov-close" id="quoteClose">&times;</div>
     <div class="quote-ov-text" id="quoteOvText"></div>
     <div class="quote-ov-controls">
-      <button class="quote-ov-btn" id="quotePrev" data-i18n="quote-prev">上一句</button>
-      <button class="quote-ov-btn" id="quoteNext" data-i18n="quote-next">换一句</button>
+      <button type="button" class="quote-ov-btn" id="quotePrev" data-i18n="quote-prev">上一句</button>
+      <button type="button" class="quote-ov-btn" id="quoteNext" data-i18n="quote-next">换一句</button>
     </div>
     <div class="quote-ov-dismiss" data-i18n="quote-close">点击空白处关闭</div>
   </div>
 </div>
+<script>
+(function(){
+  var ov=document.getElementById('quoteOverlay');
+  var txt=document.getElementById('quoteOvText');
+  var prev=document.getElementById('quotePrev');
+  var next=document.getElementById('quoteNext');
+  var cls=document.getElementById('quoteClose');
+  if(!ov)return;
+  var Q=(window.SITE_TEXT&&window.SITE_TEXT.quotes)||[];
+  function getQ(i){
+    if(!Q.length)return'';
+    var lang=document.documentElement.lang==='en'?'en':'cn';
+    var q=Q[((i%Q.length)+Q.length)%Q.length];
+    return typeof q==='string'?q:(lang==='en'?(q.en||q.cn):(q.cn||q.en));
+  }
+  function closeOv(){ov.classList.remove('show');document.body.style.overflow='';document.documentElement.style.overflow='';}
+  function showQ(i){
+    window._quoteIdx=((i%Q.length)+Q.length)%Q.length;
+    if(txt){txt.style.opacity='0';setTimeout(function(){txt.textContent=getQ(window._quoteIdx);txt.style.opacity='1';},200);}
+  }
+  ov.addEventListener('click',function(e){if(e.target===ov||e.target.classList.contains('quote-ov-dismiss'))closeOv();});
+  if(cls)cls.addEventListener('click',function(e){e.stopPropagation();closeOv();});
+  if(prev)prev.addEventListener('click',function(e){e.stopPropagation();showQ((window._quoteIdx||0)-1);});
+  if(next)next.addEventListener('click',function(e){e.stopPropagation();showQ((window._quoteIdx||0)+1);});
+})();
+</script>
 
 <!-- ═══════════ ILLUSTRATED MAP ═══════════ -->
 <div id="map-overlay" class="map-overlay">
