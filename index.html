@@ -1,951 +1,625 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>认识小对</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-    :root {
-      --bg-page: #0c1220;
-      --bg-card: rgba(255,255,255,0.06);
-      --bg-card-solid: #161e30;
-      --primary: #e0e7ff;
-      --accent: #38bdf8;
-      --accent2: #a78bfa;
-      --accent3: #f472b6;
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --shadow: 0 4px 24px rgba(0,0,0,0.3);
-      --radius: 16px;
-      --gold: #fbbf24;
+    /* ===== THEME VARIABLES (DARK — default) ===== */
+    :root{--bg:#0c1220;--bg2:#161e30;--primary:#e0e7ff;--accent:#38bdf8;--accent2:#a78bfa;--text:#e2e8f0;--muted:#94a3b8;--radius:16px;--gold:#fbbf24;
+      --nav-bg:rgba(12,18,32,.92);--nav-border:rgba(255,255,255,.06);--frame-border:rgba(255,255,255,.06);--card-back-bg:#161e30;--card-back-border:rgba(255,255,255,.1);
+      --overlay-bg:rgba(12,18,32,.88);--overlay-bg2:rgba(12,18,32,.92);--hero-grad1:#1a2744;--hero-grad2:var(--bg);--divider-line:rgba(56,189,248,.08);--divider-dot:rgba(56,189,248,.18);
+      --sp-bg1:#0f172a;--sp-bg2:var(--bg2);--sp-ov-bg:rgba(15,23,42,.8);--sp-ov-box:rgba(22,30,48,.95);
+      --map-btn-bg:rgba(12,18,32,.9);--map-btn-border:rgba(255,255,255,.12);
+      --tl-line:rgba(255,255,255,.08);
+      --hkw-color:rgba(255,255,255,.15);--hkw-hover:rgba(56,189,248,.5);
+      --toggle-border:rgba(255,255,255,.12);--toggle-bg:rgba(255,255,255,.05)
     }
+
+    /* ===== LIGHT THEME ===== */
+    [data-theme="light"]{--bg:#f0f4f8;--bg2:#ffffff;--primary:#1e293b;--accent:#0369a1;--accent2:#6d28d9;--text:#334155;--muted:#64748b;--gold:#b45309;
+      --nav-bg:rgba(255,255,255,.92);--nav-border:rgba(0,0,0,.06);--frame-border:rgba(0,0,0,.08);--card-back-bg:#f8fafc;--card-back-border:rgba(0,0,0,.1);
+      --overlay-bg:rgba(255,255,255,.88);--overlay-bg2:rgba(255,255,255,.92);--hero-grad1:#dbeafe;--hero-grad2:#f0f4f8;--divider-line:rgba(3,105,161,.1);--divider-dot:rgba(3,105,161,.2);
+      --sp-bg1:#e0f2fe;--sp-bg2:#f0f4f8;--sp-ov-bg:rgba(255,255,255,.85);--sp-ov-box:rgba(255,255,255,.95);
+      --map-btn-bg:rgba(255,255,255,.9);--map-btn-border:rgba(0,0,0,.1);
+      --tl-line:rgba(0,0,0,.08);
+      --hkw-color:rgba(0,0,0,.1);--hkw-hover:rgba(3,105,161,.5);
+      --toggle-border:rgba(0,0,0,.1);--toggle-bg:rgba(0,0,0,.04)
+    }
+
     *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{font-family:"Inter","SF Pro Display","Microsoft YaHei",-apple-system,sans-serif;background:var(--bg-page);color:var(--text);line-height:1.7;overflow-x:hidden}
+    html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+    body{font-family:"Inter","SF Pro Display","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;transition:background .35s,color .35s}
 
-    /* ===== NAV ===== */
-    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(12,18,32,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;gap:1.2rem;padding:0 1rem;z-index:1000;font-size:.82rem}
-    .nav a{color:var(--text-muted);text-decoration:none;font-weight:500;transition:color .2s}
-    .nav a:hover{color:var(--accent)}
-    .nav-sep{color:rgba(255,255,255,0.15);font-size:.7rem}
+    /* ===== TOP NAV ===== */
+    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border);display:flex;align-items:center;justify-content:center;gap:1.6rem;padding:0 7rem 0 1rem;z-index:1000;transition:background .35s,border-color .35s}
+    .nav a{color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600;transition:color .2s;white-space:nowrap}
+    .nav a:hover,.nav a.active{color:var(--accent)}
 
-    main{padding-top:52px}
+    /* ===== TOGGLES ===== */
+    .toggle-group{position:fixed;top:12px;right:16px;z-index:1001;display:flex;gap:8px;align-items:center}
+    .lang-toggle,.theme-toggle{padding:.28rem .55rem;border:1px solid var(--toggle-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.7rem;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:1px;user-select:none;display:flex;align-items:center;justify-content:center;line-height:1}
+    .lang-toggle:hover,.theme-toggle:hover{color:var(--accent);border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.06)}
+    .theme-toggle{width:30px;height:30px;padding:0;border-radius:50%}
+    .theme-toggle svg{width:15px;height:15px}
 
     /* ===== COMMON ===== */
-    .section-wrap{max-width:1100px;margin:0 auto;padding:3.5rem 1.5rem}
-    .section-title{font-size:1.6rem;font-weight:700;color:var(--primary);margin-bottom:.5rem;letter-spacing:-.02em}
-    .section-sub{font-size:1.15rem;font-weight:600;color:var(--text);margin:2.5rem 0 .8rem;display:flex;align-items:center;gap:.5rem}
-    .section-sub::before{content:'';width:4px;height:1.1em;border-radius:2px;background:var(--accent)}
-    .unlock-banner{text-align:center;padding:2.5rem 1rem;font-size:1rem;color:var(--accent);letter-spacing:.15em;font-weight:600;opacity:.7}
-    .unlock-banner span{display:inline-block;padding:.5rem 2rem;border:1px solid rgba(56,189,248,0.3);border-radius:999px;background:rgba(56,189,248,0.05)}
+    .sw{max-width:1100px;margin:0 auto;padding:0 1.5rem;width:100%}
+    .btn{padding:.5rem 1.4rem;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.08);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+    .btn:hover{background:rgba(56,189,248,.2);border-color:rgba(56,189,248,.5)}
 
-    /* ===== 0. HERO ===== */
-    #hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#1a2744 0%,#0c1220 70%);overflow:hidden}
-    #hero-keywords{position:absolute;inset:0;pointer-events:none}
-    .hero-kw{position:absolute;color:rgba(255,255,255,0.12);font-weight:700;white-space:nowrap;animation:kwFloat 8s ease-in-out infinite alternate}
-    @keyframes kwFloat{0%{transform:translateY(0) rotate(0deg)}100%{transform:translateY(-18px) rotate(2deg)}}
-    #hero-center{position:relative;z-index:2;text-align:center;max-width:800px;padding:0 1.5rem}
-    #hero-center h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,#e0e7ff,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
-    #hero-center .hero-subtitle{color:var(--text-muted);font-size:1rem;margin-bottom:2rem}
-    .hero-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;width:100%;margin-top:1.5rem}
-    .hero-card{background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:1.2rem 1.4rem;text-align:left;backdrop-filter:blur(8px)}
-    .hero-card h3{font-size:.85rem;color:var(--accent);margin-bottom:.5rem;font-weight:600;letter-spacing:.05em}
-    .hero-card p,.hero-card ul{font-size:.82rem;color:var(--text-muted);line-height:1.7}
-    .hero-card ul{list-style:none;padding:0}
-    .hero-card ul li{padding:2px 0}
-    .hero-card ul li::before{content:'·';color:var(--accent);margin-right:.4rem}
-    .hero-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
-    .hero-badge{display:inline-block;padding:.2rem .7rem;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.25);border-radius:999px;font-size:.75rem;color:var(--accent2);font-weight:600;letter-spacing:.03em}
+    /* ===== SECTION PAGE ===== */
+    .section-page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px 0 60px;position:relative}
 
-    /* ===== 1.1 INTEREST CARD GAME ===== */
-    .interest-section{display:flex;flex-direction:column;align-items:center;padding:1rem 0 2rem}
-    .game-controls{display:flex;gap:.75rem;margin-bottom:1.2rem}
-    .btn{padding:.5rem 1.4rem;border:1px solid rgba(56,189,248,0.3);border-radius:999px;background:rgba(56,189,248,0.08);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
-    .btn:hover{background:rgba(56,189,248,0.2);border-color:rgba(56,189,248,0.5)}
+    /* ===== SECTION DECO (map-like elements) ===== */
+    .section-page::before,.section-page::after{content:'';position:absolute;pointer-events:none;z-index:0;opacity:.4;transition:opacity .3s}
+    .section-page::before{bottom:18px;left:3%;width:22px;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 34'%3E%3Crect x='9' y='18' width='4' height='16' rx='1' fill='%2378350f'/%3E%3Ccircle cx='11' cy='14' r='9' fill='%23166534'/%3E%3Ccircle cx='8' cy='11' r='3' fill='rgba(255,255,255,.12)'/%3E%3C/svg%3E") no-repeat center/contain}
+    .section-page::after{bottom:22px;right:4%;width:18px;height:28px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 28'%3E%3Crect x='7' y='14' width='3' height='14' rx='1' fill='%2378350f'/%3E%3Ccircle cx='9' cy='11' r='7' fill='%2315803d'/%3E%3Ccircle cx='6' cy='9' r='2' fill='rgba(255,255,255,.1)'/%3E%3C/svg%3E") no-repeat center/contain}
+
+    /* ===== SECTION INTRO ===== */
+    .section-intro{text-align:center;margin-bottom:1.8rem;position:relative;z-index:1}
+    .section-welcome{font-size:1.6rem;font-weight:800;color:var(--accent);margin-bottom:.6rem}
+    .section-desc{font-size:.88rem;color:var(--muted);line-height:1.9}
+
+    /* ===== SECTION FRAME ===== */
+    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:hidden;padding:1.5rem;width:100%;position:relative;z-index:1;transition:background .35s,border-color .35s}
+    .section-header{text-align:center;margin-bottom:1rem}
+    .section-title{font-size:1.25rem;font-weight:700;color:var(--primary);margin-bottom:.3rem}
+    .section-rules{font-size:.78rem;color:var(--muted);opacity:.6}
+
+    /* ===== SECTION DIVIDER ===== */
+    .section-divider{height:30vh;min-height:180px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;scroll-snap-align:start}
+    .section-divider::before{content:'';position:absolute;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--divider-line) 30%,var(--divider-line) 70%,transparent)}
+    .section-divider::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--divider-dot);box-shadow:0 0 12px var(--divider-dot)}
+
+    /* ===== HERO ===== */
+    #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,var(--hero-grad1),var(--hero-grad2) 70%);overflow:hidden;padding-top:52px;position:relative}
+    #hero-kw{position:absolute;inset:0}
+    .hkw{position:absolute;color:var(--hkw-color);font-weight:700;white-space:nowrap;animation:kwf 8s ease-in-out infinite alternate;pointer-events:auto;cursor:pointer;transition:color .25s,text-shadow .25s;user-select:none}
+    .hkw:hover{color:var(--hkw-hover);text-shadow:0 0 20px rgba(56,189,248,.2)}
+    @keyframes kwf{0%{transform:translateY(0) rotate(0deg)}100%{transform:translateY(-18px) rotate(2deg)}}
+    #hero-c{position:relative;z-index:2;text-align:center;pointer-events:none}
+    #hero-c h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub-hint{color:var(--muted);font-size:.85rem;margin-top:.8rem;opacity:.5}
+    .hero-overlay{position:fixed;inset:0;z-index:100;background:var(--overlay-bg);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+    .hero-overlay.show{opacity:1;pointer-events:auto}
+    .hero-ov-content{text-align:center;max-width:500px;padding:2.5rem;cursor:pointer}
+    .hero-ov-word{font-size:2.2rem;font-weight:800;color:var(--accent);margin-bottom:1rem}
+    .hero-ov-desc{font-size:1.05rem;color:var(--muted);line-height:2}
+    .hero-ov-dismiss{margin-top:1.5rem;font-size:.75rem;color:var(--muted);opacity:.3}
+
+    /* ===== CARD GAME ===== */
+    .interest-s{display:flex;flex-direction:column;align-items:center;padding:.5rem 0 1rem}
     .game-board{display:grid;grid-template-columns:repeat(5,88px);gap:8px}
     .card{width:88px;height:108px;perspective:600px}
     .card-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
     .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
-    .card.matched .card-inner{box-shadow:0 0 12px rgba(56,189,248,0.3)}
+    .card.matched .card-inner{box-shadow:0 0 12px rgba(56,189,248,.3)}
     .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:600;padding:6px}
     .card-front{color:#fff;transform:rotateY(180deg);justify-content:space-between;padding:8px 6px}
-    .category-name{font-size:10px;opacity:.85;letter-spacing:.04em}
-    .category-logo{width:32px;height:32px;fill:currentColor;color:rgba(255,255,255,0.9)}
-    .category-logo svg{width:100%;height:100%}
-    .item-name{font-size:12px;font-weight:700}
-    .card-back{background:var(--bg-card-solid);border:1.5px solid rgba(255,255,255,0.1);font-size:1.2rem;color:var(--text-muted)}
+    .cname{font-size:10px;opacity:.85}.clogo{width:32px;height:32px;fill:currentColor;color:rgba(255,255,255,.9)}.clogo svg{width:100%;height:100%}
+    .iname{font-size:12px;font-weight:700}
+    .card-back{background:var(--card-back-bg);border:1.5px solid var(--card-back-border);color:var(--muted);transition:background .35s,border-color .35s}
     .card-back::after{content:'?';font-size:1.6rem;opacity:.4}
-    .game-status{margin-top:1rem;font-size:.9rem;color:var(--text-muted);font-weight:500}
+    .gstatus{margin-top:.8rem;font-size:.85rem;color:var(--muted);font-weight:500}
 
-    /* ===== 1.2 CAREER ===== */
-    .career-wrap{display:flex;min-height:440px;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.06);background:var(--bg-card-solid)}
-    .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem 1rem;transition:background .3s}
-    .career-pane:first-child{border-right:1px solid rgba(255,255,255,0.06)}
-    #career-left{background:linear-gradient(160deg,#1a2235 0%,#1e293b 100%)}
-    #career-right{background:linear-gradient(160deg,#1e293b 0%,#1a2235 100%)}
-    .career-pane-label{font-size:.8rem;color:var(--text-muted);margin-bottom:1rem;opacity:0;transition:opacity .3s}
-    .career-pane:hover .career-pane-label{opacity:1}
+    /* ===== CAREER ===== */
+    .career-wrap{display:flex;min-height:380px;border-radius:var(--radius);overflow:hidden;position:relative}
+    .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem .8rem}
+    .career-pane:first-child{border-right:1px solid var(--frame-border)}
+    #cl,#cr{background:var(--bg2)}
+    .career-hint{font-size:.72rem;color:var(--muted);margin-bottom:.6rem;opacity:.5}
+    .mbag-area{position:relative;width:170px;height:280px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+    .mbag-svg{width:140px;height:180px;transition:transform .7s cubic-bezier(.175,.885,.32,1.275);flex-shrink:0;transform-origin:center center}
+    .mbag-area.open .mbag-svg{transform:scaleY(-1) translateY(-10px)}
+    .coins-row{display:flex;gap:8px;margin-top:8px;opacity:0;transform:translateY(-18px);transition:all .6s cubic-bezier(.34,1.56,.64,1)}
+    .mbag-area.open .coins-row{opacity:1;transform:translateY(0)}
+    .gcoin{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fef3c7,#fbbf24 45%,#b45309 100%);border:2.5px solid #92400e;display:flex;justify-content:center;align-items:center;font-weight:800;color:#451a03;font-size:9px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 -2px 5px rgba(0,0,0,.25),inset 0 2px 5px rgba(255,255,255,.35);position:relative;transition:transform .2s;opacity:0;transform:scale(0)}
+    .gcoin::after{content:'';position:absolute;inset:3px;border-radius:50%;border:1.5px solid rgba(120,53,15,.25)}
+    .mbag-area.open .gcoin{opacity:1;transform:scale(1)}
+    .mbag-area.open .gcoin:nth-child(1){transition-delay:.15s}.mbag-area.open .gcoin:nth-child(2){transition-delay:.25s}.mbag-area.open .gcoin:nth-child(3){transition-delay:.35s}.mbag-area.open .gcoin:nth-child(4){transition-delay:.45s}
+    .gcoin:hover{transform:scale(1.12)!important}
+    .egg-area{position:relative;width:170px;height:280px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .egg-wrap{position:relative;width:110px;height:145px}
+    .egg-top-half{position:absolute;width:100%;height:55%;top:0;clip-path:inset(0 0 45% 0);transition:all .8s cubic-bezier(.68,-.55,.265,1.55);z-index:3}
+    .egg-bottom-half{position:absolute;width:100%;height:100%;top:0;z-index:1}
+    .egg-area.cracked .egg-top-half{transform:translateY(-50px) rotate(-15deg);opacity:0}
+    .egg-crack-line{position:absolute;top:46%;left:5%;right:5%;height:8%;z-index:4;opacity:0;transition:opacity .3s}
+    .egg-area:not(.cracked):hover .egg-crack-line{opacity:.7}
+    .egg-area.cracked .egg-crack-line{opacity:0}
+    .cloud-reveal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:5;transition:transform .9s cubic-bezier(.34,1.56,.64,1) .3s;cursor:pointer}
+    .egg-area.cracked .cloud-reveal{transform:translate(-50%,-50%) scale(1)}
+    .career-overlay{position:absolute;inset:0;background:var(--overlay-bg);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .35s;border-radius:var(--radius)}
+    .career-overlay.show{opacity:1;pointer-events:auto}
+    .career-overlay-text{font-size:2rem;font-weight:800;color:var(--primary);text-shadow:0 0 40px rgba(56,189,248,.15)}
+    .career-overlay-sub{font-size:.8rem;color:var(--muted);margin-top:.4rem}
 
-    .money-bag-container{position:relative;width:180px;height:240px;cursor:pointer}
-    .money-bag-svg{width:100%;height:100%;transition:transform .7s cubic-bezier(.175,.885,.32,1.275);transform-origin:center 70%}
-    .money-bag-svg.inverted{transform:rotate(180deg)}
-    .coin-grid{position:absolute;left:0;right:0;bottom:-60px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-    .coin{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fde68a,#fbbf24 40%,#d97706 100%);border:3px solid #b45309;display:flex;justify-content:center;align-items:center;font-weight:800;color:#78350f;font-size:11px;cursor:pointer;transform:scale(0);opacity:0;transition:all .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 -2px 4px rgba(0,0,0,0.2),inset 0 2px 4px rgba(255,255,255,0.3);position:relative}
-    .coin::after{content:'';position:absolute;inset:4px;border-radius:50%;border:1.5px solid rgba(120,53,15,0.3)}
-    .money-bag-container.active .coin{transform:scale(1);opacity:1}
-    .money-bag-container.active .coin:nth-child(1){transition-delay:.1s}
-    .money-bag-container.active .coin:nth-child(2){transition-delay:.2s}
-    .money-bag-container.active .coin:nth-child(3){transition-delay:.3s}
-    .money-bag-container.active .coin:nth-child(4){transition-delay:.4s}
-    .coin-label{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none}
-    .coin:hover .coin-label,.coin.pinned .coin-label{opacity:1}
-    .career-hover-label{font-size:.85rem;color:var(--accent);font-weight:600;margin-top:.8rem;min-height:1.5em;opacity:0;transition:opacity .3s}
-    .career-hover-label.visible{opacity:1}
+    /* ===== BUBBLES ===== */
+    .kspores{position:relative;height:460px;background:linear-gradient(160deg,var(--sp-bg1),var(--sp-bg2) 50%,var(--sp-bg1));border-radius:var(--radius);overflow:hidden;transition:background .35s}
+    .sp-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:1rem;pointer-events:none;z-index:2;opacity:0;transition:opacity 1s}
+    .sp-hint.vis{opacity:1}.sp-hint.fade{opacity:0;transition:opacity 1.5s}
+    .sp-canvas{position:absolute;inset:0;pointer-events:none;z-index:3}
+    .sp-area{position:absolute;inset:0;z-index:1}
+    .sp-bub{position:absolute;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;text-align:center;font-size:12px;font-weight:600;color:rgba(255,255,255,.85);text-shadow:0 1px 3px rgba(0,0,0,.3);pointer-events:auto;transition:transform .15s;user-select:none}
+    .sp-bub:hover{transform:scale(1.08)}
+    .sp-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--sp-ov-bg);opacity:0;pointer-events:none;z-index:4;transition:opacity .4s;backdrop-filter:blur(6px)}
+    .sp-ov.vis{opacity:1;pointer-events:auto}
+    .sp-ov-box{max-width:400px;padding:1.8rem 2rem;background:var(--sp-ov-box);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;border:1px solid var(--frame-border);transition:background .35s,border-color .35s}
+    .sp-ov-term{font-size:1.2rem;font-weight:700;margin-bottom:.5rem;color:var(--primary)}
+    .sp-ov-desc{font-size:.88rem;line-height:1.8;color:var(--muted)}
 
-    .egg-container{position:relative;width:160px;height:210px;cursor:pointer;display:flex;justify-content:center;align-items:center}
-    .egg-shell{position:absolute;width:140px;height:180px;left:50%;top:50%;transform:translate(-50%,-50%)}
-    .egg-top,.egg-bottom{position:absolute;width:100%;left:0;z-index:20;transition:all .8s cubic-bezier(.68,-.55,.265,1.55)}
-    .egg-top{top:0;height:55%;border-radius:50% 50% 0 0/60% 60% 0 0;background:radial-gradient(ellipse at 40% 40%,#fef3c7,#fde68a,#fcd34d);box-shadow:inset 0 -2px 8px rgba(0,0,0,0.1);transform-origin:bottom right}
-    .egg-bottom{bottom:0;height:50%;border-radius:0 0 50% 50%/0 0 55% 55%;background:radial-gradient(ellipse at 40% 60%,#fde68a,#fbbf24);box-shadow:inset 0 2px 8px rgba(0,0,0,0.1);transform-origin:top left}
-    .egg-crack{position:absolute;top:48%;left:10%;right:10%;height:4%;z-index:21;opacity:0;transition:opacity .3s}
-    .egg-crack svg{width:100%;height:100%}
-    .egg-container.active .egg-top{transform:rotate(-25deg) translate(-40px,-40px);opacity:0}
-    .egg-container.active .egg-bottom{transform:rotate(20deg) translate(40px,40px);opacity:0}
-    .egg-container.active .egg-crack{opacity:0}
-    .egg-container:not(.active):hover .egg-crack{opacity:1}
-    .cloud-icon{position:absolute;z-index:15;transform:scale(0);transition:transform .8s cubic-bezier(.34,1.56,.64,1) .2s;cursor:pointer}
-    .egg-container.active .cloud-icon{transform:scale(1)}
-    .cloud-label{font-size:.85rem;color:var(--accent);font-weight:600;margin-top:.8rem;min-height:1.5em;opacity:0;transition:opacity .3s}
-    .cloud-label.visible{opacity:1}
-
-    /* ===== 1.3 KNOWLEDGE BUBBLES ===== */
-    .knowledge-spores{position:relative;height:500px;background:linear-gradient(160deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
-    .spores-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,0.6);font-size:1rem;pointer-events:none;z-index:2;opacity:0;transition:opacity 1s}
-    .spores-hint.visible{opacity:1}
-    .spores-hint.faded{opacity:0;transition:opacity 1.5s}
-    .spores-canvas{position:absolute;inset:0;pointer-events:none;z-index:3}
-    .spores-bubbles{position:absolute;inset:0;z-index:1}
-    .spore-bubble{position:absolute;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;text-align:center;font-size:12px;font-weight:600;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.4);pointer-events:auto;transition:transform .15s,box-shadow .15s;user-select:none}
-    .spore-bubble:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(255,255,255,0.15)}
-    .spores-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,0.8);opacity:0;pointer-events:none;z-index:4;transition:opacity .4s;backdrop-filter:blur(4px)}
-    .spores-overlay.visible{opacity:1;pointer-events:auto}
-    .spores-overlay-content{max-width:400px;padding:2rem 2.5rem;background:rgba(30,27,75,0.95);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;border:1px solid rgba(255,255,255,0.1)}
-    .spores-overlay-term{font-size:1.3rem;font-weight:700;margin-bottom:.6rem;color:#fff}
-    .spores-overlay-desc{font-size:.9rem;line-height:1.8;color:var(--text-muted)}
-
-    /* ===== 1.4 WORLD MAP ===== */
-    .world-map-section{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(160deg,#0f172a,#1e293b)}
-    .world-map-header{padding:1.5rem 2rem .5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
-    .world-map-header h4{font-size:1rem;color:var(--primary);font-weight:600}
-    .map-legend{display:flex;gap:1rem;font-size:.75rem;color:var(--text-muted)}
-    .map-legend-item{display:flex;align-items:center;gap:.35rem}
-    .map-legend-dot{width:10px;height:10px;border-radius:50%}
-    .map-legend-dot.lang{background:#a78bfa}
-    .map-legend-dot.been{background:#38bdf8}
-    .map-legend-dot.both{background:linear-gradient(135deg,#a78bfa,#38bdf8)}
-    .world-map-container{position:relative;width:100%;padding-bottom:50%;overflow:hidden}
-    .world-map-container svg{position:absolute;inset:0;width:100%;height:100%}
-    .map-region{fill:rgba(255,255,255,0.06);stroke:rgba(255,255,255,0.1);stroke-width:.5;cursor:pointer;transition:fill .3s}
-    .map-region:hover{fill:rgba(255,255,255,0.12)}
-    .map-region.been{fill:rgba(56,189,248,0.25);stroke:rgba(56,189,248,0.4)}
-    .map-region.lang{fill:rgba(167,139,250,0.25);stroke:rgba(167,139,250,0.4)}
-    .map-region.both{fill:rgba(130,160,240,0.3);stroke:rgba(130,160,240,0.5)}
-    .map-tooltip{position:absolute;background:rgba(30,41,59,0.95);color:#fff;padding:6px 12px;border-radius:8px;font-size:.75rem;pointer-events:none;opacity:0;transition:opacity .2s;z-index:5;white-space:nowrap;border:1px solid rgba(255,255,255,0.1)}
-    .map-tooltip.visible{opacity:1}
-    .map-instructions{text-align:center;padding:.8rem;font-size:.75rem;color:var(--text-muted);opacity:.6}
+    /* ===== LEAFLET MAP ===== */
+    .map-inner-frame{border-radius:var(--radius);overflow:hidden}
+    #leafletMap{height:400px}
+    .map-footer{padding:.7rem 1rem;background:var(--bg2);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;transition:background .35s}
+    .map-legend{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;justify-content:center}
+    .map-legend-btn{display:flex;align-items:center;gap:.4rem;padding:.3rem .6rem;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .2s;font-size:.75rem;color:var(--muted)}
+    .map-legend-btn:hover,.map-legend-btn.active{border-color:var(--frame-border);background:var(--toggle-bg);color:var(--primary)}
+    .map-legend-btn span{font-weight:600;margin-right:.3rem}
+    .ml-scale{display:flex;gap:.35rem;align-items:center}
+    .ml-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;display:inline-block}
+    .ml-scale small{font-size:.65rem;color:var(--muted)}
+    .map-instr{text-align:center;padding:.35rem;font-size:.7rem;color:var(--muted);opacity:.45}
 
     /* ===== TIMELINE ===== */
-    .timeline-container{position:relative;padding:1rem 0 1rem 2.5rem}
-    .timeline-line{position:absolute;left:12px;top:0;bottom:0;width:2px;background:rgba(255,255,255,0.08)}
-    .tl-item{position:relative;padding-bottom:1.8rem}
-    .tl-dot{position:absolute;left:-2.5rem;top:.4rem;width:14px;height:14px;border-radius:50%;border:2.5px solid;background:var(--bg-page)}
-    .tl-time{font-size:.8rem;color:var(--text-muted);font-weight:500}
-    .tl-title{font-size:.95rem;font-weight:600;color:var(--primary);margin-top:.15rem}
-    .tl-desc{font-size:.82rem;color:var(--text-muted);margin-top:.1rem}
-    .tl-edu .tl-dot{border-color:#3b82f6}
-    .tl-work .tl-dot{border-color:#ef4444}
-    .tl-proj .tl-dot{border-color:#22c55e}
-    .tl-culture .tl-dot{border-color:#f59e0b}
-    .tl-honor .tl-dot{border-color:#a855f7}
-    .timeline-legend{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
-    .tl-legend-item{display:flex;align-items:center;gap:.35rem;font-size:.78rem;color:var(--text-muted)}
-    .tl-legend-dot{width:10px;height:10px;border-radius:50%}
+    .tl-wrap{position:relative;padding:.8rem 0 .8rem 2.5rem}
+    .tl-line{position:absolute;left:12px;top:0;bottom:0;width:2px;background:var(--tl-line);transition:background .35s}
+    .tl-item{position:relative;padding-bottom:1.5rem}
+    .tl-dot{position:absolute;left:-2.5rem;top:.35rem;width:14px;height:14px;border-radius:50%;border:2.5px solid;background:var(--bg);transition:background .35s}
+    .tl-time{font-size:.78rem;color:var(--muted)}.tl-title{font-size:.9rem;font-weight:600;color:var(--primary);margin-top:.12rem}.tl-desc{font-size:.8rem;color:var(--muted);margin-top:.08rem}
+    .tl-edu .tl-dot{border-color:#3b82f6}.tl-work .tl-dot{border-color:#ef4444}.tl-proj .tl-dot{border-color:#22c55e}.tl-culture .tl-dot{border-color:#f59e0b}.tl-honor .tl-dot{border-color:#a855f7}
+    .tl-legend{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:.8rem}
+    .tl-legend-item{display:flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--muted)}
+    .tl-legend-dot{width:9px;height:9px;border-radius:50%}
 
     /* ===== SKILL TREE ===== */
-    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:2rem 0}
+    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:.5rem 0}
     .tree-svg{max-width:700px;width:100%}
-    .tree-branch-label{font-size:12px;fill:var(--text-muted);font-weight:600}
-    .tree-leaf{cursor:default;transition:transform .2s}
-    .tree-leaf:hover{transform:scale(1.1)}
-
-    /* ===== ENDING ===== */
-    .ending-section{text-align:center;padding:4rem 1.5rem 5rem;max-width:600px;margin:0 auto}
-    .ending-section h2{font-size:1.5rem;color:var(--gold);font-weight:700;margin-bottom:1.2rem}
-    .ending-section p{font-size:.95rem;color:var(--text-muted);line-height:2;margin-bottom:.5rem}
 
     /* ===== CONTACT ===== */
-    .contact-list{list-style:none;margin-top:.8rem}
-    .contact-list li{padding:.4rem 0;font-size:.9rem;color:var(--text-muted);display:flex;align-items:center;gap:.5rem}
-    .last-word{margin-top:1.5rem;padding:1.5rem 2rem;background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);text-align:center;font-size:1rem;color:var(--text);font-style:italic}
+    .contact-list{list-style:none;margin-top:.6rem}
+    .contact-list li{padding:.4rem 0;font-size:.88rem;color:var(--muted)}
+    .contact-list a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(56,189,248,.2);transition:all .2s}
+    .contact-list a:hover{color:var(--primary);border-color:var(--accent)}
 
-    /* ===== RESPONSIVE ===== */
+    /* ===== ENDING + REPLAY ===== */
+    .ending-section{text-align:center;padding:3rem 1.5rem;min-height:40vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;scroll-snap-align:start}
+    .quote-trigger{padding:.6rem 1.8rem;border:1px solid rgba(56,189,248,.25);border-radius:999px;background:rgba(56,189,248,.06);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s}
+    .quote-trigger:hover{background:rgba(56,189,248,.15);border-color:rgba(56,189,248,.4)}
+    .replay-btn{padding:.8rem 2.5rem;border:2px solid var(--gold);border-radius:999px;background:rgba(251,191,36,.06);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:1px}
+    .replay-btn:hover{background:rgba(251,191,36,.18);box-shadow:0 0 30px rgba(251,191,36,.15)}
+
+    /* ===== QUOTE OVERLAY (full-screen) ===== */
+    .quote-overlay{position:fixed;inset:0;z-index:2600;background:var(--overlay-bg);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;cursor:pointer}
+    .quote-overlay.show{opacity:1;pointer-events:auto}
+    .quote-ov-content{text-align:center;max-width:560px;padding:3rem 2rem;pointer-events:auto;cursor:default}
+    .quote-ov-text{font-size:1.5rem;font-weight:600;color:var(--primary);line-height:2;font-style:italic;min-height:3rem;transition:opacity .3s}
+    .quote-ov-controls{display:flex;gap:1rem;justify-content:center;margin-top:2rem}
+    .quote-ov-btn{padding:.5rem 1.5rem;border:1px solid var(--frame-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s}
+    .quote-ov-btn:hover{color:var(--accent);border-color:var(--accent);background:rgba(56,189,248,.06)}
+    .quote-ov-dismiss{margin-top:1.8rem;font-size:.72rem;color:var(--muted);opacity:.3}
+
+    /* ===== OVERLAYS ===== */
+    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+    .map-overlay.open{opacity:1;pointer-events:auto}
+    .map-close{position:absolute;top:20px;right:28px;font-size:2rem;color:var(--muted);cursor:pointer;z-index:10;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--toggle-bg);transition:all .2s}
+    .map-close:hover{color:var(--primary);background:rgba(255,255,255,.1)}
+    .map-overlay-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;font-family:"Courier New",monospace;opacity:.7}
+    .illustrated-map{width:92%;max-width:1200px;height:auto}
+    .map-building{cursor:pointer;transition:transform .2s,filter .2s,opacity .3s;transform-origin:center bottom;opacity:.2}
+    .map-building.unlocked{opacity:1}
+    .map-building.unlocked:hover{transform:translateY(-5px);filter:drop-shadow(0 8px 16px rgba(251,191,36,.25))}
+    .bld-glow{opacity:0;transition:opacity .3s}
+    .map-building.active .bld-glow{opacity:1}
+    .map-building text{pointer-events:none}
+    .map-label{font-size:12px;fill:var(--primary);font-weight:700;text-anchor:middle}
+    .map-sublabel{font-size:9px;fill:var(--muted);font-weight:600;text-anchor:middle}
+
+    #map-btn{position:fixed;bottom:16px;right:20px;z-index:1000;cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid var(--map-btn-border);box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .3s;background:var(--map-btn-bg)}
+    #map-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,0,0,.3);border-color:var(--accent)}
+    #map-btn svg{display:block}
+
+    .unlock-overlay{position:fixed;inset:0;z-index:2500;background:var(--overlay-bg2);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .5s;cursor:pointer}
+    .unlock-overlay.show{opacity:1;pointer-events:auto}
+    .unlock-congrats{font-size:.9rem;color:var(--muted);margin-bottom:.8rem;letter-spacing:2px}
+    .unlock-scene{font-size:1.8rem;font-weight:800;color:var(--gold);animation:unlockPulse .6s ease both}
+    .unlock-dismiss{margin-top:2rem;font-size:.75rem;color:var(--muted);opacity:.3}
+    @keyframes unlockPulse{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+
+    .completion-overlay{position:fixed;inset:0;z-index:3000;background:var(--overlay-bg2);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s;cursor:pointer}
+    .completion-overlay.show{opacity:1;pointer-events:auto}
+    .completion-content{text-align:center;max-width:520px;padding:3rem;animation:completionIn .8s ease .2s both}
+    @keyframes completionIn{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .completion-content h2{font-size:1.8rem;color:var(--gold);font-weight:700;margin-bottom:1.5rem}
+    .completion-content p{font-size:1rem;color:var(--muted);line-height:2.2;margin-bottom:.2rem}
+    .completion-close{margin-top:2rem;font-size:.8rem;color:var(--muted);opacity:.3}
+
     @media(max-width:600px){
-      .game-board{grid-template-columns:repeat(5,62px);gap:5px}
-      .card{width:62px;height:78px}
-      .category-logo{width:22px;height:22px}
-      .item-name{font-size:10px}
-      .category-name{font-size:8px}
+      .nav{gap:.5rem;padding:0 6rem 0 .5rem;height:46px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch}
+      .nav a{font-size:.68rem;flex-shrink:0}
+      .toggle-group{top:10px;right:10px;gap:5px}
+      .lang-toggle{font-size:.6rem;padding:.2rem .4rem}
+      .theme-toggle{width:26px;height:26px}
+      .theme-toggle svg{width:12px;height:12px}
+      .section-page{padding:58px 0 30px}
+      .section-welcome{font-size:1.3rem}
+      .game-board{grid-template-columns:repeat(5,58px);gap:4px}
+      .card{width:58px;height:72px}.clogo{width:18px;height:18px}.iname{font-size:8px}.cname{font-size:7px}
       .career-wrap{flex-direction:column;min-height:auto}
-      .career-pane:first-child{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}
-      .hero-cards{grid-template-columns:1fr}
-      .nav{font-size:.7rem;gap:.6rem}
+      .career-pane:first-child{border-right:none;border-bottom:1px solid var(--frame-border)}
+      .illustrated-map{width:98%}
+      .kspores{height:360px}
+      #leafletMap{height:300px}
+      .section-divider{height:20vh;min-height:120px}
+      .map-legend{flex-direction:column;gap:.4rem}
+      .section-page::before,.section-page::after{display:none}
     }
   </style>
 </head>
 <body>
 
-<!-- ===== NAVIGATION ===== -->
+<!-- ===== TOP NAV ===== -->
 <nav class="nav">
-  <a href="#hero">Who am I</a><span class="nav-sep">|</span>
-  <a href="#interest">兴趣</a>
-  <a href="#career">事业</a>
-  <a href="#study">学习</a>
-  <a href="#worldmap">世界</a><span class="nav-sep">|</span>
-  <a href="#skills">技能树</a>
-  <a href="#timelines">时间轴</a><span class="nav-sep">|</span>
-  <a href="#takeaway">Takeaway</a>
+  <a href="#hero" data-i18n="nav-hero">我是谁</a>
+  <a href="#interest" data-i18n="nav-interest">兴趣</a>
+  <a href="#career" data-i18n="nav-career">工作</a>
+  <a href="#study" data-i18n="nav-study">学习</a>
+  <a href="#worldmap" data-i18n="nav-worldmap">足迹</a>
+  <a href="#skills" data-i18n="nav-skills">技能</a>
+  <a href="#timelines" data-i18n="nav-timelines">经历</a>
+  <a href="#takeaway" data-i18n="nav-takeaway">联系XD</a>
 </nav>
+<div class="toggle-group">
+  <div class="lang-toggle" id="langToggle">EN</div>
+  <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </div>
+</div>
 
-<main>
-
-<!-- ========== 0. HERO: WHO AM I ========== -->
-<section id="hero">
-  <div id="hero-keywords"></div>
-  <div id="hero-center">
+<!-- ═══════════ HERO ═══════════ -->
+<div class="section-page" id="hero" data-map-id="hero">
+  <div id="hero-kw"></div>
+  <div id="hero-c">
     <h1>Who am I?</h1>
-    <p class="hero-subtitle">一大堆关键词漂浮在页面中——来探索吧</p>
-    <div class="hero-cards">
-      <div class="hero-card">
-        <h3>自我评价</h3>
-        <ul>
-          <li>极具主动性</li>
-          <li>自信、好学、刨根究底</li>
-          <li>重视效率、向上管理</li>
-          <li>有审美、有思想、爱探索</li>
-          <li>超级大现充</li>
-        </ul>
-      </div>
-      <div class="hero-card">
-        <h3>思维方式</h3>
-        <ul>
-          <li>Trade-off 思维</li>
-          <li>Top-down 拆解</li>
-          <li>机会成本意识</li>
-          <li>风险对冲策略</li>
-        </ul>
-      </div>
-      <div class="hero-card">
-        <h3>人生格言</h3>
-        <p>相信复利的力量 · 多看事实 少看观点 · 无所求必满载而归 · 要有节奏感 · 着眼未来 · 慢慢来就是最快的</p>
-        <p style="margin-top:.5rem;color:var(--accent);font-style:italic;font-size:.8rem">If you got tangled up, just tango on.</p>
-      </div>
+    <p class="hero-sub-hint" data-i18n="hero-hint">点击关键词了解更多</p>
+  </div>
+</div>
+
+<div id="heroOverlay" class="hero-overlay">
+  <div class="hero-ov-content">
+    <div class="hero-ov-word" id="heroOvWord"></div>
+    <div class="hero-ov-desc" id="heroOvDesc"></div>
+    <div class="hero-ov-dismiss" data-i18n="dismiss-click">点击任意处关闭</div>
+  </div>
+</div>
+
+<div class="section-divider" data-next-id="interest" data-next-label="兴趣游乐场"></div>
+
+<!-- ═══════════ 兴趣游乐场 ═══════════ -->
+<div class="section-page" id="interest" data-map-id="interest">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="interest-welcome">欢迎来到兴趣游乐场</div>
+      <div class="section-desc" data-i18n-html="interest-desc">了解一个人，从TA的兴趣开始<br>翻翻卡片，看看小对藏了哪些宝藏爱好</div>
     </div>
-    <div class="hero-badges" style="justify-content:center;margin-top:1.2rem">
-      <span class="hero-badge">Resilient</span>
-      <span class="hero-badge">Pivot</span>
-      <span class="hero-badge">Assertive</span>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="interest-title">兴趣对对碰</div>
+        <div class="section-rules" data-i18n="interest-rules">翻开两张同类卡片即可配对，点击「打乱重来」可重新开始</div>
+      </div>
+      <div class="interest-s">
+        <div style="margin-bottom:.8rem"><button class="btn" id="shuffleBtn" data-i18n="shuffle-btn">打乱重来</button></div>
+        <div class="game-board" id="gameBoard"></div>
+        <div class="gstatus" id="gStatus" data-i18n="game-hint">翻开两张同类卡片试试看！</div>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- UNLOCK: 小游戏 -->
-<div class="unlock-banner"><span>解锁：小游戏</span></div>
+<div class="section-divider" data-next-id="career" data-next-label="事业大厦"></div>
 
-<!-- ========== 1. WHO AM I ========== -->
-<div class="section-wrap" id="whoami-wrap">
-
-  <!-- 1.1 兴趣翻翻乐 -->
-  <div id="interest">
-    <div class="section-sub">1.1 关于兴趣</div>
-    <div class="interest-section">
-      <div class="game-controls">
-        <button class="btn" id="shuffleBtn">打乱重来</button>
-      </div>
-      <div class="game-board" id="gameBoard"></div>
-      <div class="game-status" id="gameStatus">翻开两张同类卡片试试看！</div>
+<!-- ═══════════ 事业大厦 ═══════════ -->
+<div class="section-page" id="career" data-map-id="career">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="career-welcome">欢迎来到事业大厦</div>
+      <div class="section-desc" data-i18n-html="career-desc">小对的职业版图就藏在这里<br>点开钱袋和鸡蛋，来一探究竟</div>
     </div>
-  </div>
-
-  <!-- 1.2 关于事业 -->
-  <div id="career">
-    <div class="section-sub">1.2 关于事业</div>
-    <div class="career-wrap">
-      <!-- LEFT: 金融 -->
-      <div class="career-pane" id="career-left">
-        <div class="career-pane-label">点击钱袋试试</div>
-        <div class="money-bag-container" id="finance-trigger">
-          <svg class="money-bag-svg" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="bagGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#a16207"/>
-                <stop offset="40%" stop-color="#ca8a04"/>
-                <stop offset="100%" stop-color="#a16207"/>
-              </linearGradient>
-              <radialGradient id="bagShine" cx="35%" cy="30%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
-                <stop offset="100%" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <!-- rope -->
-            <ellipse cx="60" cy="32" rx="18" ry="8" fill="none" stroke="#78350f" stroke-width="3"/>
-            <rect x="50" y="10" width="20" height="22" rx="4" fill="#92400e"/>
-            <rect x="52" y="12" width="16" height="18" rx="3" fill="#a16207"/>
-            <!-- bag body -->
-            <path d="M28,30 Q8,55 12,100 Q16,145 60,148 Q104,145 108,100 Q112,55 92,30 Z" fill="url(#bagGrad)" stroke="#78350f" stroke-width="1.5"/>
-            <path d="M28,30 Q8,55 12,100 Q16,145 60,148 Q104,145 108,100 Q112,55 92,30 Z" fill="url(#bagShine)"/>
-            <!-- $ symbol -->
-            <text x="60" y="105" text-anchor="middle" font-size="42" fill="#78350f" font-weight="900" font-family="serif" opacity=".6">$</text>
-          </svg>
-          <div class="coin-grid" id="coinGrid">
-            <div class="coin" data-text="期货"><span>期货</span><span class="coin-label">期货</span></div>
-            <div class="coin" data-text="律所IPO"><span>律所</span><span class="coin-label">律所IPO</span></div>
-            <div class="coin" data-text="私募"><span>私募</span><span class="coin-label">私募</span></div>
-            <div class="coin" data-text="券商投行"><span>投行</span><span class="coin-label">券商投行</span></div>
-          </div>
-        </div>
-        <div class="career-hover-label" id="finance-label">金融经历</div>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="career-title">金融 × 初创</div>
+        <div class="section-rules" data-i18n="career-rules">点击左边的钱袋和右边的鸡蛋，探索小对的事业版图</div>
       </div>
-      <!-- RIGHT: 初创 -->
-      <div class="career-pane" id="career-right">
-        <div class="career-pane-label">点击蛋壳试试</div>
-        <div class="egg-container" id="startup-trigger">
-          <div class="egg-shell">
-            <div class="egg-top"></div>
-            <div class="egg-bottom"></div>
-            <div class="egg-crack">
-              <svg viewBox="0 0 120 6"><path d="M0,3 L15,1 L30,5 L45,2 L60,4 L75,1 L90,5 L105,2 L120,3" fill="none" stroke="#78350f" stroke-width="1.5"/></svg>
+      <div class="career-wrap" id="careerWrap">
+        <div class="career-pane" id="cl">
+          <div class="career-hint" data-i18n="career-hint-bag">点击钱袋</div>
+          <div class="mbag-area" id="mbag">
+            <svg class="mbag-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="bg1" x1="0" y1="0" x2=".3" y2="1"><stop offset="0%" stop-color="#d4a017"/><stop offset="50%" stop-color="#b8860b"/><stop offset="100%" stop-color="#8b6914"/></linearGradient>
+                <radialGradient id="bs1" cx=".35" cy=".3"><stop offset="0%" stop-color="rgba(255,255,255,.3)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+                <linearGradient id="rope" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a0522d"/><stop offset="100%" stop-color="#6b3a1f"/></linearGradient>
+              </defs>
+              <ellipse cx="80" cy="192" rx="55" ry="6" fill="rgba(0,0,0,.3)"/>
+              <path d="M32,52 C8,75 8,140 16,165 C24,185 55,195 80,195 C105,195 136,185 144,165 C152,140 152,75 128,52 Z" fill="url(#bg1)" stroke="#6b3a1f" stroke-width="1"/>
+              <path d="M32,52 C8,75 8,140 16,165 C24,185 55,195 80,195 C105,195 136,185 144,165 C152,140 152,75 128,52 Z" fill="url(#bs1)"/>
+              <path d="M45,52 Q45,38 55,30 L105,30 Q115,38 115,52 Z" fill="url(#bg1)" stroke="#6b3a1f" stroke-width="1"/>
+              <ellipse cx="80" cy="52" rx="38" ry="6" fill="none" stroke="url(#rope)" stroke-width="4"/>
+              <text x="80" y="140" text-anchor="middle" font-size="52" fill="#6b3a1f" font-weight="900" font-family="Georgia,serif" opacity=".4">$</text>
+            </svg>
+            <div class="coins-row">
+              <div class="gcoin" data-co="期货">期货</div>
+              <div class="gcoin" data-co="律所IPO">律所</div>
+              <div class="gcoin" data-co="私募">私募</div>
+              <div class="gcoin" data-co="券商投行">投行</div>
             </div>
           </div>
-          <!-- cloud revealed after crack -->
-          <div class="cloud-icon" id="cloud-icon">
-            <svg width="120" height="80" viewBox="0 0 120 80">
-              <defs>
-                <linearGradient id="cloudGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#e0e7ff"/>
-                  <stop offset="100%" stop-color="#c7d2fe"/>
-                </linearGradient>
-              </defs>
-              <ellipse cx="60" cy="50" rx="50" ry="22" fill="url(#cloudGrad)"/>
-              <circle cx="38" cy="35" r="22" fill="url(#cloudGrad)"/>
-              <circle cx="65" cy="30" r="26" fill="url(#cloudGrad)"/>
-              <circle cx="85" cy="40" r="18" fill="url(#cloudGrad)"/>
-              <text x="60" y="55" text-anchor="middle" font-size="13" fill="#4338ca" font-weight="700">沄视科技</text>
-            </svg>
+        </div>
+        <div class="career-pane" id="cr">
+          <div class="career-hint" data-i18n="career-hint-egg">点击鸡蛋</div>
+          <div class="egg-area" id="eggArea">
+            <div class="egg-wrap">
+              <svg class="egg-bottom-half" viewBox="0 0 130 170">
+                <defs><radialGradient id="eg1" cx=".45" cy=".45"><stop offset="0%" stop-color="#faf5eb"/><stop offset="50%" stop-color="#ede0cc"/><stop offset="100%" stop-color="#c4a77d"/></radialGradient></defs>
+                <ellipse cx="65" cy="92" rx="55" ry="72" fill="url(#eg1)"/>
+                <ellipse cx="50" cy="62" rx="16" ry="22" fill="rgba(255,255,255,.15)" transform="rotate(-15 50 62)"/>
+              </svg>
+              <svg class="egg-top-half" viewBox="0 0 130 170">
+                <defs><radialGradient id="eg2" cx=".45" cy=".45"><stop offset="0%" stop-color="#faf5eb"/><stop offset="50%" stop-color="#ede0cc"/><stop offset="100%" stop-color="#c4a77d"/></radialGradient></defs>
+                <ellipse cx="65" cy="92" rx="55" ry="72" fill="url(#eg2)"/>
+                <ellipse cx="50" cy="62" rx="16" ry="22" fill="rgba(255,255,255,.18)" transform="rotate(-15 50 62)"/>
+              </svg>
+              <svg class="egg-crack-line" viewBox="0 0 120 12"><path d="M0,6 L12,2 L22,10 L35,1 L48,11 L58,3 L72,10 L82,2 L95,9 L105,3 L120,6" fill="none" stroke="#654321" stroke-width="3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cloud-reveal" id="cloudReveal">
+              <svg width="130" height="88" viewBox="0 0 140 95"><defs><radialGradient id="cg1" cx=".4" cy=".3"><stop offset="0%" stop-color="#f0f4ff"/><stop offset="100%" stop-color="#c7d2fe"/></radialGradient><radialGradient id="cg2" cx=".5" cy=".4"><stop offset="0%" stop-color="#e0e7ff"/><stop offset="100%" stop-color="#a5b4fc"/></radialGradient><filter id="cshadow"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity=".15"/></filter></defs><g filter="url(#cshadow)"><ellipse cx="70" cy="58" rx="55" ry="25" fill="url(#cg1)"/><circle cx="42" cy="40" r="25" fill="url(#cg1)"/><circle cx="75" cy="33" r="28" fill="url(#cg2)"/><circle cx="100" cy="45" r="20" fill="url(#cg1)"/></g><text x="70" y="63" text-anchor="middle" font-size="13" fill="#4338ca" font-weight="700">沄视科技</text></svg>
+            </div>
           </div>
         </div>
-        <div class="career-hover-label" id="startup-label">初创经历</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 1.3 关于学习 -->
-  <div id="study">
-    <div class="section-sub">1.3 关于学习</div>
-    <div class="knowledge-spores" id="knowledgeSpores">
-      <div class="spores-hint" id="sporesHint">戳开泡泡试试看</div>
-      <canvas class="spores-canvas" id="sporesCanvas"></canvas>
-      <div class="spores-bubbles" id="sporesBubbles"></div>
-      <div class="spores-overlay" id="sporesOverlay">
-        <div class="spores-overlay-content">
-          <div class="spores-overlay-term" id="sporesOverlayTerm"></div>
-          <div class="spores-overlay-desc" id="sporesOverlayDesc"></div>
+        <div class="career-overlay" id="careerOv">
+          <div style="text-align:center;cursor:pointer"><div class="career-overlay-text" id="careerOvText"></div><div class="career-overlay-sub" data-i18n="dismiss-click">点击任意处关闭</div></div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- 1.4 我与世界 -->
-  <div id="worldmap">
-    <div class="section-sub">1.4 我与世界</div>
-    <div class="world-map-section">
-      <div class="world-map-header">
-        <h4>点击地区切换状态</h4>
-        <div class="map-legend">
-          <div class="map-legend-item"><div class="map-legend-dot lang"></div>我会说这里的语言</div>
-          <div class="map-legend-item"><div class="map-legend-dot been"></div>我去过这里</div>
-          <div class="map-legend-item"><div class="map-legend-dot both"></div>都是</div>
+<div class="section-divider" data-next-id="study" data-next-label="学习湖泊"></div>
+
+<!-- ═══════════ 学习湖泊 ═══════════ -->
+<div class="section-page" id="study" data-map-id="study">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="study-welcome">欢迎来到学习湖泊</div>
+      <div class="section-desc" data-i18n-html="study-desc">学习湖泊里漂浮着许多知识泡泡<br>戳开一个，学习一个新词汇吧</div>
+    </div>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="study-title">知识泡泡</div>
+        <div class="section-rules" data-i18n="study-rules">湖里的泡泡装着各种知识——戳开它，随机学一个新词汇</div>
+      </div>
+      <div class="kspores" id="kSpores">
+        <div class="sp-hint" id="spHint" data-i18n="bubble-hint">戳开泡泡试试看</div>
+        <canvas class="sp-canvas" id="spCanvas"></canvas>
+        <div class="sp-area" id="spArea"></div>
+        <div class="sp-ov" id="spOv">
+          <div class="sp-ov-box"><div class="sp-ov-term" id="spOvTerm"></div><div class="sp-ov-desc" id="spOvDesc"></div></div>
         </div>
       </div>
-      <div class="world-map-container" id="worldMapContainer">
-        <svg id="worldMapSvg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"></svg>
-        <div class="map-tooltip" id="mapTooltip"></div>
-      </div>
-      <div class="map-instructions">单击切换：默认 → 去过 → 会说语言 → 都是 → 默认</div>
     </div>
   </div>
-
-</div><!-- end section-wrap -->
-
-<!-- UNLOCK: 技能树 -->
-<div class="unlock-banner"><span>解锁：技能树</span></div>
-
-<!-- ========== 2. 技能树 ========== -->
-<div class="section-wrap" id="skills">
-  <div class="section-title">技能树</div>
-  <div class="skill-tree-wrap" id="skillTreeWrap"></div>
 </div>
 
-<!-- UNLOCK: 时间轴 -->
-<div class="unlock-banner"><span>解锁：时间轴</span></div>
+<div class="section-divider" data-next-id="worldmap" data-next-label="个人杂货铺"></div>
 
-<!-- ========== 2. TIMELINES ========== -->
-<div class="section-wrap" id="timelines">
-  <div class="section-title">我是怎么一步步走来的</div>
-  <div class="timeline-legend">
-    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#3b82f6"></div>学业</div>
-    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#ef4444"></div>工作</div>
-    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#22c55e"></div>项目</div>
-    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#f59e0b"></div>文化</div>
-    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#a855f7"></div>荣誉</div>
-  </div>
-  <div class="timeline-container" id="timelineContainer">
-    <div class="timeline-line"></div>
-  </div>
-</div>
-
-<!-- ========== MAP LIT ========== -->
-<div class="unlock-banner" style="color:var(--gold)"><span style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.05)">地图已经全部点亮</span></div>
-
-<!-- ========== 3. TAKEAWAY ========== -->
-<div class="section-wrap" id="takeaway">
-  <div class="section-title">3. Takeaway</div>
-
-  <div class="section-sub" id="contact">3.1 联系方式</div>
-  <ul class="contact-list">
-    <li>邮箱：your@email.com</li>
-    <li>微信 / 其他：请填写</li>
-    <li>LinkedIn / 个人链接：请填写</li>
-  </ul>
-
-  <div class="section-sub" id="lastword">3.2 最后一句话</div>
-  <div class="last-word">
-    If you got tangled up, just tango on.
+<!-- ═══════════ 个人杂货铺（世界地图） ═══════════ -->
+<div class="section-page" id="worldmap" data-map-id="worldmap">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="worldmap-welcome">欢迎来到个人杂货铺</div>
+      <div class="section-desc" data-i18n-html="worldmap-desc">小对的足迹遍布世界各地<br>来看看她都去过哪里、会说什么语言</div>
+    </div>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="worldmap-title">我与世界</div>
+      </div>
+      <div class="map-inner-frame">
+        <div id="leafletMap"></div>
+        <div class="map-footer">
+          <div class="map-legend">
+            <div class="map-legend-btn active" data-mode="visit">
+              <span data-i18n="map-visit">我去过</span>
+              <div class="ml-scale">
+                <span class="ml-dot" style="background:#93c5fd"></span><small data-i18n="map-travel">旅行</small>
+                <span class="ml-dot" style="background:#3b82f6"></span><small data-i18n="map-short">短居</small>
+                <span class="ml-dot" style="background:#1d4ed8"></span><small data-i18n="map-long">长住</small>
+              </div>
+            </div>
+            <div class="map-legend-btn" data-mode="lang">
+              <span data-i18n="map-lang">我会说这里的语言</span>
+              <div class="ml-scale">
+                <span class="ml-dot" style="background:#d8b4fe"></span><small data-i18n="map-beginner">入门</small>
+                <span class="ml-dot" style="background:#a78bfa"></span><small data-i18n="map-proficient">熟练</small>
+                <span class="ml-dot" style="background:#7c3aed"></span><small data-i18n="map-fluent">精通</small>
+                <span class="ml-dot" style="background:#4c1d95"></span><small data-i18n="map-native">母语</small>
+              </div>
+            </div>
+          </div>
+          <div class="map-instr" data-i18n="map-instr">点击标记切换 · 滚轮缩放 · 拖拽平移</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ========== ENDING ========== -->
-<div class="ending-section" id="ending">
-  <h2>恭喜你顺利通关！</h2>
-  <p>认识小对的小游戏到这里就结束啦，</p>
-  <p>但小对和你的故事才刚刚开始，</p>
-  <p>让我们一起继续探索吧，</p>
-  <p>相信她一定会给你带来惊喜！</p>
+<div class="section-divider" data-next-id="skills" data-next-label="技能花园"></div>
+
+<!-- ═══════════ 技能花园 ═══════════ -->
+<div class="section-page" id="skills" data-map-id="skills">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="skills-welcome">欢迎来到技能花园</div>
+      <div class="section-desc" data-i18n-html="skills-desc">每一片叶子都是一项技能<br>一起看看小对的技能全景图</div>
+    </div>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="skills-title">个人技能树</div>
+      </div>
+      <div class="skill-tree-wrap" id="stWrap"></div>
+    </div>
+  </div>
 </div>
 
-</main>
+<div class="section-divider" data-next-id="timelines" data-next-label="钟表店"></div>
 
-<script>
-// ================================================================
-//  DATA
-// ================================================================
-const CATEGORY_STYLES = {
-  music:      { label:'音乐类', color:'#9333ea', icon:'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z' },
-  sports:     { label:'运动类', color:'#16a34a', icon:'M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 1.1-5.2C15.3 12 16.1 12 16.5 12c.8 0 1.5-.1 2-.3V6c-.5.2-1.2.3-2 .3-.6 0-1.2-.1-1.7-.3l-2-1-1-1.1L9.8 8.9z' },
-  experience: { label:'体验类', color:'#0284c7', icon:'M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4c-1.1 0-2 .9-2 2v3.8h1.5c1.4 0 2.5 1.1 2.5 2.5S4.9 15.8 3.5 15.8H2V19c0 1.1.9 2 2 2h3.8v-1.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5V21H17c1.1 0 2-.9 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z' },
-  arts:       { label:'文艺类', color:'#ea580c', icon:'M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z' }
-};
-const HOBBY_ITEMS = [
-  {n:'合唱',c:'music'},{n:'钢琴',c:'music'},{n:'小提琴',c:'music'},{n:'音乐剧',c:'music'},
-  {n:'旅行',c:'experience'},{n:'摄影',c:'experience'},{n:'美食探店',c:'experience'},{n:'做小手工',c:'experience'},{n:'轰趴',c:'experience'},{n:'KTV',c:'experience'},
-  {n:'阅读',c:'arts'},{n:'电影',c:'arts'},{n:'国际象棋',c:'arts'},{n:'写作',c:'arts'},
-  {n:'铁三',c:'sports'},{n:'骑行',c:'sports'},{n:'长跑',c:'sports'},{n:'游泳',c:'sports'},{n:'徒步',c:'sports'},{n:'健身',c:'sports'}
-];
+<!-- ═══════════ 钟表店（时间轴） ═══════════ -->
+<div class="section-page" id="timelines" data-map-id="timelines">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="timelines-welcome">欢迎来到钟表店</div>
+      <div class="section-desc" data-i18n-html="timelines-desc">时间记录着每一段经历<br>跟着时间轴，回顾小对的成长足迹</div>
+    </div>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="timelines-title">时间轴</div>
+        <div class="section-rules" data-i18n="timelines-rules">按时间顺序记录学业、工作、项目、文化和荣誉</div>
+      </div>
+      <div class="tl-legend">
+        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#3b82f6"></div><span data-i18n="tl-edu">学业</span></div>
+        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#ef4444"></div><span data-i18n="tl-work">工作</span></div>
+        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#22c55e"></div><span data-i18n="tl-proj">项目</span></div>
+        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#f59e0b"></div><span data-i18n="tl-culture">文化</span></div>
+        <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#a855f7"></div><span data-i18n="tl-honor">荣誉</span></div>
+      </div>
+      <div class="tl-wrap" id="tlWrap"><div class="tl-line"></div></div>
+    </div>
+  </div>
+</div>
 
-const SPORES_TOPICS = [
-  {id:'internet',name:'互联网',color:'#0ea5e9',entries:[
-    {term:'互联网黑话',desc:'赋能、抓手、底层逻辑、颗粒度、拉齐对齐……这些词在互联网公司的会议里每天都在飞。'},
-    {term:'DAU / MAU',desc:'日活跃用户/月活跃用户，衡量一个产品有多少人真的在用。'},
-    {term:'用户增长飞轮',desc:'通过产品体验→口碑→新用户→更多数据→更好体验的循环，实现自增长。'}
-  ]},
-  {id:'ecommerce',name:'电商',color:'#f43f5e',entries:[
-    {term:'GMV',desc:'Gross Merchandise Volume，成交总额。电商人每天盯着看的核心数字。'},
-    {term:'转化率',desc:'从浏览到下单的比例，每提高0.1%都意味着巨大的收入增长。'},
-    {term:'复购率',desc:'用户买了一次之后还会不会再来？这决定了生意能不能持续。'}
-  ]},
-  {id:'pm',name:'产品经理',color:'#8b5cf6',entries:[
-    {term:'需求池',desc:'产品经理的武器库——所有待做的功能和改进都在这里排队等候。'},
-    {term:'MVP',desc:'最小可行产品。先做一个最简单的版本验证想法，再逐步迭代。'},
-    {term:'用户故事',desc:'"作为一个XX用户，我想要XX，以便XX"——产品经理思考需求的标准句式。'}
-  ]},
-  {id:'retail',name:'零售',color:'#06b6d4',entries:[
-    {term:'SKU',desc:'Stock Keeping Unit，最小存货单位。一个颜色、一个尺码就是一个SKU。'},
-    {term:'坪效',desc:'每平米产生的销售额，衡量零售空间效率的核心指标。'},
-    {term:'动销率',desc:'有多少比例的商品在一定时间内卖出去了？库存管理的关键。'}
-  ]},
-  {id:'ai',name:'人工智能',color:'#a855f7',entries:[
-    {term:'大模型（LLM）',desc:'在海量文本上训练出的"语言大脑"，能理解和生成人类语言。GPT、Claude都是。'},
-    {term:'Prompt Engineering',desc:'如何给AI写好指令？这是一门新兴的"提问的艺术"。'},
-    {term:'幻觉（Hallucination）',desc:'AI有时会自信地编造不存在的事实——就像人类有时也会记错。'}
-  ]},
-  {id:'nn',name:'神经网络',color:'#ec4899',entries:[
-    {term:'反向传播',desc:'神经网络的"自我纠正"机制——通过误差一层层反推，自动调整权重。'},
-    {term:'激活函数',desc:'让神经网络产生非线性。没有它，再深的网络也只是线性变换。'},
-    {term:'Transformer',desc:'注意力机制的集大成者，ChatGPT背后的核心架构。'}
-  ]},
-  {id:'politics',name:'政治学',color:'#10b981',entries:[
-    {term:'权力分立',desc:'立法、行政、司法互相制衡，防止权力滥用的制度设计。'},
-    {term:'社会契约论',desc:'政府的权力来自人民的授权——卢梭提出的经典理论。'},
-    {term:'博弈论',desc:'在对手的决策影响你的结果时，如何做出最优选择？'}
-  ]},
-  {id:'economics',name:'经济学',color:'#f59e0b',entries:[
-    {term:'边际效用递减',desc:'第一块披萨最香，第十块就只是填肚子——经济学最直观的规律。'},
-    {term:'沉没成本谬误',desc:'已经投入的时间和金钱不应该影响未来决策，但人们总是放不下。'},
-    {term:'帕累托法则',desc:'80/20法则——20%的努力产生80%的结果，专注关键少数。'}
-  ]},
-  {id:'invest',name:'投资理财',color:'#eab308',entries:[
-    {term:'不要把鸡蛋放在一个篮子里',desc:'分散投资降低风险——这是投资的第一课。'},
-    {term:'鸡尾酒会理论',desc:'彼得·林奇说：当鸡尾酒会上人人都在聊股票时，市场可能快到顶了。'},
-    {term:'蒙特卡洛模拟',desc:'用大量随机模拟来预测不确定性结果，金融工程师的常用工具。'}
-  ]},
-  {id:'linguistics',name:'语言学',color:'#14b8a6',entries:[
-    {term:'结构主义',desc:'索绪尔提出：语言是一个系统，每个词的意义来自它与其他词的关系。'},
-    {term:'语用学',desc:'同一句话在不同场景下意思完全不同——语境决定意义。'},
-    {term:'语言相对论',desc:'你说什么语言，可能会影响你怎么思考世界——Sapir-Whorf假说。'}
-  ]},
-  {id:'lanlearn',name:'语言学习',color:'#0ea5e9',entries:[
-    {term:'你好的一千种说法',desc:'Hello · 你好 · こんにちは · 안녕하세요 · Bonjour · Hola · Ciao · Hallo · Привет · مرحبا'},
-    {term:'沉浸式学习',desc:'把自己扔进语言环境里，像婴儿一样学语言，效率最高。'},
-    {term:'语言迁移',desc:'学过的语言会帮助你学新语言——多语言者的大脑在偷偷帮你。'}
-  ]},
-  {id:'comm',name:'传播学',color:'#f97316',entries:[
-    {term:'5W模型',desc:'Who说What通过What Channel对Whom产生What Effect——拉斯韦尔的经典传播模型。'},
-    {term:'议程设置',desc:'媒体不能决定你怎么想，但能决定你想什么。'},
-    {term:'回音室效应',desc:'算法让你只看到自己认同的观点，世界观越来越窄。'}
-  ]},
-  {id:'symphony',name:'交响乐',color:'#a855f7',entries:[
-    {term:'交响乐团编制',desc:'弦乐组铺底色，木管出旋律，铜管加高光，打击乐点睛——一个好乐团像一家好公司。'},
-    {term:'指挥的角色',desc:'指挥不发出声音，但决定了所有声音如何融合——真正的领导力。'},
-    {term:'协奏曲',desc:'一件独奏乐器与整个乐团的对话——个人与集体的完美博弈。'}
-  ]},
-  {id:'choir',name:'合唱',color:'#d946ef',entries:[
-    {term:'四个声部',desc:'女高音（Soprano）、女低音（Alto）、男高音（Tenor）、男低音（Bass）——SATB，合唱的基本编制。'},
-    {term:'和声',desc:'多个声部同时发声，各自独立却又完美融合——这就是合唱的魔力。'},
-    {term:'泛音列',desc:'一个音其实包含无数个音——这是为什么和声听起来这么丰满。'}
-  ]},
-  {id:'stage',name:'舞台艺术',color:'#ec4899',entries:[
-    {term:'具身体验',desc:'演员用身体和呼吸诠释角色，观众在现场共同参与创作这一刻。'},
-    {term:'第四面墙',desc:'舞台前方那道看不见的墙——打破它，观众就成了演出的一部分。'},
-    {term:'即兴表演',desc:'没有剧本，一切都在当下发生——最考验演员功力的表演形式。'}
-  ]},
-  {id:'biztycoon',name:'商业巨头',color:'#22c55e',entries:[
-    {term:'从车库到帝国',desc:'苹果、亚马逊、惠普……硅谷最经典的创业叙事从车库开始。'},
-    {term:'第一性原理',desc:'马斯克的思维方式：回到最基本的事实，从零开始推导解决方案。'},
-    {term:'飞轮效应',desc:'贝佐斯的亚马逊：低价→更多客户→更多卖家→更低价→继续转。'}
-  ]},
-  {id:'bizanalysis',name:'商业分析',color:'#3b82f6',entries:[
-    {term:'SWOT分析',desc:'优势、劣势、机会、威胁——最经典的商业分析框架。'},
-    {term:'波特五力',desc:'供应商、买家、替代品、新进入者、同行竞争——决定行业吸引力的五种力量。'},
-    {term:'商业画布',desc:'一张图说清楚商业模式：价值主张、客户、渠道、收入、成本……'}
-  ]},
-  {id:'meme',name:'互联网热梗',color:'#ef4444',entries:[
-    {term:'遥遥领先',desc:'从华为发布会金句变成全民口头禅——热梗的传播力就是这么强。'},
-    {term:'City不City',desc:'外国博主的一句中式英语，瞬间席卷全网——语言碰撞产生的化学反应。'},
-    {term:'我真的会谢',desc:'感谢？吐槽？都是——当代年轻人的情绪出口。'}
-  ]}
-];
+<div class="section-divider" data-next-id="takeaway" data-next-label="探索完成"></div>
 
-const MAP_REGIONS = [
-  {id:'cn',name:'中国',d:'M680,180 L720,170 L740,190 L750,210 L740,240 L720,250 L700,240 L680,250 L660,240 L650,220 L660,200 L670,190 Z'},
-  {id:'jp',name:'日本',d:'M780,200 L790,190 L795,200 L790,220 L785,230 L780,220 Z'},
-  {id:'kr',name:'韩国',d:'M755,200 L762,195 L768,205 L762,215 L755,210 Z'},
-  {id:'sea',name:'东南亚',d:'M700,260 L740,255 L760,270 L750,290 L730,300 L710,290 L695,275 Z'},
-  {id:'india',name:'印度',d:'M630,230 L660,220 L670,240 L660,270 L640,285 L625,270 L620,250 Z'},
-  {id:'meast',name:'中东',d:'M560,200 L600,190 L620,210 L610,235 L580,240 L560,225 Z'},
-  {id:'eur-w',name:'西欧',d:'M460,130 L490,120 L500,140 L495,160 L480,170 L465,160 L455,145 Z'},
-  {id:'eur-e',name:'东欧',d:'M500,120 L530,110 L545,130 L540,155 L520,160 L505,150 L500,135 Z'},
-  {id:'uk',name:'英国',d:'M445,125 L455,120 L458,132 L452,140 L445,135 Z'},
-  {id:'russia',name:'俄罗斯',d:'M540,80 L700,60 L750,80 L740,120 L700,140 L650,130 L600,135 L560,120 L545,100 Z'},
-  {id:'africa-n',name:'北非',d:'M440,210 L520,200 L540,220 L530,250 L500,260 L460,255 L440,235 Z'},
-  {id:'africa-s',name:'南非',d:'M470,270 L520,265 L535,290 L525,330 L500,345 L475,335 L460,310 L455,285 Z'},
-  {id:'na-us',name:'美国',d:'M120,150 L240,140 L260,165 L240,190 L180,195 L130,185 L110,170 Z'},
-  {id:'na-ca',name:'加拿大',d:'M110,90 L250,80 L270,110 L250,135 L180,140 L120,140 L100,120 Z'},
-  {id:'mexico',name:'墨西哥',d:'M130,195 L180,200 L190,220 L170,240 L145,235 L125,215 Z'},
-  {id:'sa-br',name:'巴西',d:'M230,280 L290,270 L310,300 L300,340 L270,360 L240,350 L225,320 L220,295 Z'},
-  {id:'sa-other',name:'南美洲其他',d:'M200,250 L230,240 L240,265 L230,290 L220,320 L210,345 L195,330 L190,300 L185,270 Z'},
-  {id:'oceania',name:'大洋洲',d:'M780,330 L830,320 L850,340 L840,365 L810,375 L785,365 L775,350 Z'},
-  {id:'nz',name:'新西兰',d:'M860,370 L870,365 L875,380 L868,390 L860,385 Z'},
-  {id:'central-asia',name:'中亚',d:'M590,150 L640,140 L660,160 L650,180 L620,185 L595,175 Z'}
-];
+<!-- ═══════════ 联系XD ═══════════ -->
+<div class="section-page" id="takeaway" data-map-id="takeaway">
+  <div class="sw">
+    <div class="section-intro">
+      <div class="section-welcome" data-i18n="takeaway-welcome">感谢你的探索</div>
+      <div class="section-desc" data-i18n="takeaway-desc">希望你对小对有了更深的了解</div>
+    </div>
+    <div class="section-frame">
+      <div class="section-header">
+        <div class="section-title" data-i18n="takeaway-title">联系方式</div>
+      </div>
+      <div style="padding:.5rem 1rem">
+        <ul class="contact-list">
+          <li><span data-i18n="contact-wechat">微信</span>：Astrid_XD</li>
+          <li><span data-i18n="contact-email">邮箱</span>：<a href="mailto:xiaoduixd@gmail.com">xiaoduixd@gmail.com</a></li>
+          <li><span data-i18n="contact-linkedin">领英</span>：<a href="https://www.linkedin.com/in/duiduihu" target="_blank" rel="noopener">linkedin.com/in/duiduihu</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 
-const TIMELINE_DATA = [
-  {year:'2025',type:'edu',title:'学校名称 · 专业/学位',desc:'简要描述'},
-  {year:'2024',type:'work',title:'公司/机构 · 职位',desc:'工作内容简述'},
-  {year:'2024',type:'proj',title:'项目名称',desc:'项目描述与你的角色'},
-  {year:'2023',type:'culture',title:'文化活动/交流',desc:'简要描述'},
-  {year:'2023',type:'honor',title:'荣誉/奖项',desc:'获奖描述'},
-  {year:'2023',type:'edu',title:'学校名称 · 专业/学位',desc:'简要描述'},
-  {year:'2022',type:'work',title:'公司/机构 · 职位',desc:'工作内容简述'},
-  {year:'2022',type:'proj',title:'项目名称',desc:'项目描述与你的角色'},
-  {year:'2022',type:'culture',title:'文化活动/交流',desc:'简要描述'},
-  {year:'2021',type:'honor',title:'荣誉/奖项',desc:'获奖描述'},
-  {year:'2021',type:'edu',title:'学校名称 · 专业/学位',desc:'简要描述'}
-];
+<div class="section-divider" data-next-id="ending" data-next-label=""></div>
 
-const SKILL_TREE_DATA = {
-  trunk:'核心能力',
-  branches:[
-    {name:'语言',color:'#3b82f6',leaves:['中文','English','日本語','한국어']},
-    {name:'金融',color:'#eab308',leaves:['投行','私募','期货','IPO']},
-    {name:'技术',color:'#22c55e',leaves:['Python','SQL','数据分析','AI']},
-    {name:'产品',color:'#f43f5e',leaves:['用户研究','原型设计','需求分析','项目管理']},
-    {name:'创意',color:'#a855f7',leaves:['写作','摄影','设计','音乐']},
-    {name:'软实力',color:'#06b6d4',leaves:['演讲','沟通','领导力','团队协作']}
-  ]
-};
+<!-- ═══════════ ENDING + REPLAY ═══════════ -->
+<div class="ending-section" id="ending" data-map-id="ending">
+  <p style="color:var(--muted);font-size:.85rem;opacity:.5" data-i18n="ending-label">旅途的终点</p>
+  <button class="quote-trigger" id="quoteTrigger" data-i18n="quote-trigger">点击查看 XD 送给你的一句话</button>
+  <button class="replay-btn" onclick="resetApp()" data-i18n="replay-btn">再玩一次</button>
+</div>
 
-// ================================================================
-//  0. HERO FLOATING KEYWORDS
-// ================================================================
-(function(){
-  const kws = ['Resilient','Pivot','Assertive','Trade-off','Top-down','复利','节奏感',
-    '效率','审美','探索','自信','好学','主动','风险对冲','机会成本','着眼未来',
-    'Tango on','现充','向上管理','刨根究底','思想','多看事实'];
-  const container = document.getElementById('hero-keywords');
-  kws.forEach((w,i) => {
-    const el = document.createElement('span');
-    el.className = 'hero-kw';
-    el.textContent = w;
-    el.style.left = (5 + Math.random()*85) + '%';
-    el.style.top = (5 + Math.random()*85) + '%';
-    el.style.fontSize = (14 + Math.random()*28) + 'px';
-    el.style.animationDelay = (-Math.random()*8) + 's';
-    el.style.animationDuration = (6 + Math.random()*6) + 's';
-    container.appendChild(el);
-  });
-})();
+<!-- ═══════════ QUOTE OVERLAY ═══════════ -->
+<div id="quoteOverlay" class="quote-overlay">
+  <div class="quote-ov-content">
+    <div class="quote-ov-text" id="quoteOvText"></div>
+    <div class="quote-ov-controls">
+      <button class="quote-ov-btn" id="quotePrev" data-i18n="quote-prev">上一句</button>
+      <button class="quote-ov-btn" id="quoteNext" data-i18n="quote-next">换一句</button>
+    </div>
+    <div class="quote-ov-dismiss" data-i18n="quote-close">点击空白处关闭</div>
+  </div>
+</div>
 
-// ================================================================
-//  1.1 INTEREST CARD GAME
-// ================================================================
-(function(){
-  const board = document.getElementById('gameBoard');
-  const status = document.getElementById('gameStatus');
-  const shuffleBtn = document.getElementById('shuffleBtn');
-  let cards, flipped=[], matched=0, canFlip=true;
+<!-- ═══════════ ILLUSTRATED MAP ═══════════ -->
+<div id="map-overlay" class="map-overlay">
+  <div class="map-close">&times;</div>
+  <div class="map-overlay-title">— 冒险地图 —</div>
+  <svg class="illustrated-map" viewBox="0 0 1400 620" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="msky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2744"/><stop offset="60%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#0f2940"/></linearGradient>
+      <linearGradient id="mgrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#166534"/><stop offset="100%" stop-color="#14532d"/></linearGradient>
+      <linearGradient id="mwater" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0ea5e9" stop-opacity=".6"/><stop offset="100%" stop-color="#0369a1" stop-opacity=".4"/></linearGradient>
+    </defs>
+    <rect width="1400" height="620" fill="url(#msky)"/>
+    <circle cx="120" cy="50" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="520" cy="60" r="1.5" fill="#fbbf24" opacity=".6"/><circle cx="950" cy="45" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="1300" cy="55" r="1.5" fill="#fbbf24" opacity=".5"/>
+    <circle cx="300" cy="30" r="1" fill="#fff" opacity=".4"/><circle cx="740" cy="25" r="1" fill="#fff" opacity=".3"/><circle cx="1150" cy="35" r="1" fill="#fff" opacity=".4"/>
+    <path d="M0,420 C80,400 160,430 280,415 C400,400 500,440 620,425 C700,415 760,445 850,430 C940,415 1020,440 1120,425 C1220,410 1320,435 1400,420 L1400,620 L0,620 Z" fill="url(#mgrass)"/>
+    <path d="M0,460 C120,445 250,470 400,455 C550,440 650,475 780,460 C900,445 1000,470 1150,455 L1400,455 L1400,620 L0,620 Z" fill="#15803d" opacity=".5"/>
+    <ellipse cx="720" cy="485" rx="110" ry="30" fill="url(#mwater)"/>
+    <path d="M120,420 C200,405 260,415 320,408 C420,400 480,418 530,412 C600,404 660,430 720,445 C790,430 860,408 940,415 C1020,422 1060,410 1120,415 C1180,420 1230,408 1280,412" fill="none" stroke="rgba(212,175,116,.25)" stroke-width="3" stroke-dasharray="8 5"/>
+    <!-- Cinema --><g class="map-building unlocked" data-target="hero"><rect x="70" y="350" width="70" height="65" rx="3" fill="#4338ca"/><rect x="70" y="350" width="70" height="8" rx="3" fill="#6366f1"/><rect x="78" y="365" width="54" height="35" rx="2" fill="#312e81"/><circle cx="80" cy="354" r="1.5" fill="#fbbf24"/><circle cx="90" cy="354" r="1.5" fill="#f87171"/><circle cx="100" cy="354" r="1.5" fill="#34d399"/><circle cx="110" cy="354" r="1.5" fill="#60a5fa"/><circle cx="120" cy="354" r="1.5" fill="#fbbf24"/><circle cx="130" cy="354" r="1.5" fill="#f87171"/><text x="105" y="432" class="map-label">个人经历电影院</text><text x="105" y="444" class="map-sublabel">Who am I</text></g>
+    <!-- Playground --><g class="map-building" data-target="interest"><circle cx="315" cy="365" r="35" fill="none" stroke="#ec4899" stroke-width="2.5" opacity=".7"/><circle cx="315" cy="365" r="3" fill="#fbbf24"/><circle cx="315" cy="330" r="5" fill="#f472b6"/><circle cx="350" cy="365" r="5" fill="#a78bfa"/><circle cx="315" cy="400" r="5" fill="#34d399"/><circle cx="280" cy="365" r="5" fill="#60a5fa"/><rect x="310" y="400" width="10" height="12" fill="#7c3aed" rx="1"/><text x="315" y="432" class="map-label">兴趣游乐场</text></g>
+    <!-- Career Tower --><g class="map-building" data-target="career"><rect x="500" y="320" width="56" height="92" rx="2" fill="#92400e"/><rect x="500" y="320" width="56" height="92" rx="2" fill="rgba(251,191,36,.15)"/><polygon points="528,300 518,320 538,320" fill="#b45309"/><circle cx="528" cy="310" r="4" fill="#fbbf24" opacity=".6"/><rect x="508" y="332" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/><rect x="524" y="332" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="538" y="332" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/><rect x="508" y="350" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="524" y="350" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/><rect x="538" y="350" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="521" y="393" width="14" height="18" rx="7" fill="rgba(120,53,15,.6)"/><text x="528" y="432" class="map-label">事业大厦</text></g>
+    <!-- Lake + School --><g class="map-building" data-target="study"><rect x="660" y="400" width="55" height="45" rx="2" fill="#dc2626"/><polygon points="655,400 687,375 720,400" fill="#991b1b"/><rect x="682" y="380" width="10" height="15" fill="#b91c1c"/><circle cx="687" cy="378" r="4" fill="#fbbf24" opacity=".6"/><rect x="668" y="412" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="686" y="412" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/><text x="720" y="510" class="map-label">学习湖泊</text></g>
+    <!-- Newsstand --><g class="map-building" data-target="worldmap"><rect x="908" y="368" width="48" height="42" rx="2" fill="#047857"/><path d="M903,368 L961,368 L956,358 L908,358 Z" fill="#059669"/><rect x="914" y="375" width="34" height="20" rx="1" fill="rgba(209,250,229,.2)"/><text x="932" y="406" text-anchor="middle" font-size="6" fill="rgba(209,250,229,.6)" font-weight="700">MAPS</text><text x="932" y="432" class="map-label">个人杂货铺</text></g>
+    <!-- Clock Shop --><g class="map-building" data-target="timelines"><rect x="1080" y="350" width="55" height="62" rx="2" fill="#5b21b6"/><circle cx="1107" cy="372" r="18" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1.5"/><line x1="1107" y1="372" x2="1107" y2="361" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/><line x1="1107" y1="372" x2="1116" y2="375" stroke="#e0e7ff" stroke-width="1" stroke-linecap="round"/><circle cx="1107" cy="372" r="2" fill="#fbbf24"/><rect x="1100" y="395" width="14" height="16" rx="2" fill="rgba(91,33,182,.6)"/><text x="1107" y="432" class="map-label">钟表店</text></g>
+    <!-- Skill Tree --><g class="map-building" data-target="skills"><rect x="1258" y="395" width="12" height="25" rx="2" fill="#78350f" opacity=".7"/><circle cx="1264" cy="370" r="28" fill="#166534" opacity=".7"/><circle cx="1248" cy="378" r="20" fill="#15803d" opacity=".6"/><circle cx="1280" cy="375" r="22" fill="#14532d" opacity=".6"/><circle cx="1264" cy="355" r="18" fill="#22c55e" opacity=".4"/><circle cx="1250" cy="365" r="4" fill="#fbbf24" opacity=".6"/><circle cx="1275" cy="358" r="3.5" fill="#f87171" opacity=".6"/><text x="1264" y="432" class="map-label">技能花园</text></g>
+    <!-- Trees --><g opacity=".3"><rect x="192" y="410" width="5" height="12" fill="#78350f"/><circle cx="194" cy="405" r="10" fill="#166534"/><rect x="452" y="415" width="4" height="10" fill="#78350f"/><circle cx="454" cy="410" r="8" fill="#15803d"/><rect x="840" y="418" width="4" height="10" fill="#78350f"/><circle cx="842" cy="413" r="8" fill="#166534"/></g>
+  </svg>
+</div>
 
-  function buildSVGIcon(path){
-    return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="${path}"/></svg>`;
-  }
+<!-- ═══════════ MINIMAP BUTTON ═══════════ -->
+<div id="map-btn">
+  <svg viewBox="0 0 90 56" width="90" height="56" xmlns="http://www.w3.org/2000/svg">
+    <rect width="90" height="56" rx="6" fill="#0f2940"/>
+    <path d="M0,34 C15,30 25,36 40,32 C55,28 65,35 80,31 C85,30 88,32 90,33 L90,56 L0,56 Z" fill="#166534" opacity=".6"/>
+    <path d="M0,40 C20,37 35,42 50,38 C65,34 80,40 90,38 L90,56 L0,56 Z" fill="#15803d" opacity=".4"/>
+    <ellipse cx="50" cy="42" rx="10" ry="4" fill="#0ea5e9" opacity=".35"/>
+    <circle id="mini-dot-hero" class="mini-dot" cx="12" cy="32" r="3" fill="#374151" opacity=".4"/>
+    <circle id="mini-dot-interest" class="mini-dot" cx="24" cy="30" r="3" fill="#374151" opacity=".4"/>
+    <circle id="mini-dot-career" class="mini-dot" cx="38" cy="31" r="3" fill="#374151" opacity=".4"/>
+    <circle id="mini-dot-study" class="mini-dot" cx="50" cy="36" r="3" fill="#374151" opacity=".4"/>
+    <circle id="mini-dot-worldmap" class="mini-dot" cx="62" cy="32" r="3" fill="#374151" opacity=".4"/>
+    <circle id="mini-dot-timelines" class="mini-dot" cx="72" cy="30" r="3" fill="#374151" opacity=".4"/>
+    <circle id="mini-dot-skills" class="mini-dot" cx="82" cy="31" r="3" fill="#374151" opacity=".4"/>
+    <path d="M12,32 C18,30 20,31 24,30 C30,29 34,31 38,31 C44,31 47,34 50,36 C54,34 58,32 62,32 C66,31 69,30 72,30 C76,30 79,31 82,31" fill="none" stroke="rgba(212,175,116,.3)" stroke-width="1" stroke-dasharray="2 2"/>
+    <circle cx="15" cy="10" r=".8" fill="#fbbf24" opacity=".5"/><circle cx="45" cy="8" r=".8" fill="#fff" opacity=".3"/><circle cx="75" cy="12" r=".8" fill="#fbbf24" opacity=".4"/>
+    <text x="45" y="22" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.45)" font-weight="700" letter-spacing="3" font-family="Courier New,monospace">MAP</text>
+  </svg>
+</div>
 
-  function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
-    return arr;
-  }
+<!-- ═══════════ OVERLAYS ═══════════ -->
+<div id="unlockOverlay" class="unlock-overlay">
+  <div class="unlock-congrats" data-i18n="unlock-congrats">恭喜你解锁下一场景</div>
+  <div class="unlock-scene" id="unlockText"></div>
+  <div class="unlock-dismiss" data-i18n="unlock-dismiss">点击任意处继续</div>
+</div>
 
-  function initGame(){
-    board.innerHTML='';
-    cards=[...HOBBY_ITEMS];
-    shuffle(cards);
-    flipped=[];matched=0;canFlip=true;
-    status.textContent='翻开两张同类卡片试试看！';
-    cards.forEach(item=>{
-      const s=CATEGORY_STYLES[item.c];
-      const el=document.createElement('div');
-      el.className='card';
-      el.dataset.category=item.c;
-      el.dataset.name=item.n;
-      el.innerHTML=`<div class="card-inner"><div class="card-front" style="background:${s.color}"><span class="category-name">${s.label}</span><div class="category-logo">${buildSVGIcon(s.icon)}</div><span class="item-name">${item.n}</span></div><div class="card-back"></div></div>`;
-      el.addEventListener('click',()=>flipCard(el));
-      board.appendChild(el);
-    });
-  }
+<div id="completionOverlay" class="completion-overlay">
+  <div class="completion-content">
+    <h2 data-i18n="completion-title">恭喜你顺利通关！</h2>
+    <p data-i18n="completion-p1">认识小对的小游戏到这里就结束啦，</p>
+    <p data-i18n="completion-p2">但小对和你的故事才刚刚开始，</p>
+    <p data-i18n="completion-p3">让我们一起继续探索吧，</p>
+    <p data-i18n="completion-p4">相信她一定会给你带来惊喜！</p>
+    <div class="completion-close" data-i18n="dismiss-click">点击任意处关闭</div>
+  </div>
+</div>
 
-  function flipCard(card){
-    if(!canFlip||card.classList.contains('flipped')||card.classList.contains('matched'))return;
-    card.classList.add('flipped');
-    flipped.push(card);
-    if(flipped.length===2){
-      canFlip=false;
-      const[a,b]=flipped;
-      if(a.dataset.category===b.dataset.category){
-        a.classList.add('matched');b.classList.add('matched');
-        flipped=[];matched+=2;canFlip=true;
-        status.textContent='配对成功！';
-        if(matched===cards.length) status.textContent='恭喜你完成全部配对！';
-      }else{
-        status.textContent='不匹配，再试一次';
-        setTimeout(()=>{a.classList.remove('flipped');b.classList.remove('flipped');flipped=[];canFlip=true;status.textContent='继续翻开两张卡片吧';},900);
-      }
-    }
-  }
-
-  shuffleBtn.addEventListener('click',initGame);
-  initGame();
-})();
-
-// ================================================================
-//  1.2 CAREER
-// ================================================================
-(function(){
-  // Finance
-  const finTrigger=document.getElementById('finance-trigger');
-  const bag=finTrigger.querySelector('.money-bag-svg');
-  const finLabel=document.getElementById('finance-label');
-  const coins=finTrigger.querySelectorAll('.coin');
-
-  finTrigger.addEventListener('mouseenter',()=>{
-    if(!finTrigger.classList.contains('active')) finLabel.classList.add('visible');
-    finLabel.textContent='金融经历';
-  });
-  finTrigger.addEventListener('mouseleave',()=>{
-    if(!finTrigger.classList.contains('active')) finLabel.classList.remove('visible');
-  });
-  finTrigger.addEventListener('click',(e)=>{
-    if(e.target.closest('.coin'))return;
-    const wasActive=finTrigger.classList.contains('active');
-    finTrigger.classList.toggle('active');
-    bag.classList.toggle('inverted');
-    if(!wasActive){finLabel.classList.add('visible');finLabel.textContent='金融经历';}
-  });
-  coins.forEach(c=>{
-    c.addEventListener('click',(e)=>{
-      e.stopPropagation();
-      c.classList.toggle('pinned');
-    });
-  });
-
-  // Startup
-  const startTrigger=document.getElementById('startup-trigger');
-  const startLabel=document.getElementById('startup-label');
-  const cloudIcon=document.getElementById('cloud-icon');
-
-  startTrigger.addEventListener('mouseenter',()=>{
-    if(!startTrigger.classList.contains('active')){startLabel.classList.add('visible');startLabel.textContent='初创经历';}
-  });
-  startTrigger.addEventListener('mouseleave',()=>{
-    if(!startTrigger.classList.contains('active')) startLabel.classList.remove('visible');
-  });
-  startTrigger.addEventListener('click',(e)=>{
-    if(e.target.closest('.cloud-icon'))return;
-    if(!startTrigger.classList.contains('active')){
-      startTrigger.classList.add('active');
-      startLabel.classList.add('visible');
-      startLabel.textContent='初创经历';
-    }
-  });
-  cloudIcon.addEventListener('click',(e)=>{
-    e.stopPropagation();
-    startLabel.textContent='沄视科技';
-    startLabel.classList.add('visible');
-  });
-})();
-
-// ================================================================
-//  1.3 KNOWLEDGE BUBBLES
-// ================================================================
-(function(){
-  const container=document.getElementById('knowledgeSpores');
-  if(!container)return;
-  const canvas=document.getElementById('sporesCanvas');
-  const bubblesEl=document.getElementById('sporesBubbles');
-  const hint=document.getElementById('sporesHint');
-  const overlay=document.getElementById('sporesOverlay');
-  const oTerm=document.getElementById('sporesOverlayTerm');
-  const oDesc=document.getElementById('sporesOverlayDesc');
-
-  const MIN_B=6,AMP=20,FLOAT_BASE=5;
-  let bubbles=[],particles=[],t0=0,raf=0,focused=false;
-
-  function resize(){
-    const r=container.getBoundingClientRect();
-    const dpr=devicePixelRatio||1;
-    canvas.width=r.width*dpr;canvas.height=r.height*dpr;
-    canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';
-    const ctx=canvas.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
-  }
-
-  function parseHex(h){const n=parseInt(h.slice(1),16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
-
-  function explode(cx,cy,hex){
-    const c=parseHex(hex);
-    for(let i=0;i<12;i++){
-      const a=Math.PI*2*i/12+Math.random()*.5,s=2+Math.random()*4;
-      particles.push({x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:.02+Math.random()*.02,r:c.r,g:c.g,b:c.b});
-    }
-  }
-
-  function createBubble(){
-    const topic=SPORES_TOPICS[Math.floor(Math.random()*SPORES_TOPICS.length)];
-    const r=container.getBoundingClientRect();
-    const size=55+Math.random()*35;
-    const baseX=size+Math.random()*(r.width-size*2);
-    const y=r.height+size;
-    const el=document.createElement('div');
-    el.className='spore-bubble';
-    el.style.width=el.style.height=size+'px';
-    el.style.left=(baseX-size/2)+'px';
-    el.style.top=(y-size/2)+'px';
-    const br=48+Math.random()*8;
-    el.style.borderRadius=br+'% '+(100-br)+'% '+(50+Math.random()*10)+'% '+(50+Math.random()*10)+'%';
-    const {r:cr,g:cg,b:cb}=parseHex(topic.color);
-    el.style.background=`radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 50%),radial-gradient(circle at 70% 70%,rgba(255,255,255,.1),transparent 45%),linear-gradient(135deg,${topic.color} 0%,${topic.color} 60%,rgba(${Math.min(255,cr+40)},${Math.min(255,cg+40)},${Math.min(255,cb+40)},.9) 100%)`;
-    el.style.boxShadow='inset -2px -2px 8px rgba(0,0,0,.2),inset 2px 2px 8px rgba(255,255,255,.15)';
-    el.textContent=topic.name;
-    el.dataset.topicId=topic.id;
-    const state={el,y:y-size/2,baseX,phase:Math.random()*Math.PI*2,speed:(r.height+100)/(FLOAT_BASE*60),topic,size};
-    bubbles.push(state);
-    bubblesEl.appendChild(el);
-    el.addEventListener('click',(e)=>{
-      e.stopPropagation();
-      const rect=container.getBoundingClientRect();
-      explode(e.clientX-rect.left,e.clientY-rect.top,state.topic.color);
-      const entries=state.topic.entries||[];
-      if(entries.length){
-        const entry=entries[Math.floor(Math.random()*entries.length)];
-        oTerm.textContent=entry.term;oDesc.textContent=entry.desc;
-        const c=parseHex(state.topic.color);
-        overlay.style.background=`radial-gradient(circle at 50% 20%,rgba(255,255,255,.15),transparent 55%),rgba(${c.r},${c.g},${c.b},.4)`;
-        overlay.classList.add('visible');focused=true;
-      }
-      state.el.remove();
-      bubbles=bubbles.filter(b=>b!==state);
-    });
-    return state;
-  }
-
-  function tick(t){
-    if(!container.isConnected){cancelAnimationFrame(raf);return;}
-    const r=container.getBoundingClientRect();
-    const dt=(t-t0)/1000;t0=t;
-    const ctx=canvas.getContext('2d');
-    ctx.clearRect(0,0,r.width,r.height);
-    particles=particles.filter(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.vx*=.98;p.vy*=.98;p.life-=p.decay;
-      if(p.life<=0)return false;
-      ctx.globalAlpha=p.life;
-      ctx.fillStyle=`rgb(${p.r},${p.g},${p.b})`;
-      ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
-      ctx.globalAlpha=1;return true;
-    });
-    const sf=focused?.15:1;
-    bubbles.forEach(b=>{
-      b.y-=b.speed*60*dt*sf;
-      const nx=b.baseX+AMP*Math.sin(t*.002+b.phase);
-      b.el.style.left=(nx-b.size/2)+'px';
-      b.el.style.top=b.y+'px';
-    });
-    bubbles=bubbles.filter(b=>{if(b.y<-b.size){b.el.remove();return false;}return true;});
-    if(bubbles.length<MIN_B)createBubble();
-    raf=requestAnimationFrame(tick);
-  }
-
-  resize();window.addEventListener('resize',resize);
-  hint.classList.add('visible');
-  setTimeout(()=>hint.classList.add('faded'),2500);
-  for(let i=0;i<MIN_B;i++) setTimeout(()=>createBubble(),i*350);
-  t0=performance.now();
-  raf=requestAnimationFrame(tick);
-  overlay.addEventListener('click',()=>{overlay.classList.remove('visible');focused=false;});
-})();
-
-// ================================================================
-//  1.4 WORLD MAP
-// ================================================================
-(function(){
-  const svg=document.getElementById('worldMapSvg');
-  const tooltip=document.getElementById('mapTooltip');
-  const container=document.getElementById('worldMapContainer');
-  const states=['','been','lang','both'];
-
-  MAP_REGIONS.forEach(region=>{
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',region.d);
-    path.setAttribute('class','map-region');
-    path.dataset.name=region.name;
-    path.dataset.state='0';
-    path.addEventListener('click',()=>{
-      let s=(parseInt(path.dataset.state)+1)%4;
-      path.dataset.state=s;
-      path.setAttribute('class','map-region'+(states[s]?' '+states[s]:''));
-    });
-    path.addEventListener('mouseenter',(e)=>{
-      const r=container.getBoundingClientRect();
-      tooltip.textContent=region.name;
-      tooltip.style.left=(e.clientX-r.left+12)+'px';
-      tooltip.style.top=(e.clientY-r.top-30)+'px';
-      tooltip.classList.add('visible');
-    });
-    path.addEventListener('mousemove',(e)=>{
-      const r=container.getBoundingClientRect();
-      tooltip.style.left=(e.clientX-r.left+12)+'px';
-      tooltip.style.top=(e.clientY-r.top-30)+'px';
-    });
-    path.addEventListener('mouseleave',()=>{tooltip.classList.remove('visible');});
-    svg.appendChild(path);
-  });
-})();
-
-// ================================================================
-//  SKILL TREE
-// ================================================================
-(function(){
-  const wrap=document.getElementById('skillTreeWrap');
-  const d=SKILL_TREE_DATA;
-  const W=700,H=520;
-  const cx=W/2,trunkBottom=H-30,trunkTop=160;
-
-  let svgStr=`<svg class="tree-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-  // ground
-  svgStr+=`<ellipse cx="${cx}" cy="${trunkBottom+10}" rx="120" ry="12" fill="rgba(34,197,94,0.15)"/>`;
-  // trunk
-  svgStr+=`<path d="M${cx-12},${trunkBottom} Q${cx-14},${(trunkTop+trunkBottom)/2} ${cx-8},${trunkTop} L${cx+8},${trunkTop} Q${cx+14},${(trunkTop+trunkBottom)/2} ${cx+12},${trunkBottom} Z" fill="#78350f" opacity=".7"/>`;
-  svgStr+=`<text x="${cx}" y="${trunkBottom-5}" text-anchor="middle" font-size="13" fill="#fbbf24" font-weight="700">${d.trunk}</text>`;
-
-  const n=d.branches.length;
-  d.branches.forEach((br,i)=>{
-    const angle=-Math.PI/2+(i/(n-1))*Math.PI-Math.PI/2; // spread from left to right
-    const spread=Math.PI*0.85;
-    const a=-Math.PI/2-spread/2+spread*i/(n-1);
-    const len=140+Math.random()*30;
-    const bx=cx+Math.cos(a)*len;
-    const by=trunkTop+30+Math.sin(a)*len*0.5-20;
-    const mx=cx+Math.cos(a)*len*0.5;
-    const my=trunkTop+20+Math.sin(a)*len*0.25;
-    // branch line
-    svgStr+=`<path d="M${cx},${trunkTop+20} Q${mx},${my} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="3" opacity=".5"/>`;
-    svgStr+=`<text x="${bx}" y="${by-8}" text-anchor="middle" font-size="11" fill="${br.color}" font-weight="700">${br.name}</text>`;
-    // leaves
-    br.leaves.forEach((leaf,li)=>{
-      const la=a+((li-br.leaves.length/2+0.5)*0.3);
-      const ll=35+li*8;
-      const lx=bx+Math.cos(la)*ll;
-      const ly=by+Math.sin(la)*ll*0.6-10;
-      svgStr+=`<circle class="tree-leaf" cx="${lx}" cy="${ly}" r="20" fill="${br.color}" opacity=".2"/>`;
-      svgStr+=`<circle class="tree-leaf" cx="${lx}" cy="${ly}" r="16" fill="${br.color}" opacity=".15"/>`;
-      svgStr+=`<text x="${lx}" y="${ly+4}" text-anchor="middle" font-size="9" fill="${br.color}" font-weight="600">${leaf}</text>`;
-    });
-  });
-
-  svgStr+=`</svg>`;
-  wrap.innerHTML=svgStr;
-})();
-
-// ================================================================
-//  TIMELINES
-// ================================================================
-(function(){
-  const container=document.getElementById('timelineContainer');
-  const typeMap={edu:'tl-edu',work:'tl-work',proj:'tl-proj',culture:'tl-culture',honor:'tl-honor'};
-  const labelMap={edu:'学业',work:'工作',proj:'项目',culture:'文化',honor:'荣誉'};
-
-  TIMELINE_DATA.forEach(item=>{
-    const el=document.createElement('div');
-    el.className='tl-item '+typeMap[item.type];
-    el.innerHTML=`<div class="tl-dot"></div><div class="tl-time">${item.year} · ${labelMap[item.type]}</div><div class="tl-title">${item.title}</div><div class="tl-desc">${item.desc}</div>`;
-    container.appendChild(el);
-  });
-})();
-</script>
-
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/0.1-whoami.js"></script>
+<script src="js/1.1-interest.js"></script>
+<script src="js/1.2-career.js"></script>
+<script src="js/1.3-learning.js"></script>
+<script src="js/1.4-aboutme.js"></script>
+<script src="js/2.1-timeline.js"></script>
+<script src="js/2.2-skilltree.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
