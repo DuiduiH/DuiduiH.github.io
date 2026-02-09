@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CV Game - 个人主页</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Leaflet for interactive mapping (optional) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+cY8K3HsIGzM7QOjCcZ08vY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-WBkoXxS53B6E0Jxlui+CHRY04GvvXlAG0KP/ynocu3s=" crossorigin=""></script>
+</head>
+<body>
+  <noscript>
+    <div style="position:fixed;left:12px;right:12px;top:12px;padding:12px;background:#fff3c4;border:1px solid #ffd27a;border-radius:8px;z-index:2002;font-weight:700;color:#664400">
+      本页面需要 JavaScript 才能完整显示。请启用 JavaScript 或使用本地服务器打开（参考 README）。
+    </div>
+  </noscript>
+
+  <!-- 调试回退区：确保至少显示基本内容 -->
+  <div id="debug-fallback" style="position:fixed;left:12px;right:12px;bottom:12px;padding:10px;background:rgba(255,255,255,0.95);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08);z-index:2001;font-weight:600;color:#08306b">页面已加载 — 如果你看到空白，请打开浏览器控制台查看错误。</div>
+  <!-- Top Navigation -->
+  <nav class="nav">
+    <a href="#whoami">1. Who am I</a>
+    <span class="nav-sub">
+      <a href="#interest">1.1 兴趣</a>
+      <a href="#career">1.2 事业</a>
+      <a href="#study">1.3 学习</a>
+      <a href="#aboutme">1.4 关于我</a>
+    </span>
+    <a href="#basic-info">2. 基本信息</a>
+    <span class="nav-sub">
+      <a href="#edu">2.1 学业</a>
+      <a href="#work">2.2 工作</a>
+      <a href="#project">2.3 项目</a>
+      <a href="#culture">2.4 文化</a>
+      <a href="#honors">2.5 荣誉</a>
+      <a href="#skills">2.6 技能树</a>
+    </span>
+    <a href="#takeaway">3. Takeaway</a>
+    <span class="nav-sub">
+      <a href="#contact">3.1 联系方式</a>
+      <a href="#lastword">3.2 最后一句话</a>
+    </span>
+  </nav>
+
+  <main>
+    <div class="page-container">
+      <section id="whoami">
+        <h2>1. Who am I?</h2>
+        <div id="interest">
+          <h3>1.1 关于兴趣</h3>
+          <div class="interest-section">
+            <h1>兴趣爱好翻翻乐</h1>
+            <div class="game-board" id="gameBoard"></div>
+            <div class="status" id="status">翻开两张卡片试试看！</div>
+          </div>
+        </div>
+        <div id="career">
+          <h3>1.2 关于事业</h3>
+          <div class="career-wrap">
+            <div class="career-overlay" id="careerOverlay"></div>
+            <div class="company-display" id="companyDisplay"></div>
+            <div class="career-pane" id="career-left">
+              <div class="money-bag-container" id="finance-trigger">
+                <svg class="money-bag" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M35,25 Q35,15 50,15 Q65,15 65,25" fill="none" stroke="#8B4513" stroke-width="3" stroke-linecap="round" />
+                  <ellipse cx="50" cy="30" rx="28" ry="8" fill="#DAA520" stroke="#B8860B" stroke-width="2" />
+                  <path d="M22,30 Q20,50 22,70 Q25,95 50,105 Q75,95 78,70 Q80,50 78,30" fill="#FFD700" stroke="#DAA520" stroke-width="2" />
+                  <path d="M50,30 Q30,50 32,75 Q35,95 50,103" fill="none" stroke="#B8860B" stroke-width="1.5" opacity="0.3" />
+                  <text x="50" y="70" text-anchor="middle" font-size="35" fill="#8B4513" font-weight="bold">$</text>
+                </svg>
+                <div class="coin" data-text="期货">💰</div>
+                <div class="coin" data-text="律所IPO">💰</div>
+                <div class="coin" data-text="私募">💰</div>
+                <div class="coin" data-text="券商投行">💰</div>
+                <div class="career-tooltip" id="finance-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">点击金币查看经历</div>
+              </div>
+            </div>
+            <div class="career-pane" id="career-right">
+              <div class="egg-container" id="startup-trigger">
+                <svg class="egg-svg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="eggGrad" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#FFF5E6" />
+                      <stop offset="60%" stop-color="#FFE9B3" />
+                      <stop offset="100%" stop-color="#FFD97A" />
+                    </linearGradient>
+                    <linearGradient id="shellGrad" x1="0" x2="1">
+                      <stop offset="0%" stop-color="#C9A184" />
+                      <stop offset="100%" stop-color="#8B7355" />
+                    </linearGradient>
+                  </defs>
+                  <path class="egg-shape" d="M100,18 C70,18 48,58 48,98 C48,148 68,200 100,238 C132,200 152,148 152,98 C152,58 130,18 100,18 Z" fill="url(#eggGrad)" stroke="#9b7a5a" stroke-width="2" />
+                  <path class="egg-crack" d="M85,88 C90,100 100,110 100,120 C100,130 95,140 100,150" fill="none" stroke="#5a4030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <path class="egg-top-shell" d="M100,18 C79,18 62,40 58,62 C54,84 62,96 85,96 C110,96 116,84 142,62 C138,40 121,18 100,18 Z" fill="url(#shellGrad)" stroke="#6b5038" stroke-width="1.5" />
+                  <ellipse class="egg-white" cx="100" cy="150" rx="44" ry="36" fill="#FFFCE6" opacity="0" />
+                  <circle class="egg-yolk" cx="100" cy="140" r="18" fill="#FFD24D" opacity="0" />
+                </svg>
+                <div class="career-tooltip" id="startup-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">点击鸡蛋查看经历</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="study">
+          <h3>1.3 关于学习</h3>
+          <div class="knowledge-spores" id="knowledgeSpores">
+            <div class="spores-hint" id="sporesHint">戳开泡泡试试看</div>
+            <canvas class="spores-canvas" id="sporesCanvas"></canvas>
+            <div class="spores-bubbles" id="sporesBubbles"></div>
+            <div class="spores-overlay" id="sporesOverlay">
+              <div class="spores-overlay-content">
+                <div class="spores-overlay-term" id="sporesOverlayTerm"></div>
+                <div class="spores-overlay-desc" id="sporesOverlayDesc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="aboutme">
+          <h3>1.4 我与世界 — 地图</h3>
+          <div class="world-map" id="worldMap">
+            <div class="map-legend">
+              <label><input type="checkbox" id="toggleVisited" checked> 我去过这里</label><br>
+              <label><input type="checkbox" id="toggleSpeak" checked> 我会说这里的语言</label>
+              <div style="margin-top: 8px;"><button id="mapResetView" class="map-zoom-btn">重置视角</button></div>
+            </div>
+            <div style="height: 480px; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);">
+              <div id="leafletMap" style="width: 100%; height: 100%;"></div>
+            </div>
+            <div class="map-controls">
+              <button class="map-zoom-btn" id="zoomOut">−</button>
+              <button class="map-zoom-btn" id="zoomIn">+</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="basic-info">
+        <h2>2. 基本信息</h2>
+        <div id="edu">
+          <h3>2.1 学业时间轴</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <time>20XX — 20XX</time>
+              <strong>学校名称 · 专业/学位</strong>
+              <span>简要描述</span>
+            </div>
+          </div>
+        </div>
+        <div id="work">
+          <h3>2.2 工作时间轴</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <time>20XX — 至今</time>
+              <strong>公司/机构 · 职位</strong>
+              <span>工作内容简述</span>
+            </div>
+          </div>
+        </div>
+        <div id="project">
+          <h3>2.3 项目时间轴</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <time>20XX</time>
+              <strong>项目名称</strong>
+              <span>项目描述与你的角色</span>
+            </div>
+          </div>
+        </div>
+        <div id="culture">
+          <h3>2.4 文化时间轴</h3>
+          <div class="placeholder">旅行、活动、文化交流等时间线可放在这里。</div>
+        </div>
+        <div id="honors">
+          <h3>2.5 所获荣誉</h3>
+          <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+            <li>荣誉/奖项 1</li>
+          </ul>
+        </div>
+        <div id="skills">
+          <h3>2.6 技能树</h3>
+          <div class="skill-tree">
+            <svg class="skill-tree-svg" viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg">
+              <path d="M450 80 C450 140, 450 220, 450 300" stroke="#6b4f3d" stroke-width="12" fill="none" stroke-linecap="round" />
+              <g class="skill-node" data-id="root" transform="translate(450,70)">
+                <circle r="18" fill="#cfe8ff" stroke="#2b7bff" stroke-width="2" />
+                <text class="skill-label" x="0" y="4" text-anchor="middle">核心能力</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="takeaway">
+        <h2>3. Takeaway</h2>
+        <div id="contact">
+          <h3>3.1 联系方式</h3>
+          <ul class="contact-list">
+            <li>📧 邮箱：your@email.com</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="career-tooltip" id="dynamic-tooltip"></div>
+
+  <div class="map-nav">
+    <div class="map-toggle" id="mapToggle">🗺️</div>
+    <div class="map-panel" id="mapPanel">
+      <div class="map-section">
+        <div class="map-section-title">📍 地 图</div>
+        <div class="map-item" data-target="#whoami">1. Who am I?</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/spores.js"></script>
+  <script src="js/map-and-skills.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
