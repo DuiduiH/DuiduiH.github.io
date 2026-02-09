@@ -37,18 +37,21 @@
   var unlockText=document.getElementById('unlockText');
   var pendingScrollTarget=null;
 
+  function lockScroll(){document.body.style.overflow='hidden';document.documentElement.style.overflow='hidden';document.documentElement.style.scrollSnapType='none';}
+  function unlockScroll(){document.body.style.overflow='';document.documentElement.style.overflow='';document.documentElement.style.scrollSnapType='';}
+
   function showUnlockOverlay(label,nextId){
     if(!unlockOv||!label)return;
     unlockText.textContent=label;
     unlockOv.classList.add('show');
-    document.body.style.overflow='hidden';
+    lockScroll();
     pendingScrollTarget=nextId;
   }
 
   if(unlockOv){
     unlockOv.addEventListener('click',function(){
       unlockOv.classList.remove('show');
-      document.body.style.overflow='';
+      unlockScroll();
       if(pendingScrollTarget){
         var el=document.getElementById(pendingScrollTarget);
         if(el) setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'center'});},80);
@@ -91,7 +94,7 @@
   if(mapBtn&&mapOverlay){
     window.toggleMapOverlay=function(){
       mapOverlay.classList.toggle('open');
-      document.body.style.overflow=mapOverlay.classList.contains('open')?'hidden':'';
+      if(mapOverlay.classList.contains('open')) lockScroll(); else unlockScroll();
     };
     mapBtn.addEventListener('click',window.toggleMapOverlay);
     var mapClose=mapOverlay.querySelector('.map-close');
@@ -105,14 +108,14 @@
           var el=document.getElementById(target)||document.querySelector('[data-map-id="'+target+'"]');
           if(el){
             mapOverlay.classList.remove('open');
-            document.body.style.overflow='';
+            unlockScroll();
             setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},100);
           }
         }
       });
     });
 
-    mapOverlay.addEventListener('click',function(e){if(e.target===mapOverlay){mapOverlay.classList.remove('open');document.body.style.overflow='';}});
+    mapOverlay.addEventListener('click',function(e){if(e.target===mapOverlay){mapOverlay.classList.remove('open');unlockScroll();}});
   }
 
   // ——— Current section highlight ———
@@ -120,9 +123,9 @@
     entries.forEach(function(entry){
       if(entry.isIntersecting){
         var id=entry.target.dataset.mapId;
-        document.querySelectorAll('.mini-dot').forEach(function(d){d.setAttribute('r','3');});
+        document.querySelectorAll('.mini-dot').forEach(function(d){d.setAttribute('r','2.2');});
         var dot=document.getElementById('mini-dot-'+id);
-        if(dot) dot.setAttribute('r','5');
+        if(dot) dot.setAttribute('r','4');
         if(mapOverlay) mapOverlay.querySelectorAll('.map-building').forEach(function(b){b.classList.toggle('active',b.dataset.target===id);});
       }
     });
@@ -187,7 +190,7 @@
     quoteTrigger.addEventListener('click',function(){
       showQuote(Math.floor(Math.random()*QUOTES.length));
       quoteOv.classList.add('show');
-      document.body.style.overflow='hidden';
+      lockScroll();
     });
   }
   if(quotePrev) quotePrev.addEventListener('click',function(e){e.stopPropagation();showQuote(quoteIdx-1);});
@@ -196,7 +199,7 @@
     quoteOv.addEventListener('click',function(e){
       if(e.target===quoteOv||e.target.classList.contains('quote-ov-dismiss')){
         quoteOv.classList.remove('show');
-        document.body.style.overflow='';
+        unlockScroll();
       }
     });
   }
@@ -205,7 +208,7 @@
   window.resetApp=function(){
     Object.keys(DOT_COLORS).forEach(function(id){
       var dot=document.getElementById('mini-dot-'+id);
-      if(dot){dot.setAttribute('fill','#374151');dot.setAttribute('opacity','.4');dot.setAttribute('r','3');}
+      if(dot){dot.setAttribute('fill','#374151');dot.setAttribute('opacity','.4');dot.setAttribute('r','2.2');}
     });
     document.querySelectorAll('.map-building').forEach(function(b){b.classList.remove('unlocked');});
     unlocked=new Set(['hero']);overlaysShown=new Set();
@@ -218,7 +221,7 @@
     var shuffleBtn=document.getElementById('shuffleBtn');if(shuffleBtn)shuffleBtn.click();
     if(unlockOv)unlockOv.classList.remove('show');
     if(quoteOv)quoteOv.classList.remove('show');
-    document.body.style.overflow='';
+    unlockScroll();
     window.scrollTo({top:0,behavior:'smooth'});
   };
 
@@ -287,7 +290,10 @@
     'completion-p2':{cn:'但小对和你的故事才刚刚开始，',en:'but XD\'s story with you is just beginning,'},
     'completion-p3':{cn:'让我们一起继续探索吧，',en:'let\'s keep exploring together,'},
     'completion-p4':{cn:'相信她一定会给你带来惊喜！',en:'she\'s sure to surprise you!'},
-    'quote-prev':{cn:'上一句',en:'Prev'},'quote-next':{cn:'换一句',en:'Next'},'quote-close':{cn:'点击空白处关闭',en:'Click outside to close'}
+    'quote-prev':{cn:'上一句',en:'Prev'},'quote-next':{cn:'换一句',en:'Next'},'quote-close':{cn:'点击空白处关闭',en:'Click outside to close'},
+    'map-title':{cn:'— 冒险地图 —',en:'— ADVENTURE MAP —'},
+    'map-b-hero':{cn:'个人经历电影院',en:'Story Cinema'},'map-b-interest':{cn:'兴趣游乐场',en:'Hobby Playground'},'map-b-career':{cn:'事业大厦',en:'Career Tower'},'map-b-study':{cn:'学习湖泊',en:'Knowledge Lake'},'map-b-worldmap':{cn:'个人杂货铺',en:'Personal Bazaar'},'map-b-timelines':{cn:'钟表店',en:'Clock Shop'},'map-b-skills':{cn:'技能花园',en:'Skill Garden'},
+    'tl-hint':{cn:'点击上方标签可显示/隐藏对应内容',en:'Click a label above to show/hide its entries'}
   };
 
   var currentLang='cn';

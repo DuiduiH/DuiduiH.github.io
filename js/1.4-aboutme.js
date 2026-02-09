@@ -1,8 +1,10 @@
-// ===== 1.4 World Map — Real data, theme-aware tiles =====
+// ===== 1.4 World Map — Real data, theme-aware tiles, bilingual =====
 (function(){
   if(typeof L==='undefined') return;
   var mapEl=document.getElementById('leafletMap');
   if(!mapEl) return;
+
+  var isEn=function(){return document.documentElement.lang==='en';};
 
   var map=L.map('leafletMap',{scrollWheelZoom:true,zoomSnap:.5,zoomDelta:.5}).setView([30,80],2.5);
 
@@ -19,7 +21,6 @@
       if(m.attributeName==='data-theme'){
         map.removeLayer(currentTile);
         currentTile=L.tileLayer(isDark()?darkUrl:lightUrl,tileOpts).addTo(map);
-        // Re-style default borders
         updateDefaultStyles();
       }
     });
@@ -29,16 +30,23 @@
   // Color scales
   var VISIT_COLORS={travel:'#93c5fd',short:'#3b82f6',long:'#1d4ed8'};
   var LANG_COLORS={beginner:'#d8b4fe',proficient:'#a78bfa',fluent:'#7c3aed',native:'#4c1d95'};
-  var VISIT_LABELS={travel:'旅行',short:'短居',long:'长住'};
-  var LANG_LABELS={beginner:'入门',proficient:'熟练',fluent:'精通',native:'母语'};
+
+  // Bilingual labels
+  var VISIT_L={travel:{cn:'旅行',en:'Travel'},short:{cn:'短居',en:'Short Stay'},long:{cn:'长住',en:'Long Stay'}};
+  var LANG_L={beginner:{cn:'入门',en:'Beginner'},proficient:{cn:'熟练',en:'Proficient'},fluent:{cn:'精通',en:'Fluent'},native:{cn:'母语',en:'Native'}};
+
+  // Province name translations
+  var PROV_EN={
+    '陕西省':'Shaanxi','上海市':'Shanghai','北京市':'Beijing','浙江省':'Zhejiang',
+    '江苏省':'Jiangsu','广东省':'Guangdong','四川省':'Sichuan','湖北省':'Hubei',
+    '香港特别行政区':'Hong Kong'
+  };
 
   // ===== REAL DATA =====
   var VISIT_DATA={
-    // China provinces
     '陕西省':'long','上海市':'long',
     '北京市':'travel','浙江省':'travel','江苏省':'travel','广东省':'travel','四川省':'travel','湖北省':'travel',
     '香港特别行政区':'travel',
-    // International — 15 countries
     'United States of America':'short',
     'Norway':'short',
     'Germany':'travel','Austria':'travel','Switzerland':'travel',
@@ -48,15 +56,11 @@
     'Thailand':'travel'
   };
   var LANG_DATA={
-    // Native — Chinese
     '陕西省':'native','上海市':'native','北京市':'native','广东省':'native',
     '四川省':'native','浙江省':'native','江苏省':'native','湖北省':'native',
     '香港特别行政区':'native',
-    // Fluent — English
     'United States of America':'fluent','United Kingdom':'fluent','Australia':'fluent',
-    // Proficient — German, Norwegian
     'Germany':'proficient','Austria':'proficient','Switzerland':'proficient','Norway':'proficient',
-    // Beginner — French, Italian, Spanish, Japanese, Russian
     'France':'beginner','Italy':'beginner','Spain':'beginner',
     'Japan':'beginner','Russia':'beginner'
   };
@@ -80,9 +84,25 @@
     if(!lv) return getDefaultStyle();
     return {fillColor:LANG_COLORS[lv],fillOpacity:.45,color:isDark()?'rgba(255,255,255,.2)':'rgba(0,0,0,.12)',weight:1};
   }
-  function makeTooltip(name,data,labels){
-    var lv=data[name];if(!lv) return null;
-    return name+' · '+labels[lv];
+
+  function dispName(name){
+    var en=isEn();
+    return en?(PROV_EN[name]||name):name;
+  }
+
+  function makeVisitTooltip(name){
+    return function(){
+      var lv=VISIT_DATA[name];if(!lv)return '';
+      var en=isEn();
+      return dispName(name)+' · '+(en?VISIT_L[lv].en:VISIT_L[lv].cn);
+    };
+  }
+  function makeLangTooltip(name){
+    return function(){
+      var lv=LANG_DATA[name];if(!lv)return '';
+      var en=isEn();
+      return dispName(name)+' · '+(en?LANG_L[lv].en:LANG_L[lv].cn);
+    };
   }
 
   var WORLD_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
@@ -115,11 +135,17 @@
 
       visitWorldLayer=L.geoJSON({type:'FeatureCollection',features:features},{
         style:function(f){return visitStyle(getName(f));},
-        onEachFeature:function(f,layer){var tip=makeTooltip(getName(f),VISIT_DATA,VISIT_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
+        onEachFeature:function(f,layer){
+          var n=getName(f);
+          if(VISIT_DATA[n]) layer.bindTooltip(makeVisitTooltip(n),{sticky:true});
+        }
       });
       langWorldLayer=L.geoJSON({type:'FeatureCollection',features:features},{
         style:function(f){return langStyle(getName(f));},
-        onEachFeature:function(f,layer){var tip=makeTooltip(getName(f),LANG_DATA,LANG_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
+        onEachFeature:function(f,layer){
+          var n=getName(f);
+          if(LANG_DATA[n]) layer.bindTooltip(makeLangTooltip(n),{sticky:true});
+        }
       });
     }
 
@@ -128,11 +154,17 @@
 
       visitChinaLayer=L.geoJSON({type:'FeatureCollection',features:chinaFeatures},{
         style:function(f){return visitStyle(f.properties.name);},
-        onEachFeature:function(f,layer){var tip=makeTooltip(f.properties.name,VISIT_DATA,VISIT_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
+        onEachFeature:function(f,layer){
+          var n=f.properties.name;
+          if(VISIT_DATA[n]) layer.bindTooltip(makeVisitTooltip(n),{sticky:true});
+        }
       });
       langChinaLayer=L.geoJSON({type:'FeatureCollection',features:chinaFeatures},{
         style:function(f){return langStyle(f.properties.name);},
-        onEachFeature:function(f,layer){var tip=makeTooltip(f.properties.name,LANG_DATA,LANG_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
+        onEachFeature:function(f,layer){
+          var n=f.properties.name;
+          if(LANG_DATA[n]) layer.bindTooltip(makeLangTooltip(n),{sticky:true});
+        }
       });
     }
     showMode('visit');
