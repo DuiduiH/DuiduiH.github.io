@@ -316,37 +316,57 @@
     });
   });
 
-  // Also allow clicking the intro page itself (lower half) to advance
+  // Click outside the frame: top = previous page, bottom = next page
+  function findPrevSnap(el){
+    var prev=el.previousElementSibling;
+    while(prev){
+      if(prev.classList.contains('section-page')||prev.classList.contains('section-intro-page')||prev.classList.contains('ending-section')||prev.id==='hero') return prev;
+      prev=prev.previousElementSibling;
+    }
+    return null;
+  }
+  function findNextSnap(el){
+    var next=el.nextElementSibling;
+    while(next){
+      if(next.classList.contains('section-page')||next.classList.contains('section-intro-page')||next.classList.contains('ending-section')) return next;
+      next=next.nextElementSibling;
+    }
+    return null;
+  }
+
+  // Intro pages: top → previous, bottom → next
   document.querySelectorAll('.section-intro-page').forEach(function(intro){
     intro.addEventListener('click',function(e){
-      // Don't hijack clicks on the scroll-hint itself (already handled)
       if(e.target.closest('.scroll-hint')) return;
-      // Only trigger if click is in bottom 40% of the intro
       var rect=intro.getBoundingClientRect();
-      if(e.clientY > rect.top + rect.height*0.6){
-        var next=intro.nextElementSibling;
+      var clickY=e.clientY-rect.top;
+      if(clickY < rect.height*0.35){
+        var prev=findPrevSnap(intro);
+        if(prev) prev.scrollIntoView({behavior:'smooth',block:'start'});
+      } else if(clickY > rect.height*0.65){
+        var next=findNextSnap(intro);
         if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
       }
     });
   });
 
-  // Allow clicking below the section-frame in any section-page to advance to next section
+  // Section pages: click outside frame — above frame = previous, below frame = next
   document.querySelectorAll('.section-page').forEach(function(page){
     page.addEventListener('click',function(e){
-      // Don't hijack clicks on interactive elements inside the frame
       if(e.target.closest('.section-frame')) return;
       if(e.target.closest('button')) return;
       if(e.target.closest('a')) return;
       if(e.target.closest('.scroll-hint')) return;
       if(e.target.closest('.section-intro')) return;
-      // Only trigger if click is below the frame (lower part of the page)
       var frame=page.querySelector('.section-frame');
-      if(frame){
-        var frameRect=frame.getBoundingClientRect();
-        if(e.clientY > frameRect.bottom){
-          var next=page.nextElementSibling;
-          if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
-        }
+      if(!frame) return;
+      var frameRect=frame.getBoundingClientRect();
+      if(e.clientY < frameRect.top){
+        var prev=findPrevSnap(page);
+        if(prev) prev.scrollIntoView({behavior:'smooth',block:'start'});
+      } else if(e.clientY > frameRect.bottom){
+        var next=findNextSnap(page);
+        if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
       }
     });
   });

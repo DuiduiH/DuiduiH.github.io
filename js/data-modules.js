@@ -113,7 +113,7 @@ window.MODULE_DATA = {
     {name:'衢州',en:'Quzhou',lat:28.97,lng:118.87,visit:'short',desc:'古城墙下的江南水乡',descEn:'A water town beneath ancient city walls',img:'quzhou.jpg'},
     {name:'三亚',en:'Sanya',lat:18.25,lng:109.5,visit:'short',desc:'椰风海韵，度假胜地',descEn:'Coconut palms, ocean breeze — tropical paradise',img:'sanya.jpg'},
     // ═══ 中国 · 旅行 ═══
-    {name:'北京',en:'Beijing',lat:39.9,lng:116.4,visit:'travel',lang:'native',desc:'故宫、长城、胡同，历史与现代交织',descEn:'Forbidden City, Great Wall, hutongs — history meets modernity',img:'beijing.jpg'},
+    {name:'北京',en:'Beijing',lat:39.9,lng:116.4,visit:'travel',lang:'native',langLabel:'中国 · 普通话',langLabelEn:'China · Mandarin',langDesc:'从小说普通话，母语',langDescEn:'Native speaker, spoken since birth',desc:'故宫、长城、胡同，历史与现代交织',descEn:'Forbidden City, Great Wall, hutongs — history meets modernity',img:'beijing.jpg'},
     {name:'武汉',en:'Wuhan',lat:30.59,lng:114.3,visit:'travel',desc:'热干面、黄鹤楼，英雄之城',descEn:'Hot dry noodles, Yellow Crane Tower — city of heroes',img:'wuhan.jpg'},
     {name:'西宁',en:'Xining',lat:36.62,lng:101.77,visit:'travel',desc:'青藏高原门户，塔尔寺朝圣',descEn:'Gateway to the Tibetan Plateau, Kumbum Monastery',img:'xining.jpg'},
     {name:'南京',en:'Nanjing',lat:32.06,lng:118.8,visit:'travel',desc:'六朝古都，梧桐大道美极了',descEn:'Ancient capital, gorgeous sycamore-lined avenues',img:'nanjing.jpg'},
@@ -139,15 +139,15 @@ window.MODULE_DATA = {
     {name:'重庆',en:'Chongqing',lat:29.56,lng:106.55,visit:'transit',desc:'8D魔幻城市，火锅之都',descEn:'8D magical city, hotpot capital',img:'chongqing.jpg'},
     {name:'成都',en:'Chengdu',lat:30.57,lng:104.07,visit:'transit',desc:'天府之国，熊猫故里',descEn:'Land of Abundance, home of pandas',img:'chengdu.jpg'},
     // ═══ 欧洲 · 长住 ═══
-    {name:'奥斯陆',en:'Oslo',lat:59.91,lng:10.75,visit:'long',lang:'proficient',desc:'交换学期，爱上了北欧的宁静',descEn:'Exchange semester — fell in love with Nordic tranquility',img:'oslo.jpg'},
+    {name:'奥斯陆',en:'Oslo',lat:59.91,lng:10.75,visit:'long',lang:'proficient',langLabel:'挪威 · 挪威语',langLabelEn:'Norway · Norwegian',langDesc:'交换期间沉浸式学习挪威语',langDescEn:'Immersive Norwegian learning during exchange',desc:'交换学期，爱上了北欧的宁静',descEn:'Exchange semester — fell in love with Nordic tranquility',img:'oslo.jpg'},
     // ═══ 欧洲 · 旅行 ═══
     {name:'维也纳',en:'Vienna',lat:48.21,lng:16.37,visit:'travel',desc:'音乐之都，古典之美',descEn:'City of Music, classical beauty everywhere',img:'vienna.jpg'},
     {name:'慕尼黑',en:'Munich',lat:48.14,lng:11.58,visit:'travel',desc:'巴伐利亚的啤酒和艺术',descEn:'Bavarian beer and art',img:'munich.jpg'},
-    {name:'柏林',en:'Berlin',lat:52.52,lng:13.41,visit:'travel',lang:'proficient',desc:'历史与前卫并存的酷城市',descEn:'A cool city where history and avant-garde coexist',img:'berlin.jpg'},
+    {name:'柏林',en:'Berlin',lat:52.52,lng:13.41,visit:'travel',lang:'proficient',langLabel:'德国 · 德语',langLabelEn:'Germany · German',langDesc:'大学期间系统学习德语',langDescEn:'Systematically studied German at university',desc:'历史与前卫并存的酷城市',descEn:'A cool city where history and avant-garde coexist',img:'berlin.jpg'},
     {name:'萨尔茨堡',en:'Salzburg',lat:47.8,lng:13.04,visit:'travel',desc:'莫扎特故乡，音乐之声取景地',descEn:'Mozart\'s hometown, Sound of Music filming site',img:'salzburg.jpg'},
     {name:'布拉格',en:'Prague',lat:50.08,lng:14.44,visit:'travel',desc:'千塔之城，波西米亚风情',descEn:'City of a thousand spires, Bohemian charm',img:'prague.jpg'},
     {name:'布达佩斯',en:'Budapest',lat:47.5,lng:19.04,visit:'travel',desc:'多瑙河畔的明珠',descEn:'Pearl of the Danube',img:'budapest.jpg'},
-    {name:'巴黎',en:'Paris',lat:48.86,lng:2.35,visit:'travel',lang:'beginner',desc:'铁塔、卢浮宫、塞纳河畔的浪漫',descEn:'Eiffel Tower, Louvre, romance along the Seine',img:'paris.jpg'},
+    {name:'巴黎',en:'Paris',lat:48.86,lng:2.35,visit:'travel',lang:'beginner',langLabel:'法国 · 法语',langLabelEn:'France · French',langDesc:'多邻国学习法语',langDescEn:'Learning French on Duolingo',desc:'铁塔、卢浮宫、塞纳河畔的浪漫',descEn:'Eiffel Tower, Louvre, romance along the Seine',img:'paris.jpg'},
     {name:'哥本哈根',en:'Copenhagen',lat:55.68,lng:12.57,visit:'travel',desc:'安徒生的故乡，童话般的城市',descEn:'Andersen\'s hometown, a fairytale city',img:'copenhagen.jpg'},
     {name:'斯德哥尔摩',en:'Stockholm',lat:59.33,lng:18.07,visit:'travel',desc:'水上之城，北欧设计美学',descEn:'City on water, Nordic design aesthetics',img:'stockholm.jpg'},
     {name:'塔林',en:'Tallinn',lat:59.44,lng:24.75,visit:'travel',desc:'中世纪古城，波罗的海宝石',descEn:'Medieval old town, Baltic gem',img:'tallinn.jpg'},
@@ -176,21 +176,19 @@ window.MODULE_DATA = {
   // 语言独立标记（不与城市重合的语言标记，定位到首都）
   langOnlyPlaces: [
     // 母语
-    {name:'北京 · 普通话',en:'Beijing · Mandarin',lat:39.91,lng:116.4,lang:'native',desc:'普通话母语',descEn:'Native Mandarin speaker'},
+    {name:'中国 · 普通话',en:'China · Mandarin',lat:39.91,lng:116.4,lang:'native',desc:'从小说普通话，母语',descEn:'Native speaker, spoken since birth'},
     // 精通
-    {name:'伦敦 · 英语',en:'London · English',lat:51.51,lng:-0.13,lang:'fluent',desc:'精通英语',descEn:'Fluent in English'},
-    {name:'华盛顿 · 英语',en:'Washington · English',lat:38.91,lng:-77.04,lang:'fluent',desc:'精通英语',descEn:'Fluent in English'},
+    {name:'英国 · 英语',en:'UK · English',lat:51.51,lng:-0.13,lang:'fluent',desc:'从小学习英语，CET-6 586 / IELTS 7.0',descEn:'Studied since childhood, CET-6 586 / IELTS 7.0'},
+    {name:'美国 · 英语',en:'USA · English',lat:38.91,lng:-77.04,lang:'fluent',desc:'UT Austin暑校全英文环境',descEn:'Full English immersion at UT Austin summer school'},
     // 入门
-    {name:'马德里 · 西班牙语',en:'Madrid · Spanish',lat:40.42,lng:-3.7,lang:'beginner',desc:'入门西班牙语',descEn:'Beginner Spanish'},
-    {name:'墨西哥城 · 西班牙语',en:'Mexico City · Spanish',lat:19.43,lng:-99.13,lang:'beginner',desc:'入门西班牙语',descEn:'Beginner Spanish'},
-    {name:'香港 · 粤语',en:'Hong Kong · Cantonese',lat:22.32,lng:114.17,lang:'beginner',desc:'入门粤语',descEn:'Beginner Cantonese'},
-    {name:'东京 · 日语',en:'Tokyo · Japanese',lat:35.68,lng:139.69,lang:'beginner',desc:'入门日语',descEn:'Beginner Japanese'},
-    {name:'首尔 · 韩语',en:'Seoul · Korean',lat:37.57,lng:126.98,lang:'beginner',desc:'入门韩语',descEn:'Beginner Korean'},
-    {name:'莫斯科 · 俄语',en:'Moscow · Russian',lat:55.76,lng:37.62,lang:'beginner',desc:'入门俄语',descEn:'Beginner Russian'},
-    {name:'悉尼 · 英语',en:'Sydney · English',lat:-33.87,lng:151.21,lang:'beginner',desc:'入门水平英语（澳洲口音）',descEn:'Beginner-level English (Aussie accent)'},
-    {name:'达累斯萨拉姆 · 斯瓦希里语',en:'Dar es Salaam · Swahili',lat:-6.79,lng:39.28,lang:'beginner',desc:'入门斯瓦希里语',descEn:'Beginner Swahili'},
-    {name:'内罗毕 · 斯瓦希里语',en:'Nairobi · Swahili',lat:-1.29,lng:36.82,lang:'beginner',desc:'入门斯瓦希里语',descEn:'Beginner Swahili'},
-    {name:'坎帕拉 · 斯瓦希里语',en:'Kampala · Swahili',lat:0.35,lng:32.58,lang:'beginner',desc:'入门斯瓦希里语',descEn:'Beginner Swahili'}
+    {name:'西班牙 · 西班牙语',en:'Spain · Spanish',lat:40.42,lng:-3.7,lang:'beginner',desc:'多邻国学习西班牙语',descEn:'Learning Spanish on Duolingo'},
+    {name:'墨西哥 · 西班牙语',en:'Mexico · Spanish',lat:19.43,lng:-99.13,lang:'beginner',desc:'多邻国学习西班牙语',descEn:'Learning Spanish on Duolingo'},
+    {name:'中国 · 粤语',en:'China · Cantonese',lat:22.32,lng:114.17,lang:'beginner',desc:'日常接触学习粤语',descEn:'Picked up Cantonese through daily exposure'},
+    {name:'日本 · 日语',en:'Japan · Japanese',lat:35.68,lng:139.69,lang:'beginner',desc:'多邻国学习日语',descEn:'Learning Japanese on Duolingo'},
+    {name:'韩国 · 韩语',en:'Korea · Korean',lat:37.57,lng:126.98,lang:'beginner',desc:'日常接触学习韩语',descEn:'Picked up Korean through daily exposure'},
+    {name:'俄罗斯 · 俄语',en:'Russia · Russian',lat:55.76,lng:37.62,lang:'beginner',desc:'多邻国学习俄语',descEn:'Learning Russian on Duolingo'},
+    {name:'意大利 · 意大利语',en:'Italy · Italian',lat:41.9,lng:12.5,lang:'beginner',desc:'多邻国学习意大利语',descEn:'Learning Italian on Duolingo'},
+    {name:'法国 · 法语',en:'France · French',lat:48.86,lng:2.35,lang:'beginner',desc:'多邻国学习法语',descEn:'Learning French on Duolingo'}
   ],
 
   // ─── 时间轴 ───

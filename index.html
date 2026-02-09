@@ -29,7 +29,7 @@
       --hkw-color:rgba(99,102,241,.15);--hkw-hover:rgba(217,119,6,.55);
       --toggle-border:rgba(0,0,0,.1);--toggle-bg:rgba(0,0,0,.04);
       --bub-text:rgba(0,0,0,.75);--bub-shadow:rgba(255,255,255,.3);
-      --msky1:#B3E5FC;--msky2:#CDEEFB;--msky3:#E8F6FE;--mgrass1:#4CAF50;--mgrass2:#388E3C;--mgrass3:#66BB6A
+      --msky1:#7EC8E3;--msky2:#A8D8EA;--msky3:#C8E6F0;--mgrass1:#4CAF50;--mgrass2:#388E3C;--mgrass3:#66BB6A
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth;scroll-snap-type:y proximity}
@@ -73,6 +73,10 @@
     .section-desc{font-size:.88rem;color:var(--muted);line-height:1.9}
 
     .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:1.5rem;width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s;box-sizing:border-box}
+    .section-page[data-map-id="interest"] .section-frame{background:rgba(22,30,48,.65);backdrop-filter:blur(8px)}
+    .section-page[data-map-id="skills"] .section-frame{background:rgba(22,30,48,.92);backdrop-filter:blur(4px)}
+    [data-theme="light"] .section-page[data-map-id="interest"] .section-frame{background:rgba(255,255,255,.6)}
+    [data-theme="light"] .section-page[data-map-id="skills"] .section-frame{background:rgba(255,255,255,.88)}
     .section-header{text-align:center;margin-bottom:1rem}
     .section-title{font-size:1.25rem;font-weight:700;color:var(--primary);margin-bottom:.3rem}
     .section-rules{font-size:.78rem;color:var(--muted);opacity:.6}
@@ -87,7 +91,7 @@
     @keyframes kwf{0%{transform:translateY(4px)}50%{transform:translateY(-6px)}100%{transform:translateY(4px)}}
     #hero-c{position:relative;z-index:1;text-align:center;pointer-events:none}
     #hero-c h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub-hint{color:var(--muted);font-size:.85rem;margin-top:.8rem;opacity:.5}
+    .hero-sub-hint{color:var(--muted);font-size:.7rem;margin-top:.8rem;opacity:.45;letter-spacing:.5px}
     .hero-overlay{position:fixed;inset:0;z-index:100;background:var(--overlay-bg);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
     .hero-overlay.show{display:flex;opacity:1;pointer-events:auto}
     .hero-ov-content{text-align:center;max-width:500px;padding:2.5rem;cursor:pointer}
@@ -114,10 +118,10 @@
 
     /* ===== CAREER ===== */
     .career-wrap{display:flex;min-height:min(380px,55vh);border-radius:var(--radius);overflow:hidden;position:relative}
-    .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem .8rem}
+    .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem .8rem;min-height:0}
     .career-pane:first-child{border-right:1px solid var(--frame-border)}
     #cl,#cr{background:var(--bg2)}
-    .mbag-area{position:relative;width:170px;height:280px;display:flex;flex-direction:column;align-items:center}
+    .mbag-area{position:relative;width:170px;height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center}
     .mbag-svg{width:140px;height:180px;transition:transform .7s cubic-bezier(.175,.885,.32,1.275);flex-shrink:0;transform-origin:center center;cursor:pointer}
     .mbag-area.open .mbag-svg{transform:scaleY(-1) translateY(-10px)}
     .coins-row{display:flex;gap:8px;margin-top:8px;opacity:0;transform:translateY(-18px);transition:all .6s cubic-bezier(.34,1.56,.64,1)}
@@ -127,7 +131,7 @@
     .mbag-area.open .gcoin{opacity:1;transform:scale(1)}
     .mbag-area.open .gcoin:nth-child(1){transition-delay:.15s}.mbag-area.open .gcoin:nth-child(2){transition-delay:.25s}.mbag-area.open .gcoin:nth-child(3){transition-delay:.35s}.mbag-area.open .gcoin:nth-child(4){transition-delay:.45s}
     .gcoin:hover{transform:scale(1.12)!important}
-    .egg-area{position:relative;width:170px;height:280px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .egg-area{position:relative;width:170px;height:260px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
     .egg-wrap{position:relative;width:110px;height:145px}
     .egg-top-half{position:absolute;width:100%;height:55%;top:0;clip-path:inset(0 0 45% 0);transition:all .8s cubic-bezier(.68,-.55,.265,1.55);z-index:3}
     .egg-bottom-half{position:absolute;width:100%;height:100%;top:0;z-index:1}
@@ -242,8 +246,8 @@
     .mini-bld.unlocked{opacity:1}
     .mini-bld.active{filter:drop-shadow(0 0 3px rgba(56,189,248,.7))}
     /* Light mode overrides */
-    [data-theme="light"] .illustrated-map{filter:brightness(1.6) saturate(.65) contrast(.9) hue-rotate(-5deg)}
-    [data-theme="light"] #map-btn svg{filter:brightness(1.6) saturate(.65) contrast(.9) hue-rotate(-5deg)}
+    [data-theme="light"] .illustrated-map{filter:brightness(1.15) saturate(.8) contrast(.95)}
+    [data-theme="light"] #map-btn svg{filter:brightness(1.15) saturate(.8) contrast(.95)}
     [data-theme="light"] .mbag-svg path[fill="url(#bg1)"]{filter:brightness(1.3) saturate(.7)}
     [data-theme="light"] .cloud-reveal svg{filter:brightness(1.1) saturate(.7)}
     /* Light mode card colors — bright & cute pastels */
@@ -681,90 +685,103 @@
     <rect width="1400" height="620" fill="url(#msky)"/>
     <g class="map-star"><circle cx="80" cy="40" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="350" cy="55" r="1" fill="#fff" opacity=".4"/><circle cx="600" cy="35" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="850" cy="50" r="1" fill="#fff" opacity=".3"/><circle cx="1050" cy="40" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="1300" cy="55" r="1" fill="#fff" opacity=".4"/></g>
     <g class="map-sun"><circle cx="1250" cy="80" r="35" fill="#FFF9C4" opacity=".2"/><circle cx="1250" cy="80" r="24" fill="#FFD54F" opacity=".8"/><circle cx="1250" cy="80" r="15" fill="#FFECB3"/></g>
-    <!-- Rolling hills terrain (Peppa Pig style) -->
-    <path d="M0,530 C50,520 90,500 130,490 C170,480 240,435 310,410 C380,385 440,335 500,310 C560,285 610,365 660,435 C685,475 695,490 700,495 C705,490 740,455 800,420 C850,400 875,400 900,400 C940,395 1000,345 1100,310 C1150,295 1210,360 1280,400 C1330,420 1380,445 1400,455 L1400,620 L0,620 Z" fill="url(#mgrass)"/>
-    <path d="M0,560 C60,550 120,535 200,520 C300,500 400,440 500,385 C570,350 630,410 700,520 C740,490 810,455 900,445 C970,440 1040,395 1100,370 C1160,355 1230,400 1310,445 C1360,460 1390,475 1400,485 L1400,620 L0,620 Z" style="fill:var(--mgrass3)" opacity=".4"/>
+    <!-- Rolling hills terrain — gentle, smooth curves -->
+    <path d="M0,525 C60,520 110,510 160,495 C230,470 290,435 360,405 C430,375 465,345 500,320 C535,295 565,320 610,370 C660,420 695,460 720,472 C745,460 785,435 840,415 C890,395 930,385 970,365 C1010,345 1055,320 1100,310 C1145,300 1200,335 1250,375 C1300,405 1360,430 1400,442 L1400,620 L0,620 Z" fill="url(#mgrass)"/>
+    <path d="M0,555 C70,548 140,530 210,510 C310,480 410,430 500,380 C560,350 610,380 680,450 C720,480 750,470 800,445 C860,420 920,400 980,375 C1040,350 1080,335 1100,330 C1150,320 1210,365 1280,405 C1340,430 1380,450 1400,460 L1400,620 L0,620 Z" style="fill:var(--mgrass3)" opacity=".35"/>
     <!-- Lake in valley -->
-    <ellipse cx="700" cy="500" rx="95" ry="20" fill="url(#mwater)"/>
+    <ellipse cx="720" cy="478" rx="80" ry="16" fill="url(#mwater)"/>
     <!-- Dotted path -->
-    <path d="M60,510 C100,498 170,476 250,440 C320,415 400,370 470,330 C510,310 550,320 600,380 C650,440 690,490 710,490 C740,470 800,425 870,405 C900,400 950,390 1010,350 C1060,325 1100,310 1140,315 C1190,325 1240,370 1280,400 C1320,420 1370,440 1400,455" fill="none" stroke="rgba(212,175,116,.18)" stroke-width="3" stroke-dasharray="8 5"/>
+    <path d="M60,505 C110,496 170,478 260,440 C340,410 420,365 470,340 C520,315 560,335 610,375 C660,420 700,460 720,465 C750,450 800,430 860,410 C920,390 960,370 1020,345 C1070,325 1100,310 1140,315 C1190,335 1240,370 1290,395 C1330,415 1370,432 1400,442" fill="none" stroke="rgba(212,175,116,.18)" stroke-width="3" stroke-dasharray="8 5"/>
     <!-- Decorative trees -->
     <g opacity=".3">
-      <rect x="55" y="500" width="4" height="11" fill="#78350f"/><circle cx="57" cy="495" r="9" style="fill:var(--mgrass1)"/>
-      <rect x="210" y="455" width="4" height="9" fill="#78350f"/><circle cx="212" cy="450" r="7" style="fill:var(--mgrass3)"/>
-      <rect x="420" y="348" width="3" height="8" fill="#78350f"/><circle cx="422" cy="343" r="6" style="fill:var(--mgrass1)"/>
-      <rect x="615" y="415" width="3" height="7" fill="#78350f"/><circle cx="617" cy="411" r="6" style="fill:var(--mgrass3)"/>
-      <rect x="830" y="408" width="3" height="8" fill="#78350f"/><circle cx="832" cy="403" r="7" style="fill:var(--mgrass1)"/>
-      <rect x="1210" y="375" width="3" height="8" fill="#78350f"/><circle cx="1212" cy="370" r="6" style="fill:var(--mgrass3)"/>
-      <rect x="1355" y="435" width="3" height="7" fill="#78350f"/><circle cx="1357" cy="430" r="6" style="fill:var(--mgrass1)"/>
+      <rect x="55" y="498" width="4" height="11" fill="#78350f"/><circle cx="57" cy="493" r="9" style="fill:var(--mgrass1)"/>
+      <rect x="220" y="448" width="4" height="9" fill="#78350f"/><circle cx="222" cy="443" r="7" style="fill:var(--mgrass3)"/>
+      <rect x="430" y="350" width="3" height="8" fill="#78350f"/><circle cx="432" cy="345" r="6" style="fill:var(--mgrass1)"/>
+      <rect x="635" y="425" width="3" height="7" fill="#78350f"/><circle cx="637" cy="421" r="6" style="fill:var(--mgrass3)"/>
+      <rect x="835" y="410" width="3" height="8" fill="#78350f"/><circle cx="837" cy="405" r="7" style="fill:var(--mgrass1)"/>
+      <rect x="1210" y="370" width="3" height="8" fill="#78350f"/><circle cx="1212" cy="365" r="6" style="fill:var(--mgrass3)"/>
+      <rect x="1355" y="428" width="3" height="7" fill="#78350f"/><circle cx="1357" cy="423" r="6" style="fill:var(--mgrass1)"/>
     </g>
     <!-- Small flowers -->
-    <g opacity=".25"><circle cx="170" cy="478" r="3" fill="#f472b6"/><circle cx="175" cy="476" r="2.5" fill="#fb923c"/><circle cx="385" cy="390" r="2.5" fill="#a78bfa"/><circle cx="775" cy="440" r="3" fill="#34d399"/><circle cx="965" cy="388" r="2.5" fill="#f472b6"/><circle cx="1350" cy="438" r="2.5" fill="#fbbf24"/></g>
-    <!-- 1. 关键词影院 — 山脚 (base, y=490) -->
+    <g opacity=".25"><circle cx="170" cy="476" r="3" fill="#f472b6"/><circle cx="178" cy="473" r="2.5" fill="#fb923c"/><circle cx="395" cy="388" r="2.5" fill="#a78bfa"/><circle cx="780" cy="442" r="3" fill="#34d399"/><circle cx="960" cy="378" r="2.5" fill="#f472b6"/><circle cx="1350" cy="425" r="2.5" fill="#fbbf24"/></g>
+    <!-- 1. 关键词影院 — 山脚 (terrain ~504) -->
     <g class="map-building unlocked" data-target="hero">
-      <ellipse cx="130" cy="490" rx="40" ry="5" fill="rgba(0,0,0,.12)"/>
-      <rect x="95" y="428" width="70" height="62" rx="4" fill="#4338ca"/><rect x="95" y="428" width="70" height="9" rx="4" fill="#6366f1"/>
-      <rect x="103" y="444" width="54" height="33" rx="2" fill="#312e81"/>
-      <circle cx="102" cy="433" r="1.5" fill="#fbbf24"/><circle cx="112" cy="433" r="1.5" fill="#f87171"/><circle cx="122" cy="433" r="1.5" fill="#34d399"/><circle cx="132" cy="433" r="1.5" fill="#60a5fa"/><circle cx="142" cy="433" r="1.5" fill="#fbbf24"/><circle cx="152" cy="433" r="1.5" fill="#f87171"/>
-      <text x="130" y="505" class="map-label" data-i18n="map-b-hero">关键词影院</text>
+      <ellipse cx="130" cy="504" rx="46" ry="6" fill="rgba(0,0,0,.12)"/>
+      <rect x="90" y="433" width="80" height="71" rx="5" fill="#4338ca"/><rect x="90" y="433" width="80" height="10" rx="5" fill="#6366f1"/>
+      <rect x="99" y="450" width="62" height="38" rx="2" fill="#312e81"/>
+      <circle cx="98" cy="439" r="1.8" fill="#fbbf24"/><circle cx="109" cy="439" r="1.8" fill="#f87171"/><circle cx="120" cy="439" r="1.8" fill="#34d399"/><circle cx="131" cy="439" r="1.8" fill="#60a5fa"/><circle cx="142" cy="439" r="1.8" fill="#fbbf24"/><circle cx="153" cy="439" r="1.8" fill="#f87171"/>
+      <text x="130" y="530" class="map-label" data-i18n="map-b-hero">关键词影院</text>
     </g>
-    <!-- 2. 兴趣游乐场 — 山腰 (mid, y=410) -->
+    <!-- 2. 兴趣游乐场 — 山腰 (terrain ~426) -->
     <g class="map-building" data-target="interest">
-      <rect x="275" y="348" width="70" height="62" fill="transparent"/>
-      <circle cx="310" cy="375" r="32" fill="none" stroke="#ec4899" stroke-width="2.5" opacity=".7"/>
-      <circle cx="310" cy="375" r="3" fill="#fbbf24"/><circle cx="310" cy="343" r="5" fill="#f472b6"/><circle cx="342" cy="375" r="5" fill="#a78bfa"/><circle cx="310" cy="407" r="5" fill="#34d399"/><circle cx="278" cy="375" r="5" fill="#60a5fa"/>
-      <text x="310" y="425" class="map-label" data-i18n="map-b-interest">兴趣游乐场</text>
+      <rect x="270" y="349" width="80" height="80" fill="transparent"/>
+      <circle cx="310" cy="389" r="37" fill="none" stroke="#ec4899" stroke-width="3" opacity=".7"/>
+      <circle cx="310" cy="389" r="3.5" fill="#fbbf24"/><circle cx="310" cy="352" r="5.8" fill="#f472b6"/><circle cx="347" cy="389" r="5.8" fill="#a78bfa"/><circle cx="310" cy="426" r="5.8" fill="#34d399"/><circle cx="273" cy="389" r="5.8" fill="#60a5fa"/>
+      <text x="310" y="454" class="map-label" data-i18n="map-b-interest">兴趣游乐场</text>
     </g>
-    <!-- 3. 事业大楼 — 山顶 (peak, y=310) -->
+    <!-- 3. 事业大楼 — 山顶 (terrain ~320) -->
     <g class="map-building" data-target="career">
-      <ellipse cx="500" cy="310" rx="34" ry="4" fill="rgba(0,0,0,.1)"/>
-      <rect x="472" y="225" width="56" height="85" rx="3" fill="#d97706"/><rect x="472" y="225" width="56" height="85" rx="3" fill="rgba(255,255,255,.06)"/>
-      <polygon points="500,206 485,225 515,225" fill="#b45309"/><circle cx="500" cy="216" r="4" fill="#fbbf24" opacity=".65"/>
-      <rect x="480" y="234" width="9" height="9" rx="1" fill="rgba(254,243,199,.3)"/><rect x="495" y="234" width="9" height="9" rx="1" fill="rgba(254,243,199,.2)"/><rect x="510" y="234" width="9" height="9" rx="1" fill="rgba(254,243,199,.3)"/>
-      <rect x="480" y="250" width="9" height="9" rx="1" fill="rgba(254,243,199,.2)"/><rect x="495" y="250" width="9" height="9" rx="1" fill="rgba(254,243,199,.3)"/><rect x="510" y="250" width="9" height="9" rx="1" fill="rgba(254,243,199,.2)"/>
-      <rect x="480" y="266" width="9" height="9" rx="1" fill="rgba(254,243,199,.3)"/><rect x="495" y="266" width="9" height="9" rx="1" fill="rgba(254,243,199,.2)"/><rect x="510" y="266" width="9" height="9" rx="1" fill="rgba(254,243,199,.3)"/>
-      <rect x="480" y="282" width="9" height="9" rx="1" fill="rgba(254,243,199,.2)"/><rect x="495" y="282" width="9" height="9" rx="1" fill="rgba(254,243,199,.25)"/><rect x="510" y="282" width="9" height="9" rx="1" fill="rgba(254,243,199,.2)"/>
-      <rect x="493" y="296" width="14" height="14" rx="7" fill="rgba(120,53,15,.45)"/>
-      <text x="500" y="326" class="map-label" data-i18n="map-b-career">事业大楼</text>
+      <ellipse cx="500" cy="320" rx="39" ry="5" fill="rgba(0,0,0,.1)"/>
+      <rect x="468" y="222" width="64" height="98" rx="3" fill="#d97706"/><rect x="468" y="222" width="64" height="98" rx="3" fill="rgba(255,255,255,.06)"/>
+      <polygon points="500,200 481,222 519,222" fill="#b45309"/><circle cx="500" cy="211" r="4.6" fill="#fbbf24" opacity=".65"/>
+      <rect x="476" y="232" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="493" y="232" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="510" y="232" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/>
+      <rect x="476" y="250" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="493" y="250" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="510" y="250" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/>
+      <rect x="476" y="268" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="493" y="268" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="510" y="268" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/>
+      <rect x="476" y="286" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="493" y="286" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/><rect x="510" y="286" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/>
+      <rect x="492" y="302" width="16" height="18" rx="8" fill="rgba(120,53,15,.45)"/>
+      <text x="500" y="350" class="map-label" data-i18n="map-b-career">事业大楼</text>
     </g>
-    <!-- 4. 知识湖 — 山谷 (valley, y=490) -->
+    <!-- 4. 知识湖 — 山谷 dock/pier (terrain ~465) -->
     <g class="map-building" data-target="study">
-      <rect x="660" y="420" width="80" height="80" fill="transparent"/>
-      <ellipse cx="700" cy="490" rx="28" ry="4" fill="rgba(0,0,0,.08)"/>
-      <rect x="675" y="450" width="50" height="40" rx="2" fill="#dc2626"/><polygon points="670,450 700,426 730,450" fill="#991b1b"/>
-      <rect x="714" y="432" width="8" height="14" rx="1" fill="#b91c1c"/><circle cx="718" cy="428" r="3" fill="rgba(156,163,175,.25)"/>
-      <rect x="683" y="462" width="10" height="10" rx="1" fill="rgba(254,243,199,.35)"/><rect x="707" y="462" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/>
-      <rect x="695" y="476" width="10" height="14" rx="5" fill="rgba(127,29,29,.5)"/>
-      <text x="700" y="530" class="map-label" data-i18n="map-b-study">知识湖</text>
+      <rect x="645" y="420" width="115" height="60" fill="transparent"/>
+      <!-- Wooden dock platform (starts on shore, extends over water) -->
+      <rect x="674" y="460" width="62" height="7" rx="2" fill="#92400e" opacity=".85"/>
+      <rect x="674" y="460" width="62" height="2.5" rx="1" fill="#b45309" opacity=".5"/>
+      <!-- Plank lines -->
+      <line x1="686" y1="460" x2="686" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
+      <line x1="697" y1="460" x2="697" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
+      <line x1="708" y1="460" x2="708" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
+      <line x1="719" y1="460" x2="719" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
+      <!-- Dock support posts into water -->
+      <rect x="678" y="465" width="5" height="16" rx="1.2" fill="#78350f" opacity=".6"/>
+      <rect x="728" y="465" width="5" height="16" rx="1.2" fill="#78350f" opacity=".6"/>
+      <!-- Lamp post on dock -->
+      <rect x="736" y="434" width="3.5" height="26" rx="1.2" fill="#78350f" opacity=".7"/>
+      <circle cx="737.75" cy="430" r="6" fill="#fbbf24" opacity=".35"/><circle cx="737.75" cy="430" r="3.5" fill="#fde68a" opacity=".6"/>
+      <!-- Rope railing -->
+      <path d="M680,457 Q710,451 738,457" fill="none" stroke="#a16207" stroke-width="1.2" opacity=".4" stroke-dasharray="2.5 1.5"/>
+      <!-- Small book on dock -->
+      <rect x="692" y="455" width="10" height="6" rx="1" fill="#4338ca" opacity=".6"/><rect x="693" y="456" width="8" height="4" rx=".5" fill="#6366f1" opacity=".5"/>
+      <text x="706" y="502" class="map-label" data-i18n="map-b-study">知识湖</text>
     </g>
-    <!-- 5. 故事杂货铺 — 半山腰 (mid, y=400) -->
+    <!-- 5. 故事杂货铺 — 半山腰 (terrain ~393) -->
     <g class="map-building" data-target="worldmap">
-      <ellipse cx="900" cy="400" rx="28" ry="4" fill="rgba(0,0,0,.1)"/>
-      <rect x="876" y="362" width="48" height="38" rx="3" fill="#047857"/>
-      <path d="M872,362 L928,362 L924,352 L876,352 Z" fill="#059669"/><path d="M876,352 C885,348 893,356 900,352 C907,348 915,356 924,352" fill="none" stroke="#34d399" stroke-width="1.5"/>
-      <rect x="882" y="370" width="36" height="16" rx="1" fill="rgba(209,250,229,.15)"/><text x="900" y="383" text-anchor="middle" font-size="7" fill="rgba(209,250,229,.5)" font-weight="700">MAPS</text>
-      <rect x="894" y="388" width="12" height="12" rx="6" fill="rgba(2,120,87,.4)"/>
-      <text x="900" y="415" class="map-label" data-i18n="map-b-worldmap">故事杂货铺</text>
+      <ellipse cx="900" cy="393" rx="33" ry="5" fill="rgba(0,0,0,.1)"/>
+      <rect x="873" y="349" width="55" height="44" rx="3" fill="#047857"/>
+      <path d="M868,349 L933,349 L929,337 L873,337 Z" fill="#059669"/><path d="M873,337 C883,332 893,342 900,337 C907,332 917,342 929,337" fill="none" stroke="#34d399" stroke-width="1.8"/>
+      <rect x="879" y="358" width="42" height="18" rx="1" fill="rgba(209,250,229,.15)"/><text x="900" y="372" text-anchor="middle" font-size="8" fill="rgba(209,250,229,.5)" font-weight="700">MAPS</text>
+      <rect x="893" y="379" width="14" height="14" rx="7" fill="rgba(2,120,87,.4)"/>
+      <text x="900" y="424" class="map-label" data-i18n="map-b-worldmap">故事杂货铺</text>
     </g>
-    <!-- 6. 经历钟楼 — 山顶 (peak, y=310) -->
+    <!-- 6. 经历钟楼 — 山顶 (terrain ~310) -->
     <g class="map-building" data-target="timelines">
-      <ellipse cx="1100" cy="310" rx="30" ry="4" fill="rgba(0,0,0,.1)"/>
-      <rect x="1075" y="248" width="50" height="62" rx="3" fill="#5b21b6"/>
-      <polygon points="1100,225 1090,248 1110,248" fill="#7c3aed"/>
-      <circle cx="1100" cy="272" r="16" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1.5"/>
-      <line x1="1100" y1="272" x2="1100" y2="261" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="1100" y1="272" x2="1109" y2="276" stroke="#e0e7ff" stroke-width="1" stroke-linecap="round"/>
-      <circle cx="1100" cy="272" r="2" fill="#fbbf24"/>
-      <rect x="1093" y="296" width="14" height="14" rx="2" fill="rgba(91,33,182,.45)"/>
-      <text x="1100" y="326" class="map-label" data-i18n="map-b-timelines">经历钟楼</text>
+      <ellipse cx="1100" cy="310" rx="35" ry="5" fill="rgba(0,0,0,.1)"/>
+      <rect x="1071" y="239" width="58" height="71" rx="3" fill="#5b21b6"/>
+      <polygon points="1100,213 1087,239 1113,239" fill="#7c3aed"/>
+      <circle cx="1100" cy="268" r="18" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1.8"/>
+      <line x1="1100" y1="268" x2="1100" y2="254" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="1100" y1="268" x2="1111" y2="273" stroke="#e0e7ff" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="1100" cy="268" r="2.3" fill="#fbbf24"/>
+      <rect x="1092" y="294" width="16" height="16" rx="2" fill="rgba(91,33,182,.45)"/>
+      <text x="1100" y="342" class="map-label" data-i18n="map-b-timelines">经历钟楼</text>
     </g>
-    <!-- 7. 技能花园 — 半山腰 (mid, y=400) -->
+    <!-- 7. 技能花园 — 半山腰 (terrain ~395) -->
     <g class="map-building" data-target="skills">
-      <rect x="1248" y="345" width="66" height="60" fill="transparent"/>
-      <rect x="1278" y="380" width="10" height="20" rx="2" fill="#78350f" opacity=".7"/>
-      <circle cx="1283" cy="362" r="24" fill="#166534" opacity=".65"/><circle cx="1267" cy="370" r="17" fill="#15803d" opacity=".55"/><circle cx="1299" cy="367" r="19" fill="#14532d" opacity=".55"/><circle cx="1283" cy="348" r="15" fill="#22c55e" opacity=".35"/>
-      <circle cx="1270" cy="360" r="3.5" fill="#fbbf24" opacity=".6"/><circle cx="1294" cy="354" r="3" fill="#f87171" opacity=".6"/><circle cx="1277" cy="347" r="2.5" fill="#fbbf24" opacity=".5"/>
-      <text x="1283" y="415" class="map-label" data-i18n="map-b-skills">技能花园</text>
+      <rect x="1243" y="328" width="80" height="70" fill="transparent"/>
+      <rect x="1277" y="370" width="12" height="25" rx="2.5" fill="#78350f" opacity=".7"/>
+      <circle cx="1283" cy="348" r="28" fill="#166534" opacity=".65"/><circle cx="1264" cy="358" r="20" fill="#15803d" opacity=".55"/><circle cx="1302" cy="354" r="22" fill="#14532d" opacity=".55"/><circle cx="1283" cy="332" r="17" fill="#22c55e" opacity=".35"/>
+      <circle cx="1268" cy="350" r="4" fill="#fbbf24" opacity=".6"/><circle cx="1298" cy="343" r="3.5" fill="#f87171" opacity=".6"/><circle cx="1280" cy="335" r="3" fill="#fbbf24" opacity=".5"/>
+      <text x="1283" y="428" class="map-label" data-i18n="map-b-skills">技能花园</text>
     </g>
   </svg>
 </div>
@@ -776,21 +793,21 @@
     <rect width="130" height="58" rx="6" fill="url(#mms)"/>
     <g class="map-star"><circle cx="11" cy="5" r=".5" fill="#fbbf24" opacity=".5"/><circle cx="48" cy="6" r=".5" fill="#fbbf24" opacity=".6"/><circle cx="88" cy="4" r=".5" fill="#fbbf24" opacity=".5"/><circle cx="121" cy="5" r=".5" fill="#fbbf24" opacity=".5"/><circle cx="28" cy="3" r=".4" fill="#fff" opacity=".3"/><circle cx="68" cy="2" r=".4" fill="#fff" opacity=".3"/><circle cx="107" cy="3" r=".4" fill="#fff" opacity=".4"/></g>
     <g class="map-sun"><circle cx="112" cy="7" r="3.5" fill="#FFF9C4" opacity=".3"/><circle cx="112" cy="7" r="2.2" fill="#FFD54F" opacity=".85"/></g>
-    <!-- Rolling hills (matching big map) -->
-    <path d="M0,49 C5,48 8,46 12,45 C16,44 22,38 29,37 C35,35 41,30 46,27 C52,24 57,35 61,39 C63,42 64,44 65,45 C66,44 69,40 74,38 C79,36 81,36 84,36 C87,35 93,30 102,27 C107,25 112,33 119,36 C123,38 128,40 130,41 L130,58 L0,58 Z" style="fill:var(--mgrass1)"/>
-    <path d="M0,52 C6,51 10,49 18,48 C28,46 37,40 46,34 C53,30 59,38 65,47 C69,44 76,40 84,38 C90,37 97,33 102,30 C109,28 115,35 119,38 C123,40 128,43 130,44 L130,58 L0,58 Z" style="fill:var(--mgrass3)" opacity=".4"/>
-    <ellipse cx="65" cy="46" rx="8" ry="2" fill="#38bdf8" opacity=".3"/>
-    <path d="M6,47 C14,45 22,40 30,38 C37,36 43,31 46,28 C50,26 54,32 58,38 C62,44 64,45 66,45 C69,43 75,39 82,37 C88,36 94,32 102,28 C106,26 111,32 117,36 C120,38 126,41 130,42" fill="none" stroke="rgba(212,175,116,.18)" stroke-width=".4" stroke-dasharray="1.2 .8"/>
+    <!-- Rolling hills (matching big map — gentle curves) -->
+    <path d="M0,49 C6,48 10,47 15,46 C21,44 27,40 33,38 C40,35 43,32 46,30 C50,28 53,30 57,35 C61,39 64,43 67,44 C69,43 73,40 78,38 C83,37 87,36 90,34 C94,32 97,30 102,29 C106,28 112,31 116,35 C121,38 126,40 130,41 L130,58 L0,58 Z" style="fill:var(--mgrass1)"/>
+    <path d="M0,52 C7,51 13,49 20,47 C29,45 38,40 46,35 C52,32 57,36 63,42 C67,45 69,44 74,41 C80,39 86,37 91,35 C97,33 101,31 102,30 C107,29 113,34 119,37 C124,39 128,42 130,43 L130,58 L0,58 Z" style="fill:var(--mgrass3)" opacity=".35"/>
+    <ellipse cx="67" cy="45" rx="7" ry="1.5" fill="#38bdf8" opacity=".3"/>
+    <path d="M6,47 C12,46 18,43 25,40 C32,37 40,33 46,30 C50,28 54,31 58,36 C63,41 66,44 67,44 C70,42 76,39 82,37 C88,36 93,33 100,30 C106,28 112,32 118,36 C122,38 127,41 130,42" fill="none" stroke="rgba(212,175,116,.18)" stroke-width=".4" stroke-dasharray="1.2 .8"/>
     <!-- Decorative trees -->
     <circle cx="18" cy="44" r=".8" style="fill:var(--mgrass1)" opacity=".3"/><circle cx="40" cy="34" r=".6" style="fill:var(--mgrass3)" opacity=".3"/><circle cx="78" cy="39" r=".6" style="fill:var(--mgrass1)" opacity=".3"/>
-    <!-- Mini buildings (used as unlock indicators) -->
-    <g class="mini-bld" data-target="hero"><rect x="9" y="40" width="6" height="5" rx=".5" fill="#4338ca"/><rect x="9" y="40" width="6" height=".8" rx=".4" fill="#6366f1"/></g>
-    <g class="mini-bld" data-target="interest"><circle cx="29" cy="34.5" r="2.8" fill="none" stroke="#ec4899" stroke-width=".4"/></g>
-    <g class="mini-bld" data-target="career"><rect x="44" y="20" width="5" height="7" rx=".3" fill="#d97706"/><polygon points="46.5,18.5 45,20 48,20" fill="#b45309"/></g>
-    <g class="mini-bld" data-target="study"><rect x="62" y="41" width="4.5" height="3.5" rx=".3" fill="#dc2626"/><polygon points="61.5,41 64.3,39 67,41" fill="#991b1b"/></g>
-    <g class="mini-bld" data-target="worldmap"><rect x="81.5" y="32" width="4.5" height="3.5" rx=".3" fill="#047857"/><path d="M81,32 L87,32 L86.5,31 L81.5,31 Z" fill="#059669"/></g>
-    <g class="mini-bld" data-target="timelines"><rect x="99.5" y="21" width="5" height="5.5" rx=".3" fill="#5b21b6"/><circle cx="102" cy="23.5" r="1.6" fill="#1e1b4b" stroke="#a78bfa" stroke-width=".25"/></g>
-    <g class="mini-bld" data-target="skills"><rect x="118" y="34" width=".9" height="2" fill="#78350f" opacity=".7"/><circle cx="118.5" cy="32.5" r="2.3" fill="#166534" opacity=".7"/><circle cx="117" cy="33.5" r="1.6" fill="#15803d" opacity=".6"/><circle cx="120" cy="33" r="1.7" fill="#14532d" opacity=".6"/></g>
+    <!-- Mini buildings (scaled ~15% larger, aligned to terrain) -->
+    <g class="mini-bld" data-target="hero"><rect x="8.5" y="40" width="7" height="7" rx=".6" fill="#4338ca"/><rect x="8.5" y="40" width="7" height="1" rx=".4" fill="#6366f1"/></g>
+    <g class="mini-bld" data-target="interest"><circle cx="29" cy="36.5" r="3.3" fill="none" stroke="#ec4899" stroke-width=".5"/></g>
+    <g class="mini-bld" data-target="career"><rect x="43.5" y="21" width="6" height="9" rx=".4" fill="#d97706"/><polygon points="46.5,19 44,21 49,21" fill="#b45309"/></g>
+    <g class="mini-bld" data-target="study"><rect x="61.5" y="42" width="6" height=".9" rx=".3" fill="#92400e"/><rect x="62" y="42.5" width=".6" height="2" fill="#78350f" opacity=".6"/><rect x="66.5" y="42.5" width=".6" height="2" fill="#78350f" opacity=".6"/><circle cx="68" cy="41" r=".7" fill="#fde68a" opacity=".6"/></g>
+    <g class="mini-bld" data-target="worldmap"><rect x="80.5" y="32.5" width="5.5" height="4.5" rx=".4" fill="#047857"/><path d="M80,32.5 L87,32.5 L86.5,31 L80.5,31 Z" fill="#059669"/></g>
+    <g class="mini-bld" data-target="timelines"><rect x="99" y="22" width="6" height="7" rx=".4" fill="#5b21b6"/><circle cx="102" cy="25" r="1.9" fill="#1e1b4b" stroke="#a78bfa" stroke-width=".3"/></g>
+    <g class="mini-bld" data-target="skills"><rect x="117.5" y="33.5" width="1.2" height="3" fill="#78350f" opacity=".7"/><circle cx="118.2" cy="32" r="2.7" fill="#166534" opacity=".7"/><circle cx="116.5" cy="33.2" r="1.9" fill="#15803d" opacity=".6"/><circle cx="120" cy="32.5" r="2" fill="#14532d" opacity=".6"/></g>
     <text x="65" y="15" text-anchor="middle" font-size="6" style="fill:var(--muted)" font-weight="700" letter-spacing="2" font-family="Courier New,monospace" opacity=".45">MAP</text>
   </svg>
 </div>

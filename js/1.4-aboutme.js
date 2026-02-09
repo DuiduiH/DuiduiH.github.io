@@ -33,31 +33,30 @@
     return 5;
   }
 
-  // Visit mode popup: travel experience
+  // Visit mode popup: Country · City / Visit type / Description
   function makeVisitPopup(place){
     var en=isEn();
     var name=en?(place.en||place.name):place.name;
     var desc=en?(place.descEn||place.desc):place.desc;
     var lbl=en?(VISIT_L[place.visit]?VISIT_L[place.visit].en:''):(VISIT_L[place.visit]?VISIT_L[place.visit].cn:'');
-    var imgPath=place.img?'images/map-places/'+place.img:'';
-    var html='<div style="text-align:center;min-width:160px;max-width:220px;font-family:Inter,Noto Sans SC,sans-serif">';
-    html+='<div style="font-weight:700;font-size:14px;margin-bottom:2px;color:#1e293b">'+name+'</div>';
-    if(lbl) html+='<div style="font-size:11px;color:#6366f1;margin-bottom:4px">'+lbl+'</div>';
-    if(imgPath) html+='<img src="'+imgPath+'" alt="'+name+'" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin:6px 0" onerror="this.style.display=\'none\'">';
+    var html='<div style="text-align:center;min-width:160px;max-width:220px;font-family:Inter,Noto Sans SC,sans-serif;padding:4px 0">';
+    html+='<div style="font-weight:700;font-size:14px;color:#1e293b;margin-bottom:4px">'+name+'</div>';
+    if(lbl) html+='<div style="font-size:12px;color:#6366f1;font-weight:600;margin-bottom:4px">'+lbl+'</div>';
     html+='<div style="font-size:12px;color:#64748b;line-height:1.6">'+desc+'</div>';
     html+='</div>';
     return html;
   }
 
-  // Lang mode popup: language info
+  // Lang mode popup: Country · Language / Proficiency / Learning method
   function makeLangPopup(place){
     var en=isEn();
-    var name=en?(place.en||place.name):place.name;
-    var desc=en?(place.descEn||place.desc):place.desc;
+    // Use langLabel if available (for places with both visit and lang)
+    var name=en?(place.langLabelEn||place.en||place.name):(place.langLabel||place.name);
+    var desc=en?(place.langDescEn||place.descEn||place.desc):(place.langDesc||place.desc);
     var lbl=en?(LANG_L[place.lang]?LANG_L[place.lang].en:''):(LANG_L[place.lang]?LANG_L[place.lang].cn:'');
-    var html='<div style="text-align:center;min-width:160px;max-width:220px;font-family:Inter,Noto Sans SC,sans-serif">';
-    html+='<div style="font-weight:700;font-size:14px;margin-bottom:2px;color:#1e293b">'+name+'</div>';
-    if(lbl) html+='<div style="font-size:11px;color:#7c3aed;margin-bottom:4px">'+lbl+'</div>';
+    var html='<div style="text-align:center;min-width:160px;max-width:220px;font-family:Inter,Noto Sans SC,sans-serif;padding:4px 0">';
+    html+='<div style="font-weight:700;font-size:14px;color:#1e293b;margin-bottom:4px">'+name+'</div>';
+    if(lbl) html+='<div style="font-size:12px;color:#7c3aed;font-weight:600;margin-bottom:4px">'+lbl+'</div>';
     html+='<div style="font-size:12px;color:#64748b;line-height:1.6">'+desc+'</div>';
     html+='</div>';
     return html;
@@ -79,7 +78,7 @@
         var lbl=en?(VISIT_L[p.visit]?VISIT_L[p.visit].en:''):(VISIT_L[p.visit]?VISIT_L[p.visit].cn:'');
         return n2+' · '+lbl;
       },{sticky:true});
-      marker.bindPopup(function(){return makeVisitPopup(p);},{maxWidth:240});
+      marker.bindPopup(function(){return makeVisitPopup(p);},{maxWidth:240,closeButton:false});
       visitGroup.addLayer(marker);
     });
   }
@@ -101,11 +100,11 @@
       });
       marker.bindTooltip(function(){
         var en=isEn();
-        var n2=en?(p.en||p.name):p.name;
+        var n2=en?(p.langLabelEn||p.en||p.name):(p.langLabel||p.name);
         var lbl=en?(LANG_L[p.lang]?LANG_L[p.lang].en:''):(LANG_L[p.lang]?LANG_L[p.lang].cn:'');
         return n2+' · '+lbl;
       },{sticky:true});
-      marker.bindPopup(function(){return makeLangPopup(p);},{maxWidth:240});
+      marker.bindPopup(function(){return makeLangPopup(p);},{maxWidth:240,closeButton:false});
       langGroup.addLayer(marker);
     });
   }
