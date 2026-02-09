@@ -1,802 +1,951 @@
-<html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>个人主页</title>
+  <title>认识小对</title>
   <style>
     :root {
-      --bg-page: #f0f6fb;
-      --bg-card: #fff;
-      --primary: #1e3a5f;
-      --accent: #0ea5e9;
-      --text: #1f2937;
-      --text-muted: #4b5563;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --radius: 12px;
+      --bg-page: #0c1220;
+      --bg-card: rgba(255,255,255,0.06);
+      --bg-card-solid: #161e30;
+      --primary: #e0e7ff;
+      --accent: #38bdf8;
+      --accent2: #a78bfa;
+      --accent3: #f472b6;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --shadow: 0 4px 24px rgba(0,0,0,0.3);
+      --radius: 16px;
+      --gold: #fbbf24;
     }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:"Inter","SF Pro Display","Microsoft YaHei",-apple-system,sans-serif;background:var(--bg-page);color:var(--text);line-height:1.7;overflow-x:hidden}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    /* ===== NAV ===== */
+    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(12,18,32,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;gap:1.2rem;padding:0 1rem;z-index:1000;font-size:.82rem}
+    .nav a{color:var(--text-muted);text-decoration:none;font-weight:500;transition:color .2s}
+    .nav a:hover{color:var(--accent)}
+    .nav-sep{color:rgba(255,255,255,0.15);font-size:.7rem}
 
-    html {
-      scroll-behavior: smooth;
-    }
+    main{padding-top:52px}
 
-    body {
-      font-family: "Microsoft YaHei", "Inter", -apple-system, sans-serif;
-      background: var(--bg-page);
-      color: var(--text);
-      line-height: 1.6;
-    }
+    /* ===== COMMON ===== */
+    .section-wrap{max-width:1100px;margin:0 auto;padding:3.5rem 1.5rem}
+    .section-title{font-size:1.6rem;font-weight:700;color:var(--primary);margin-bottom:.5rem;letter-spacing:-.02em}
+    .section-sub{font-size:1.15rem;font-weight:600;color:var(--text);margin:2.5rem 0 .8rem;display:flex;align-items:center;gap:.5rem}
+    .section-sub::before{content:'';width:4px;height:1.1em;border-radius:2px;background:var(--accent)}
+    .unlock-banner{text-align:center;padding:2.5rem 1rem;font-size:1rem;color:var(--accent);letter-spacing:.15em;font-weight:600;opacity:.7}
+    .unlock-banner span{display:inline-block;padding:.5rem 2rem;border:1px solid rgba(56,189,248,0.3);border-radius:999px;background:rgba(56,189,248,0.05)}
 
-    /* ----- 导航 ----- */
-    .nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      min-height: 56px;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem 1.5rem;
-      padding: 0.75rem 1rem;
-      z-index: 1000;
-    }
+    /* ===== 0. HERO ===== */
+    #hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#1a2744 0%,#0c1220 70%);overflow:hidden}
+    #hero-keywords{position:absolute;inset:0;pointer-events:none}
+    .hero-kw{position:absolute;color:rgba(255,255,255,0.12);font-weight:700;white-space:nowrap;animation:kwFloat 8s ease-in-out infinite alternate}
+    @keyframes kwFloat{0%{transform:translateY(0) rotate(0deg)}100%{transform:translateY(-18px) rotate(2deg)}}
+    #hero-center{position:relative;z-index:2;text-align:center;max-width:800px;padding:0 1.5rem}
+    #hero-center h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,#e0e7ff,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
+    #hero-center .hero-subtitle{color:var(--text-muted);font-size:1rem;margin-bottom:2rem}
+    .hero-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;width:100%;margin-top:1.5rem}
+    .hero-card{background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:1.2rem 1.4rem;text-align:left;backdrop-filter:blur(8px)}
+    .hero-card h3{font-size:.85rem;color:var(--accent);margin-bottom:.5rem;font-weight:600;letter-spacing:.05em}
+    .hero-card p,.hero-card ul{font-size:.82rem;color:var(--text-muted);line-height:1.7}
+    .hero-card ul{list-style:none;padding:0}
+    .hero-card ul li{padding:2px 0}
+    .hero-card ul li::before{content:'·';color:var(--accent);margin-right:.4rem}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+    .hero-badge{display:inline-block;padding:.2rem .7rem;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.25);border-radius:999px;font-size:.75rem;color:var(--accent2);font-weight:600;letter-spacing:.03em}
 
-    .nav a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
+    /* ===== 1.1 INTEREST CARD GAME ===== */
+    .interest-section{display:flex;flex-direction:column;align-items:center;padding:1rem 0 2rem}
+    .game-controls{display:flex;gap:.75rem;margin-bottom:1.2rem}
+    .btn{padding:.5rem 1.4rem;border:1px solid rgba(56,189,248,0.3);border-radius:999px;background:rgba(56,189,248,0.08);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+    .btn:hover{background:rgba(56,189,248,0.2);border-color:rgba(56,189,248,0.5)}
+    .game-board{display:grid;grid-template-columns:repeat(5,88px);gap:8px}
+    .card{width:88px;height:108px;perspective:600px}
+    .card-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+    .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
+    .card.matched .card-inner{box-shadow:0 0 12px rgba(56,189,248,0.3)}
+    .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:600;padding:6px}
+    .card-front{color:#fff;transform:rotateY(180deg);justify-content:space-between;padding:8px 6px}
+    .category-name{font-size:10px;opacity:.85;letter-spacing:.04em}
+    .category-logo{width:32px;height:32px;fill:currentColor;color:rgba(255,255,255,0.9)}
+    .category-logo svg{width:100%;height:100%}
+    .item-name{font-size:12px;font-weight:700}
+    .card-back{background:var(--bg-card-solid);border:1.5px solid rgba(255,255,255,0.1);font-size:1.2rem;color:var(--text-muted)}
+    .card-back::after{content:'?';font-size:1.6rem;opacity:.4}
+    .game-status{margin-top:1rem;font-size:.9rem;color:var(--text-muted);font-weight:500}
 
-    .nav a:hover {
-      color: var(--accent);
-    }
+    /* ===== 1.2 CAREER ===== */
+    .career-wrap{display:flex;min-height:440px;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.06);background:var(--bg-card-solid)}
+    .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem 1rem;transition:background .3s}
+    .career-pane:first-child{border-right:1px solid rgba(255,255,255,0.06)}
+    #career-left{background:linear-gradient(160deg,#1a2235 0%,#1e293b 100%)}
+    #career-right{background:linear-gradient(160deg,#1e293b 0%,#1a2235 100%)}
+    .career-pane-label{font-size:.8rem;color:var(--text-muted);margin-bottom:1rem;opacity:0;transition:opacity .3s}
+    .career-pane:hover .career-pane-label{opacity:1}
 
-    .nav-sub {
-      display: flex;
-      gap: 1rem;
-    }
+    .money-bag-container{position:relative;width:180px;height:240px;cursor:pointer}
+    .money-bag-svg{width:100%;height:100%;transition:transform .7s cubic-bezier(.175,.885,.32,1.275);transform-origin:center 70%}
+    .money-bag-svg.inverted{transform:rotate(180deg)}
+    .coin-grid{position:absolute;left:0;right:0;bottom:-60px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .coin{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fde68a,#fbbf24 40%,#d97706 100%);border:3px solid #b45309;display:flex;justify-content:center;align-items:center;font-weight:800;color:#78350f;font-size:11px;cursor:pointer;transform:scale(0);opacity:0;transition:all .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 -2px 4px rgba(0,0,0,0.2),inset 0 2px 4px rgba(255,255,255,0.3);position:relative}
+    .coin::after{content:'';position:absolute;inset:4px;border-radius:50%;border:1.5px solid rgba(120,53,15,0.3)}
+    .money-bag-container.active .coin{transform:scale(1);opacity:1}
+    .money-bag-container.active .coin:nth-child(1){transition-delay:.1s}
+    .money-bag-container.active .coin:nth-child(2){transition-delay:.2s}
+    .money-bag-container.active .coin:nth-child(3){transition-delay:.3s}
+    .money-bag-container.active .coin:nth-child(4){transition-delay:.4s}
+    .coin-label{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none}
+    .coin:hover .coin-label,.coin.pinned .coin-label{opacity:1}
+    .career-hover-label{font-size:.85rem;color:var(--accent);font-weight:600;margin-top:.8rem;min-height:1.5em;opacity:0;transition:opacity .3s}
+    .career-hover-label.visible{opacity:1}
 
-    main {
-      padding-top: 56px;
-    }
+    .egg-container{position:relative;width:160px;height:210px;cursor:pointer;display:flex;justify-content:center;align-items:center}
+    .egg-shell{position:absolute;width:140px;height:180px;left:50%;top:50%;transform:translate(-50%,-50%)}
+    .egg-top,.egg-bottom{position:absolute;width:100%;left:0;z-index:20;transition:all .8s cubic-bezier(.68,-.55,.265,1.55)}
+    .egg-top{top:0;height:55%;border-radius:50% 50% 0 0/60% 60% 0 0;background:radial-gradient(ellipse at 40% 40%,#fef3c7,#fde68a,#fcd34d);box-shadow:inset 0 -2px 8px rgba(0,0,0,0.1);transform-origin:bottom right}
+    .egg-bottom{bottom:0;height:50%;border-radius:0 0 50% 50%/0 0 55% 55%;background:radial-gradient(ellipse at 40% 60%,#fde68a,#fbbf24);box-shadow:inset 0 2px 8px rgba(0,0,0,0.1);transform-origin:top left}
+    .egg-crack{position:absolute;top:48%;left:10%;right:10%;height:4%;z-index:21;opacity:0;transition:opacity .3s}
+    .egg-crack svg{width:100%;height:100%}
+    .egg-container.active .egg-top{transform:rotate(-25deg) translate(-40px,-40px);opacity:0}
+    .egg-container.active .egg-bottom{transform:rotate(20deg) translate(40px,40px);opacity:0}
+    .egg-container.active .egg-crack{opacity:0}
+    .egg-container:not(.active):hover .egg-crack{opacity:1}
+    .cloud-icon{position:absolute;z-index:15;transform:scale(0);transition:transform .8s cubic-bezier(.34,1.56,.64,1) .2s;cursor:pointer}
+    .egg-container.active .cloud-icon{transform:scale(1)}
+    .cloud-label{font-size:.85rem;color:var(--accent);font-weight:600;margin-top:.8rem;min-height:1.5em;opacity:0;transition:opacity .3s}
+    .cloud-label.visible{opacity:1}
 
-    /* ----- 通用区块 ----- */
-    section {
-      padding: 3rem 1.5rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    /* ===== 1.3 KNOWLEDGE BUBBLES ===== */
+    .knowledge-spores{position:relative;height:500px;background:linear-gradient(160deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+    .spores-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,0.6);font-size:1rem;pointer-events:none;z-index:2;opacity:0;transition:opacity 1s}
+    .spores-hint.visible{opacity:1}
+    .spores-hint.faded{opacity:0;transition:opacity 1.5s}
+    .spores-canvas{position:absolute;inset:0;pointer-events:none;z-index:3}
+    .spores-bubbles{position:absolute;inset:0;z-index:1}
+    .spore-bubble{position:absolute;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;text-align:center;font-size:12px;font-weight:600;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.4);pointer-events:auto;transition:transform .15s,box-shadow .15s;user-select:none}
+    .spore-bubble:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(255,255,255,0.15)}
+    .spores-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,0.8);opacity:0;pointer-events:none;z-index:4;transition:opacity .4s;backdrop-filter:blur(4px)}
+    .spores-overlay.visible{opacity:1;pointer-events:auto}
+    .spores-overlay-content{max-width:400px;padding:2rem 2.5rem;background:rgba(30,27,75,0.95);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;border:1px solid rgba(255,255,255,0.1)}
+    .spores-overlay-term{font-size:1.3rem;font-weight:700;margin-bottom:.6rem;color:#fff}
+    .spores-overlay-desc{font-size:.9rem;line-height:1.8;color:var(--text-muted)}
 
-    section h2 {
-      font-size: 1.75rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 3px solid var(--accent);
-    }
+    /* ===== 1.4 WORLD MAP ===== */
+    .world-map-section{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(160deg,#0f172a,#1e293b)}
+    .world-map-header{padding:1.5rem 2rem .5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+    .world-map-header h4{font-size:1rem;color:var(--primary);font-weight:600}
+    .map-legend{display:flex;gap:1rem;font-size:.75rem;color:var(--text-muted)}
+    .map-legend-item{display:flex;align-items:center;gap:.35rem}
+    .map-legend-dot{width:10px;height:10px;border-radius:50%}
+    .map-legend-dot.lang{background:#a78bfa}
+    .map-legend-dot.been{background:#38bdf8}
+    .map-legend-dot.both{background:linear-gradient(135deg,#a78bfa,#38bdf8)}
+    .world-map-container{position:relative;width:100%;padding-bottom:50%;overflow:hidden}
+    .world-map-container svg{position:absolute;inset:0;width:100%;height:100%}
+    .map-region{fill:rgba(255,255,255,0.06);stroke:rgba(255,255,255,0.1);stroke-width:.5;cursor:pointer;transition:fill .3s}
+    .map-region:hover{fill:rgba(255,255,255,0.12)}
+    .map-region.been{fill:rgba(56,189,248,0.25);stroke:rgba(56,189,248,0.4)}
+    .map-region.lang{fill:rgba(167,139,250,0.25);stroke:rgba(167,139,250,0.4)}
+    .map-region.both{fill:rgba(130,160,240,0.3);stroke:rgba(130,160,240,0.5)}
+    .map-tooltip{position:absolute;background:rgba(30,41,59,0.95);color:#fff;padding:6px 12px;border-radius:8px;font-size:.75rem;pointer-events:none;opacity:0;transition:opacity .2s;z-index:5;white-space:nowrap;border:1px solid rgba(255,255,255,0.1)}
+    .map-tooltip.visible{opacity:1}
+    .map-instructions{text-align:center;padding:.8rem;font-size:.75rem;color:var(--text-muted);opacity:.6}
 
-    section h3 {
-      font-size: 1.25rem;
-      color: var(--text);
-      margin: 1.5rem 0 0.75rem;
-    }
+    /* ===== TIMELINE ===== */
+    .timeline-container{position:relative;padding:1rem 0 1rem 2.5rem}
+    .timeline-line{position:absolute;left:12px;top:0;bottom:0;width:2px;background:rgba(255,255,255,0.08)}
+    .tl-item{position:relative;padding-bottom:1.8rem}
+    .tl-dot{position:absolute;left:-2.5rem;top:.4rem;width:14px;height:14px;border-radius:50%;border:2.5px solid;background:var(--bg-page)}
+    .tl-time{font-size:.8rem;color:var(--text-muted);font-weight:500}
+    .tl-title{font-size:.95rem;font-weight:600;color:var(--primary);margin-top:.15rem}
+    .tl-desc{font-size:.82rem;color:var(--text-muted);margin-top:.1rem}
+    .tl-edu .tl-dot{border-color:#3b82f6}
+    .tl-work .tl-dot{border-color:#ef4444}
+    .tl-proj .tl-dot{border-color:#22c55e}
+    .tl-culture .tl-dot{border-color:#f59e0b}
+    .tl-honor .tl-dot{border-color:#a855f7}
+    .timeline-legend{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
+    .tl-legend-item{display:flex;align-items:center;gap:.35rem;font-size:.78rem;color:var(--text-muted)}
+    .tl-legend-dot{width:10px;height:10px;border-radius:50%}
 
-    .placeholder {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 2rem;
-      box-shadow: var(--shadow);
-      color: var(--text-muted);
-      text-align: center;
-    }
+    /* ===== SKILL TREE ===== */
+    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:2rem 0}
+    .tree-svg{max-width:700px;width:100%}
+    .tree-branch-label{font-size:12px;fill:var(--text-muted);font-weight:600}
+    .tree-leaf{cursor:default;transition:transform .2s}
+    .tree-leaf:hover{transform:scale(1.1)}
 
-    /* ========== 1. Who am I ========== */
-    #whoami {
-      background: linear-gradient(180deg, #fff 0%, #f0f4f8 100%);
-    }
+    /* ===== ENDING ===== */
+    .ending-section{text-align:center;padding:4rem 1.5rem 5rem;max-width:600px;margin:0 auto}
+    .ending-section h2{font-size:1.5rem;color:var(--gold);font-weight:700;margin-bottom:1.2rem}
+    .ending-section p{font-size:.95rem;color:var(--text-muted);line-height:2;margin-bottom:.5rem}
 
-    /* ----- 1.1 关于兴趣 (翻翻乐) ----- */
-    .interest-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 20px;
-    }
+    /* ===== CONTACT ===== */
+    .contact-list{list-style:none;margin-top:.8rem}
+    .contact-list li{padding:.4rem 0;font-size:.9rem;color:var(--text-muted);display:flex;align-items:center;gap:.5rem}
+    .last-word{margin-top:1.5rem;padding:1.5rem 2rem;background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);text-align:center;font-size:1rem;color:var(--text);font-style:italic}
 
-    .interest-section h1 {
-      color: var(--primary);
-      margin-bottom: 20px;
-      font-size: 1.5rem;
-    }
-
-    .interest-section .game-board {
-      display: grid;
-      grid-template-columns: repeat(5, 100px);
-      gap: 10px;
-      max-width: 550px;
-    }
-
-    .interest-section .card {
-      width: 100px;
-      height: 120px;
-      perspective: 600px;
-    }
-
-    .interest-section .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.5s;
-      transform-style: preserve-3d;
-      cursor: pointer;
-    }
-
-    .interest-section .card.flipped .card-inner,
-    .interest-section .card.matched .card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .interest-section .card-front,
-    .interest-section .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      padding: 5px;
-      box-sizing: border-box;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .interest-section .card-front {
-      color: white;
-      transform: rotateY(180deg);
-      justify-content: space-between;
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    .interest-section .category-name { font-size: 12px; opacity: 0.9; }
-    .interest-section .category-logo { width: 40px; height: 40px; fill: white; }
-    .interest-section .item-name { font-size: 14px; font-weight: bold; }
-    .interest-section .card-back {
-      background-color: #f0f0f0;
-      border: 2px solid #ccc;
-      font-size: 24px;
-      color: #aaa;
-    }
-    .interest-section .status {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #555;
-    }
-
-    /* ----- 1.2 关于事业 (双栏) ----- */
-    .career-wrap {
-      display: flex;
-      min-height: 420px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .career-pane {
-      flex: 1;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background 0.3s;
-    }
-
-    #career-left {
-      background: linear-gradient(135deg, #e0eaec 0%, #cfdef3 100%);
-      border-right: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    #career-right {
-      background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);
-    }
-
-    .career-tooltip {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s;
-      z-index: 100;
-    }
-    .career-tooltip.visible { opacity: 1; transform: translateY(0); }
-
-    .money-bag-container {
-      position: relative;
-      width: 200px;
-      height: 350px;
-      cursor: pointer;
-      z-index: 10;
-    }
-    .money-bag-container .money-bag {
-      width: 100%;
-      height: 100%;
-      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform-origin: center bottom;
-    }
-    .money-bag-container .money-bag.inverted {
-      transform: rotate(180deg) translateY(-150px);
-    }
-    .money-bag-container .coin {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      background: radial-gradient(circle at 30% 30%, #ffd700, #fdb931);
-      border: 2px solid #d4af37;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      color: #b8860b;
-      font-size: 16px;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      cursor: pointer;
-      z-index: 5;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-    }
-    .money-bag-container.active .coin { opacity: 1; }
-    .money-bag-container.active .coin:nth-child(2) {
-      left: 15px; top: 260px;
-      transform: translate(0, 0) scale(1) rotate(15deg);
-      transition-delay: 0.1s;
-    }
-    .money-bag-container.active .coin:nth-child(3) {
-      left: 70px; top: 280px;
-      transform: translate(0, 0) scale(1) rotate(-10deg);
-      transition-delay: 0.2s;
-    }
-    .money-bag-container.active .coin:nth-child(4) {
-      left: 130px; top: 280px;
-      transform: translate(0, 0) scale(1) rotate(20deg);
-      transition-delay: 0.3s;
-    }
-    .money-bag-container.active .coin:nth-child(5) {
-      left: 185px; top: 260px;
-      transform: translate(0, 0) scale(1) rotate(-5deg);
-      transition-delay: 0.4s;
-    }
-
-    .egg-container {
-      position: relative;
-      width: 200px;
-      height: 260px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    .egg-top, .egg-bottom {
-      position: absolute;
-      width: 180px;
-      height: 120px;
-      background: radial-gradient(circle at 40% 80%, #ffefd5, #f5deb3);
-      left: 10px;
-      z-index: 20;
-      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s;
-    }
-    .egg-top {
-      top: 10px;
-      height: 130px;
-      border-radius: 50% 50% 0 0 / 60% 60% 0 0;
-      background: radial-gradient(circle at 40% 40%, #ffefd5, #f5deb3);
-      transform-origin: bottom right;
-    }
-    .egg-bottom {
-      bottom: 10px;
-      height: 110px;
-      border-radius: 0 0 50% 50% / 0 0 40% 40%;
-      background: radial-gradient(circle at 40% 10%, #ffefd5, #f5deb3);
-      transform-origin: top left;
-    }
-    .egg-container.active .egg-top {
-      transform: rotate(-30deg) translate(-50px, -50px);
-      opacity: 0;
-    }
-    .egg-container.active .egg-bottom {
-      transform: rotate(30deg) translate(50px, 50px);
-      opacity: 0;
-    }
-    .egg-container .cloud {
-      position: absolute;
-      width: 140px;
-      height: 80px;
-      background: #fff;
-      border-radius: 50px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      z-index: 15;
-      transform: scale(0);
-      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    .egg-container .cloud::before,
-    .egg-container .cloud::after {
-      content: '';
-      position: absolute;
-      background: #fff;
-      border-radius: 50%;
-    }
-    .egg-container .cloud::before {
-      width: 60px; height: 60px;
-      top: -30px; left: 20px;
-    }
-    .egg-container .cloud::after {
-      width: 40px; height: 40px;
-      top: -15px; right: 20px;
-    }
-    .egg-container.active .cloud {
-      transform: scale(1.5);
-    }
-
-    #dynamic-tooltip {
-      position: fixed;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      pointer-events: none;
-      opacity: 0;
-      z-index: 1001;
-      transition: all 0.3s;
-    }
-    #dynamic-tooltip.visible { opacity: 1; }
-
-    /* ----- 1.3 学习泡泡 Knowledge Spores ----- */
-    .knowledge-spores {
-      position: relative;
-      height: 450px;
-      background: linear-gradient(135deg, #0f2744 0%, #1a3a52 100%);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-top: 0.5rem;
-    }
-    .spores-hint {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 1.1rem;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-    .spores-hint.visible { opacity: 1; }
-    .spores-hint.faded { opacity: 0; transition: opacity 1.5s ease; }
-    .spores-canvas {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 3;
-    }
-    .spores-bubbles {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-    .spores-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(15, 39, 68, 0.75);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 4;
-      transition: opacity 0.4s ease;
-    }
-    .spores-overlay.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .spores-overlay-content {
-      max-width: 70%;
-      padding: 1.75rem 2rem;
-      background: rgba(30, 58, 95, 0.95);
-      border-radius: 18px;
-      box-shadow: 0 18px 45px rgba(15, 39, 68, 0.6);
-      text-align: center;
-      color: #f0f6fb;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(14, 165, 233, 0.2);
-    }
-    .spores-overlay-term {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-    .spores-overlay-desc {
-      font-size: 0.98rem;
-      line-height: 1.7;
-      color: rgba(219, 234, 254, 0.95);
-    }
-    .spore-bubble {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: 50%;
-      box-sizing: border-box;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-      pointer-events: auto;
-      transition: transform 0.15s ease;
-    }
-    .spore-bubble:hover {
-      transform: scale(1.05);
-    }
-
-    /* ----- 1.4 占位 ----- */
-    .whoami-placeholders {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1rem;
-    }
-
-    /* ========== 2. 基本信息 ========== */
-    #basic-info {
-      background: #fff;
-    }
-
-    .timeline {
-      position: relative;
-      padding-left: 2rem;
-      border-left: 3px solid var(--accent);
-      margin: 1rem 0;
-    }
-    .timeline-item {
-      position: relative;
-      padding-bottom: 1.5rem;
-    }
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -2rem;
-      top: 0.35rem;
-      width: 12px;
-      height: 12px;
-      background: var(--accent);
-      border-radius: 50%;
-      margin-left: -4px;
-    }
-    .timeline-item time { color: var(--text-muted); font-size: 0.9rem; }
-    .timeline-item strong { display: block; margin-top: 0.25rem; }
-
-    .skill-tree {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-    .skill-tag {
-      background: linear-gradient(135deg, #e8f4fc 0%, #d6eaf8 100%);
-      color: var(--primary);
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-    }
-
-    /* ========== 3. Takeaway ========== */
-    #takeaway {
-      background: linear-gradient(180deg, #f0f4f8 0%, #e8eef5 100%);
-    }
-
-    .contact-list {
-      list-style: none;
-      margin-top: 1rem;
-    }
-    .contact-list li {
-      padding: 0.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .contact-list a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .contact-list a:hover { text-decoration: underline; }
-
-    .last-word {
-      margin-top: 2rem;
-      padding: 2rem;
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      text-align: center;
-      font-size: 1.1rem;
-      color: var(--text);
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:600px){
+      .game-board{grid-template-columns:repeat(5,62px);gap:5px}
+      .card{width:62px;height:78px}
+      .category-logo{width:22px;height:22px}
+      .item-name{font-size:10px}
+      .category-name{font-size:8px}
+      .career-wrap{flex-direction:column;min-height:auto}
+      .career-pane:first-child{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}
+      .hero-cards{grid-template-columns:1fr}
+      .nav{font-size:.7rem;gap:.6rem}
     }
   </style>
 </head>
-
 <body>
-  <nav class="nav">
-    <a href="#whoami">1. Who am I</a>
-    <span class="nav-sub">
-      <a href="#interest">1.1 兴趣</a>
-      <a href="#career">1.2 事业</a>
-      <a href="#study">1.3 学习</a>
-      <a href="#aboutme">1.4 关于我</a>
-    </span>
-    <a href="#basic-info">2. 基本信息</a>
-    <span class="nav-sub">
-      <a href="#edu">2.1 学业</a>
-      <a href="#work">2.2 工作</a>
-      <a href="#project">2.3 项目</a>
-      <a href="#culture">2.4 文化</a>
-      <a href="#honors">2.5 荣誉</a>
-      <a href="#skills">2.6 技能树</a>
-    </span>
-    <a href="#takeaway">3. Takeaway</a>
-    <span class="nav-sub">
-      <a href="#contact">3.1 联系方式</a>
-      <a href="#lastword">3.2 最后一句话</a>
-    </span>
-  </nav>
 
-  <main>
-      <section id="whoami">
-        <h2>1. Who am I?</h2>
-        <div id="interest">
-          <h3>1.1 关于兴趣</h3>
-          <div class="interest-section">
-            <h1>兴趣爱好翻翻乐</h1>
-            <div class="game-controls" style="margin-bottom:12px;">
-              <button id="shuffleBtn" class="map-zoom-btn">一键打乱</button>
-            </div>
-            <div class="game-board" id="gameBoard"></div>
-            <div class="status" id="status">翻开两张卡片试试看！</div>
-          </div>
-        </div>
-        <div id="career">
-          <h3>1.2 关于事业</h3>
-          <div class="career-wrap">
-            <div class="career-overlay" id="careerOverlay"></div>
-            <div class="company-display" id="companyDisplay"></div>
-            <div class="career-pane" id="career-left">
-              <div class="money-bag-container" id="finance-trigger">
-                <svg class="money-bag" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M35,25 Q35,15 50,15 Q65,15 65,25" fill="none" stroke="#8B4513" stroke-width="3" stroke-linecap="round" />
-                  <ellipse cx="50" cy="30" rx="28" ry="8" fill="#DAA520" stroke="#B8860B" stroke-width="2" />
-                  <path d="M22,30 Q20,50 22,70 Q25,95 50,105 Q75,95 78,70 Q80,50 78,30" fill="#FFD700" stroke="#DAA520" stroke-width="2" />
-                  <path d="M50,30 Q30,50 32,75 Q35,95 50,103" fill="none" stroke="#B8860B" stroke-width="1.5" opacity="0.3" />
-                  <text x="50" y="70" text-anchor="middle" font-size="35" fill="#8B4513" font-weight="bold">$</text>
-                </svg>
-                <div class="coin" data-text="期货">
-                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <radialGradient id="g1" cx="30%" cy="30%" r="70%">
-                        <stop offset="0%" stop-color="#fff7cc" />
-                        <stop offset="100%" stop-color="#ffd24d" />
-                      </radialGradient>
-                    </defs>
-                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
-                    <text x="32" y="38" text-anchor="middle" font-size="20" fill="#8b4513" font-weight="700">$</text>
-                  </svg>
-                </div>
-                <div class="coin" data-text="律所IPO">
-                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
-                    <text x="32" y="38" text-anchor="middle" font-size="12" fill="#8b4513" font-weight="700">IPO</text>
-                  </svg>
-                </div>
-                <div class="coin" data-text="私募">
-                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
-                    <text x="32" y="36" text-anchor="middle" font-size="12" fill="#8b4513" font-weight="700">私募</text>
-                  </svg>
-                </div>
-                <div class="coin" data-text="券商投行">
-                  <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="24" fill="url(#g1)" stroke="#c98f00" stroke-width="2" />
-                    <text x="32" y="36" text-anchor="middle" font-size="10" fill="#8b4513" font-weight="700">券商</text>
-                  </svg>
-                </div>
-                <div class="career-tooltip" id="finance-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">点击金币查看经历</div>
-              </div>
-            </div>
-            <div class="career-pane" id="career-right">
-              <div class="egg-container" id="startup-trigger">
-                <svg class="egg-svg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="eggGrad" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stop-color="#FFF5E6" />
-                      <stop offset="60%" stop-color="#FFE9B3" />
-                      <stop offset="100%" stop-color="#FFD97A" />
-                    </linearGradient>
-                    <linearGradient id="shellGrad" x1="0" x2="1">
-                      <stop offset="0%" stop-color="#C9A184" />
-                      <stop offset="100%" stop-color="#8B7355" />
-                    </linearGradient>
-                  </defs>
-                  <path class="egg-shape" d="M100,18 C70,18 48,58 48,98 C48,148 68,200 100,238 C132,200 152,148 152,98 C152,58 130,18 100,18 Z" fill="url(#eggGrad)" stroke="#9b7a5a" stroke-width="2" />
-                  <path class="egg-crack" d="M85,88 C90,100 100,110 100,120 C100,130 95,140 100,150" fill="none" stroke="#5a4030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  <path class="egg-top-shell" d="M100,18 C79,18 62,40 58,62 C54,84 62,96 85,96 C110,96 116,84 142,62 C138,40 121,18 100,18 Z" fill="url(#shellGrad)" stroke="#6b5038" stroke-width="1.5" />
-                  <ellipse class="egg-white" cx="100" cy="150" rx="44" ry="36" fill="#FFFCE6" opacity="0" />
-                  <circle class="egg-yolk" cx="100" cy="140" r="18" fill="#FFD24D" opacity="0" />
-                </svg>
-                <div class="cloud" data-text="沄视科技" style="display:none;align-items:center;justify-content:center;padding:8px 12px;font-weight:700;color:#08306b;">
-                  <svg viewBox="0 0 64 40" width="160" height="80" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#ffffff" stroke="#d6e9ff" stroke-width="2">
-                      <ellipse cx="22" cy="24" rx="12" ry="8" />
-                      <ellipse cx="38" cy="20" rx="14" ry="9" />
-                      <ellipse cx="30" cy="18" rx="18" ry="10" />
-                    </g>
-                  </svg>
-                </div>
-                <div class="career-tooltip" id="startup-tooltip" style="left: 50%; top: -40px; transform: translateX(-50%); opacity: 0;">点击鸡蛋查看经历</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="study">
-          <h3>1.3 关于学习</h3>
-          <div class="knowledge-spores" id="knowledgeSpores">
-            <div class="spores-hint" id="sporesHint">戳开泡泡试试看</div>
-            <canvas class="spores-canvas" id="sporesCanvas"></canvas>
-            <div class="spores-bubbles" id="sporesBubbles"></div>
-            <div class="spores-overlay" id="sporesOverlay">
-              <div class="spores-overlay-content">
-                <div class="spores-overlay-term" id="sporesOverlayTerm"></div>
-                <div class="spores-overlay-desc" id="sporesOverlayDesc"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="aboutme">
-          <h3>1.4 我与世界 — 地图</h3>
-          <div class="world-map" id="worldMap">
-            <div class="map-legend">
-              <label><input type="checkbox" id="toggleVisited" checked> 我去过这里</label><br>
-              <label><input type="checkbox" id="toggleSpeak" checked> 我会说这里的语言</label>
-              <div style="margin-top: 8px;"><button id="mapResetView" class="map-zoom-btn">重置视角</button></div>
-            </div>
-            <div style="height: 480px; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);">
-              <div id="leafletMap" style="width: 100%; height: 100%;"></div>
-            </div>
-            <div class="map-controls">
-              <button class="map-zoom-btn" id="zoomOut">−</button>
-              <button class="map-zoom-btn" id="zoomIn">+</button>
-            </div>
-          </div>
-        </div>
-      </section>
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav">
+  <a href="#hero">Who am I</a><span class="nav-sep">|</span>
+  <a href="#interest">兴趣</a>
+  <a href="#career">事业</a>
+  <a href="#study">学习</a>
+  <a href="#worldmap">世界</a><span class="nav-sep">|</span>
+  <a href="#skills">技能树</a>
+  <a href="#timelines">时间轴</a><span class="nav-sep">|</span>
+  <a href="#takeaway">Takeaway</a>
+</nav>
 
-      <section id="basic-info">
-        <h2>2. 基本信息</h2>
-        <div id="edu">
-          <h3>2.1 学业时间轴</h3>
-          <div class="timeline">
-            <div class="timeline-item">
-              <time>20XX — 20XX</time>
-              <strong>学校名称 · 专业/学位</strong>
-              <span>简要描述</span>
-            </div>
+<main>
+
+<!-- ========== 0. HERO: WHO AM I ========== -->
+<section id="hero">
+  <div id="hero-keywords"></div>
+  <div id="hero-center">
+    <h1>Who am I?</h1>
+    <p class="hero-subtitle">一大堆关键词漂浮在页面中——来探索吧</p>
+    <div class="hero-cards">
+      <div class="hero-card">
+        <h3>自我评价</h3>
+        <ul>
+          <li>极具主动性</li>
+          <li>自信、好学、刨根究底</li>
+          <li>重视效率、向上管理</li>
+          <li>有审美、有思想、爱探索</li>
+          <li>超级大现充</li>
+        </ul>
+      </div>
+      <div class="hero-card">
+        <h3>思维方式</h3>
+        <ul>
+          <li>Trade-off 思维</li>
+          <li>Top-down 拆解</li>
+          <li>机会成本意识</li>
+          <li>风险对冲策略</li>
+        </ul>
+      </div>
+      <div class="hero-card">
+        <h3>人生格言</h3>
+        <p>相信复利的力量 · 多看事实 少看观点 · 无所求必满载而归 · 要有节奏感 · 着眼未来 · 慢慢来就是最快的</p>
+        <p style="margin-top:.5rem;color:var(--accent);font-style:italic;font-size:.8rem">If you got tangled up, just tango on.</p>
+      </div>
+    </div>
+    <div class="hero-badges" style="justify-content:center;margin-top:1.2rem">
+      <span class="hero-badge">Resilient</span>
+      <span class="hero-badge">Pivot</span>
+      <span class="hero-badge">Assertive</span>
+    </div>
+  </div>
+</section>
+
+<!-- UNLOCK: 小游戏 -->
+<div class="unlock-banner"><span>解锁：小游戏</span></div>
+
+<!-- ========== 1. WHO AM I ========== -->
+<div class="section-wrap" id="whoami-wrap">
+
+  <!-- 1.1 兴趣翻翻乐 -->
+  <div id="interest">
+    <div class="section-sub">1.1 关于兴趣</div>
+    <div class="interest-section">
+      <div class="game-controls">
+        <button class="btn" id="shuffleBtn">打乱重来</button>
+      </div>
+      <div class="game-board" id="gameBoard"></div>
+      <div class="game-status" id="gameStatus">翻开两张同类卡片试试看！</div>
+    </div>
+  </div>
+
+  <!-- 1.2 关于事业 -->
+  <div id="career">
+    <div class="section-sub">1.2 关于事业</div>
+    <div class="career-wrap">
+      <!-- LEFT: 金融 -->
+      <div class="career-pane" id="career-left">
+        <div class="career-pane-label">点击钱袋试试</div>
+        <div class="money-bag-container" id="finance-trigger">
+          <svg class="money-bag-svg" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bagGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#a16207"/>
+                <stop offset="40%" stop-color="#ca8a04"/>
+                <stop offset="100%" stop-color="#a16207"/>
+              </linearGradient>
+              <radialGradient id="bagShine" cx="35%" cy="30%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+            </defs>
+            <!-- rope -->
+            <ellipse cx="60" cy="32" rx="18" ry="8" fill="none" stroke="#78350f" stroke-width="3"/>
+            <rect x="50" y="10" width="20" height="22" rx="4" fill="#92400e"/>
+            <rect x="52" y="12" width="16" height="18" rx="3" fill="#a16207"/>
+            <!-- bag body -->
+            <path d="M28,30 Q8,55 12,100 Q16,145 60,148 Q104,145 108,100 Q112,55 92,30 Z" fill="url(#bagGrad)" stroke="#78350f" stroke-width="1.5"/>
+            <path d="M28,30 Q8,55 12,100 Q16,145 60,148 Q104,145 108,100 Q112,55 92,30 Z" fill="url(#bagShine)"/>
+            <!-- $ symbol -->
+            <text x="60" y="105" text-anchor="middle" font-size="42" fill="#78350f" font-weight="900" font-family="serif" opacity=".6">$</text>
+          </svg>
+          <div class="coin-grid" id="coinGrid">
+            <div class="coin" data-text="期货"><span>期货</span><span class="coin-label">期货</span></div>
+            <div class="coin" data-text="律所IPO"><span>律所</span><span class="coin-label">律所IPO</span></div>
+            <div class="coin" data-text="私募"><span>私募</span><span class="coin-label">私募</span></div>
+            <div class="coin" data-text="券商投行"><span>投行</span><span class="coin-label">券商投行</span></div>
           </div>
         </div>
-        <div id="work">
-          <h3>2.2 工作时间轴</h3>
-          <div class="timeline">
-            <div class="timeline-item">
-              <time>20XX — 至今</time>
-              <strong>公司/机构 · 职位</strong>
-              <span>工作内容简述</span>
+        <div class="career-hover-label" id="finance-label">金融经历</div>
+      </div>
+      <!-- RIGHT: 初创 -->
+      <div class="career-pane" id="career-right">
+        <div class="career-pane-label">点击蛋壳试试</div>
+        <div class="egg-container" id="startup-trigger">
+          <div class="egg-shell">
+            <div class="egg-top"></div>
+            <div class="egg-bottom"></div>
+            <div class="egg-crack">
+              <svg viewBox="0 0 120 6"><path d="M0,3 L15,1 L30,5 L45,2 L60,4 L75,1 L90,5 L105,2 L120,3" fill="none" stroke="#78350f" stroke-width="1.5"/></svg>
             </div>
           </div>
-        </div>
-        <div id="project">
-          <h3>2.3 项目时间轴</h3>
-          <div class="timeline">
-            <div class="timeline-item">
-              <time>20XX</time>
-              <strong>项目名称</strong>
-              <span>项目描述与你的角色</span>
-            </div>
-          </div>
-        </div>
-        <div id="culture">
-          <h3>2.4 文化时间轴</h3>
-          <div class="placeholder">旅行、活动、文化交流等时间线可放在这里。</div>
-        </div>
-        <div id="honors">
-          <h3>2.5 所获荣誉</h3>
-          <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-            <li>荣誉/奖项 1</li>
-          </ul>
-        </div>
-        <div id="skills">
-          <h3>2.6 技能树</h3>
-          <div class="skill-tree">
-            <svg class="skill-tree-svg" viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg">
-              <path d="M450 80 C450 140, 450 220, 450 300" stroke="#6b4f3d" stroke-width="12" fill="none" stroke-linecap="round" />
-              <g class="skill-node" data-id="root" transform="translate(450,70)">
-                <circle r="18" fill="#cfe8ff" stroke="#2b7bff" stroke-width="2" />
-                <text class="skill-label" x="0" y="4" text-anchor="middle">核心能力</text>
-              </g>
+          <!-- cloud revealed after crack -->
+          <div class="cloud-icon" id="cloud-icon">
+            <svg width="120" height="80" viewBox="0 0 120 80">
+              <defs>
+                <linearGradient id="cloudGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#e0e7ff"/>
+                  <stop offset="100%" stop-color="#c7d2fe"/>
+                </linearGradient>
+              </defs>
+              <ellipse cx="60" cy="50" rx="50" ry="22" fill="url(#cloudGrad)"/>
+              <circle cx="38" cy="35" r="22" fill="url(#cloudGrad)"/>
+              <circle cx="65" cy="30" r="26" fill="url(#cloudGrad)"/>
+              <circle cx="85" cy="40" r="18" fill="url(#cloudGrad)"/>
+              <text x="60" y="55" text-anchor="middle" font-size="13" fill="#4338ca" font-weight="700">沄视科技</text>
             </svg>
           </div>
         </div>
-      </section>
-
-      <section id="takeaway">
-        <h2>3. Takeaway</h2>
-        <div id="contact">
-          <h3>3.1 联系方式</h3>
-          <ul class="contact-list">
-            <li>📧 邮箱：your@email.com</li>
-          </ul>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <div class="career-tooltip" id="dynamic-tooltip"></div>
-
-  <div class="map-nav">
-    <div class="map-toggle" id="mapToggle">🗺️</div>
-    <div class="map-panel" id="mapPanel">
-      <div class="map-section">
-        <div class="map-section-title">📍 地 图</div>
-        <div class="map-item" data-target="#whoami">1. Who am I?</div>
+        <div class="career-hover-label" id="startup-label">初创经历</div>
       </div>
     </div>
   </div>
 
-  <script src="js/spores.js"></script>
-  <script src="js/map-and-skills.js"></script>
-  <script src="js/main.js"></script>
+  <!-- 1.3 关于学习 -->
+  <div id="study">
+    <div class="section-sub">1.3 关于学习</div>
+    <div class="knowledge-spores" id="knowledgeSpores">
+      <div class="spores-hint" id="sporesHint">戳开泡泡试试看</div>
+      <canvas class="spores-canvas" id="sporesCanvas"></canvas>
+      <div class="spores-bubbles" id="sporesBubbles"></div>
+      <div class="spores-overlay" id="sporesOverlay">
+        <div class="spores-overlay-content">
+          <div class="spores-overlay-term" id="sporesOverlayTerm"></div>
+          <div class="spores-overlay-desc" id="sporesOverlayDesc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 我与世界 -->
+  <div id="worldmap">
+    <div class="section-sub">1.4 我与世界</div>
+    <div class="world-map-section">
+      <div class="world-map-header">
+        <h4>点击地区切换状态</h4>
+        <div class="map-legend">
+          <div class="map-legend-item"><div class="map-legend-dot lang"></div>我会说这里的语言</div>
+          <div class="map-legend-item"><div class="map-legend-dot been"></div>我去过这里</div>
+          <div class="map-legend-item"><div class="map-legend-dot both"></div>都是</div>
+        </div>
+      </div>
+      <div class="world-map-container" id="worldMapContainer">
+        <svg id="worldMapSvg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="map-tooltip" id="mapTooltip"></div>
+      </div>
+      <div class="map-instructions">单击切换：默认 → 去过 → 会说语言 → 都是 → 默认</div>
+    </div>
+  </div>
+
+</div><!-- end section-wrap -->
+
+<!-- UNLOCK: 技能树 -->
+<div class="unlock-banner"><span>解锁：技能树</span></div>
+
+<!-- ========== 2. 技能树 ========== -->
+<div class="section-wrap" id="skills">
+  <div class="section-title">技能树</div>
+  <div class="skill-tree-wrap" id="skillTreeWrap"></div>
+</div>
+
+<!-- UNLOCK: 时间轴 -->
+<div class="unlock-banner"><span>解锁：时间轴</span></div>
+
+<!-- ========== 2. TIMELINES ========== -->
+<div class="section-wrap" id="timelines">
+  <div class="section-title">我是怎么一步步走来的</div>
+  <div class="timeline-legend">
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#3b82f6"></div>学业</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#ef4444"></div>工作</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#22c55e"></div>项目</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#f59e0b"></div>文化</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:#a855f7"></div>荣誉</div>
+  </div>
+  <div class="timeline-container" id="timelineContainer">
+    <div class="timeline-line"></div>
+  </div>
+</div>
+
+<!-- ========== MAP LIT ========== -->
+<div class="unlock-banner" style="color:var(--gold)"><span style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.05)">地图已经全部点亮</span></div>
+
+<!-- ========== 3. TAKEAWAY ========== -->
+<div class="section-wrap" id="takeaway">
+  <div class="section-title">3. Takeaway</div>
+
+  <div class="section-sub" id="contact">3.1 联系方式</div>
+  <ul class="contact-list">
+    <li>邮箱：your@email.com</li>
+    <li>微信 / 其他：请填写</li>
+    <li>LinkedIn / 个人链接：请填写</li>
+  </ul>
+
+  <div class="section-sub" id="lastword">3.2 最后一句话</div>
+  <div class="last-word">
+    If you got tangled up, just tango on.
+  </div>
+</div>
+
+<!-- ========== ENDING ========== -->
+<div class="ending-section" id="ending">
+  <h2>恭喜你顺利通关！</h2>
+  <p>认识小对的小游戏到这里就结束啦，</p>
+  <p>但小对和你的故事才刚刚开始，</p>
+  <p>让我们一起继续探索吧，</p>
+  <p>相信她一定会给你带来惊喜！</p>
+</div>
+
+</main>
+
+<script>
+// ================================================================
+//  DATA
+// ================================================================
+const CATEGORY_STYLES = {
+  music:      { label:'音乐类', color:'#9333ea', icon:'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z' },
+  sports:     { label:'运动类', color:'#16a34a', icon:'M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 1.1-5.2C15.3 12 16.1 12 16.5 12c.8 0 1.5-.1 2-.3V6c-.5.2-1.2.3-2 .3-.6 0-1.2-.1-1.7-.3l-2-1-1-1.1L9.8 8.9z' },
+  experience: { label:'体验类', color:'#0284c7', icon:'M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4c-1.1 0-2 .9-2 2v3.8h1.5c1.4 0 2.5 1.1 2.5 2.5S4.9 15.8 3.5 15.8H2V19c0 1.1.9 2 2 2h3.8v-1.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5V21H17c1.1 0 2-.9 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z' },
+  arts:       { label:'文艺类', color:'#ea580c', icon:'M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z' }
+};
+const HOBBY_ITEMS = [
+  {n:'合唱',c:'music'},{n:'钢琴',c:'music'},{n:'小提琴',c:'music'},{n:'音乐剧',c:'music'},
+  {n:'旅行',c:'experience'},{n:'摄影',c:'experience'},{n:'美食探店',c:'experience'},{n:'做小手工',c:'experience'},{n:'轰趴',c:'experience'},{n:'KTV',c:'experience'},
+  {n:'阅读',c:'arts'},{n:'电影',c:'arts'},{n:'国际象棋',c:'arts'},{n:'写作',c:'arts'},
+  {n:'铁三',c:'sports'},{n:'骑行',c:'sports'},{n:'长跑',c:'sports'},{n:'游泳',c:'sports'},{n:'徒步',c:'sports'},{n:'健身',c:'sports'}
+];
+
+const SPORES_TOPICS = [
+  {id:'internet',name:'互联网',color:'#0ea5e9',entries:[
+    {term:'互联网黑话',desc:'赋能、抓手、底层逻辑、颗粒度、拉齐对齐……这些词在互联网公司的会议里每天都在飞。'},
+    {term:'DAU / MAU',desc:'日活跃用户/月活跃用户，衡量一个产品有多少人真的在用。'},
+    {term:'用户增长飞轮',desc:'通过产品体验→口碑→新用户→更多数据→更好体验的循环，实现自增长。'}
+  ]},
+  {id:'ecommerce',name:'电商',color:'#f43f5e',entries:[
+    {term:'GMV',desc:'Gross Merchandise Volume，成交总额。电商人每天盯着看的核心数字。'},
+    {term:'转化率',desc:'从浏览到下单的比例，每提高0.1%都意味着巨大的收入增长。'},
+    {term:'复购率',desc:'用户买了一次之后还会不会再来？这决定了生意能不能持续。'}
+  ]},
+  {id:'pm',name:'产品经理',color:'#8b5cf6',entries:[
+    {term:'需求池',desc:'产品经理的武器库——所有待做的功能和改进都在这里排队等候。'},
+    {term:'MVP',desc:'最小可行产品。先做一个最简单的版本验证想法，再逐步迭代。'},
+    {term:'用户故事',desc:'"作为一个XX用户，我想要XX，以便XX"——产品经理思考需求的标准句式。'}
+  ]},
+  {id:'retail',name:'零售',color:'#06b6d4',entries:[
+    {term:'SKU',desc:'Stock Keeping Unit，最小存货单位。一个颜色、一个尺码就是一个SKU。'},
+    {term:'坪效',desc:'每平米产生的销售额，衡量零售空间效率的核心指标。'},
+    {term:'动销率',desc:'有多少比例的商品在一定时间内卖出去了？库存管理的关键。'}
+  ]},
+  {id:'ai',name:'人工智能',color:'#a855f7',entries:[
+    {term:'大模型（LLM）',desc:'在海量文本上训练出的"语言大脑"，能理解和生成人类语言。GPT、Claude都是。'},
+    {term:'Prompt Engineering',desc:'如何给AI写好指令？这是一门新兴的"提问的艺术"。'},
+    {term:'幻觉（Hallucination）',desc:'AI有时会自信地编造不存在的事实——就像人类有时也会记错。'}
+  ]},
+  {id:'nn',name:'神经网络',color:'#ec4899',entries:[
+    {term:'反向传播',desc:'神经网络的"自我纠正"机制——通过误差一层层反推，自动调整权重。'},
+    {term:'激活函数',desc:'让神经网络产生非线性。没有它，再深的网络也只是线性变换。'},
+    {term:'Transformer',desc:'注意力机制的集大成者，ChatGPT背后的核心架构。'}
+  ]},
+  {id:'politics',name:'政治学',color:'#10b981',entries:[
+    {term:'权力分立',desc:'立法、行政、司法互相制衡，防止权力滥用的制度设计。'},
+    {term:'社会契约论',desc:'政府的权力来自人民的授权——卢梭提出的经典理论。'},
+    {term:'博弈论',desc:'在对手的决策影响你的结果时，如何做出最优选择？'}
+  ]},
+  {id:'economics',name:'经济学',color:'#f59e0b',entries:[
+    {term:'边际效用递减',desc:'第一块披萨最香，第十块就只是填肚子——经济学最直观的规律。'},
+    {term:'沉没成本谬误',desc:'已经投入的时间和金钱不应该影响未来决策，但人们总是放不下。'},
+    {term:'帕累托法则',desc:'80/20法则——20%的努力产生80%的结果，专注关键少数。'}
+  ]},
+  {id:'invest',name:'投资理财',color:'#eab308',entries:[
+    {term:'不要把鸡蛋放在一个篮子里',desc:'分散投资降低风险——这是投资的第一课。'},
+    {term:'鸡尾酒会理论',desc:'彼得·林奇说：当鸡尾酒会上人人都在聊股票时，市场可能快到顶了。'},
+    {term:'蒙特卡洛模拟',desc:'用大量随机模拟来预测不确定性结果，金融工程师的常用工具。'}
+  ]},
+  {id:'linguistics',name:'语言学',color:'#14b8a6',entries:[
+    {term:'结构主义',desc:'索绪尔提出：语言是一个系统，每个词的意义来自它与其他词的关系。'},
+    {term:'语用学',desc:'同一句话在不同场景下意思完全不同——语境决定意义。'},
+    {term:'语言相对论',desc:'你说什么语言，可能会影响你怎么思考世界——Sapir-Whorf假说。'}
+  ]},
+  {id:'lanlearn',name:'语言学习',color:'#0ea5e9',entries:[
+    {term:'你好的一千种说法',desc:'Hello · 你好 · こんにちは · 안녕하세요 · Bonjour · Hola · Ciao · Hallo · Привет · مرحبا'},
+    {term:'沉浸式学习',desc:'把自己扔进语言环境里，像婴儿一样学语言，效率最高。'},
+    {term:'语言迁移',desc:'学过的语言会帮助你学新语言——多语言者的大脑在偷偷帮你。'}
+  ]},
+  {id:'comm',name:'传播学',color:'#f97316',entries:[
+    {term:'5W模型',desc:'Who说What通过What Channel对Whom产生What Effect——拉斯韦尔的经典传播模型。'},
+    {term:'议程设置',desc:'媒体不能决定你怎么想，但能决定你想什么。'},
+    {term:'回音室效应',desc:'算法让你只看到自己认同的观点，世界观越来越窄。'}
+  ]},
+  {id:'symphony',name:'交响乐',color:'#a855f7',entries:[
+    {term:'交响乐团编制',desc:'弦乐组铺底色，木管出旋律，铜管加高光，打击乐点睛——一个好乐团像一家好公司。'},
+    {term:'指挥的角色',desc:'指挥不发出声音，但决定了所有声音如何融合——真正的领导力。'},
+    {term:'协奏曲',desc:'一件独奏乐器与整个乐团的对话——个人与集体的完美博弈。'}
+  ]},
+  {id:'choir',name:'合唱',color:'#d946ef',entries:[
+    {term:'四个声部',desc:'女高音（Soprano）、女低音（Alto）、男高音（Tenor）、男低音（Bass）——SATB，合唱的基本编制。'},
+    {term:'和声',desc:'多个声部同时发声，各自独立却又完美融合——这就是合唱的魔力。'},
+    {term:'泛音列',desc:'一个音其实包含无数个音——这是为什么和声听起来这么丰满。'}
+  ]},
+  {id:'stage',name:'舞台艺术',color:'#ec4899',entries:[
+    {term:'具身体验',desc:'演员用身体和呼吸诠释角色，观众在现场共同参与创作这一刻。'},
+    {term:'第四面墙',desc:'舞台前方那道看不见的墙——打破它，观众就成了演出的一部分。'},
+    {term:'即兴表演',desc:'没有剧本，一切都在当下发生——最考验演员功力的表演形式。'}
+  ]},
+  {id:'biztycoon',name:'商业巨头',color:'#22c55e',entries:[
+    {term:'从车库到帝国',desc:'苹果、亚马逊、惠普……硅谷最经典的创业叙事从车库开始。'},
+    {term:'第一性原理',desc:'马斯克的思维方式：回到最基本的事实，从零开始推导解决方案。'},
+    {term:'飞轮效应',desc:'贝佐斯的亚马逊：低价→更多客户→更多卖家→更低价→继续转。'}
+  ]},
+  {id:'bizanalysis',name:'商业分析',color:'#3b82f6',entries:[
+    {term:'SWOT分析',desc:'优势、劣势、机会、威胁——最经典的商业分析框架。'},
+    {term:'波特五力',desc:'供应商、买家、替代品、新进入者、同行竞争——决定行业吸引力的五种力量。'},
+    {term:'商业画布',desc:'一张图说清楚商业模式：价值主张、客户、渠道、收入、成本……'}
+  ]},
+  {id:'meme',name:'互联网热梗',color:'#ef4444',entries:[
+    {term:'遥遥领先',desc:'从华为发布会金句变成全民口头禅——热梗的传播力就是这么强。'},
+    {term:'City不City',desc:'外国博主的一句中式英语，瞬间席卷全网——语言碰撞产生的化学反应。'},
+    {term:'我真的会谢',desc:'感谢？吐槽？都是——当代年轻人的情绪出口。'}
+  ]}
+];
+
+const MAP_REGIONS = [
+  {id:'cn',name:'中国',d:'M680,180 L720,170 L740,190 L750,210 L740,240 L720,250 L700,240 L680,250 L660,240 L650,220 L660,200 L670,190 Z'},
+  {id:'jp',name:'日本',d:'M780,200 L790,190 L795,200 L790,220 L785,230 L780,220 Z'},
+  {id:'kr',name:'韩国',d:'M755,200 L762,195 L768,205 L762,215 L755,210 Z'},
+  {id:'sea',name:'东南亚',d:'M700,260 L740,255 L760,270 L750,290 L730,300 L710,290 L695,275 Z'},
+  {id:'india',name:'印度',d:'M630,230 L660,220 L670,240 L660,270 L640,285 L625,270 L620,250 Z'},
+  {id:'meast',name:'中东',d:'M560,200 L600,190 L620,210 L610,235 L580,240 L560,225 Z'},
+  {id:'eur-w',name:'西欧',d:'M460,130 L490,120 L500,140 L495,160 L480,170 L465,160 L455,145 Z'},
+  {id:'eur-e',name:'东欧',d:'M500,120 L530,110 L545,130 L540,155 L520,160 L505,150 L500,135 Z'},
+  {id:'uk',name:'英国',d:'M445,125 L455,120 L458,132 L452,140 L445,135 Z'},
+  {id:'russia',name:'俄罗斯',d:'M540,80 L700,60 L750,80 L740,120 L700,140 L650,130 L600,135 L560,120 L545,100 Z'},
+  {id:'africa-n',name:'北非',d:'M440,210 L520,200 L540,220 L530,250 L500,260 L460,255 L440,235 Z'},
+  {id:'africa-s',name:'南非',d:'M470,270 L520,265 L535,290 L525,330 L500,345 L475,335 L460,310 L455,285 Z'},
+  {id:'na-us',name:'美国',d:'M120,150 L240,140 L260,165 L240,190 L180,195 L130,185 L110,170 Z'},
+  {id:'na-ca',name:'加拿大',d:'M110,90 L250,80 L270,110 L250,135 L180,140 L120,140 L100,120 Z'},
+  {id:'mexico',name:'墨西哥',d:'M130,195 L180,200 L190,220 L170,240 L145,235 L125,215 Z'},
+  {id:'sa-br',name:'巴西',d:'M230,280 L290,270 L310,300 L300,340 L270,360 L240,350 L225,320 L220,295 Z'},
+  {id:'sa-other',name:'南美洲其他',d:'M200,250 L230,240 L240,265 L230,290 L220,320 L210,345 L195,330 L190,300 L185,270 Z'},
+  {id:'oceania',name:'大洋洲',d:'M780,330 L830,320 L850,340 L840,365 L810,375 L785,365 L775,350 Z'},
+  {id:'nz',name:'新西兰',d:'M860,370 L870,365 L875,380 L868,390 L860,385 Z'},
+  {id:'central-asia',name:'中亚',d:'M590,150 L640,140 L660,160 L650,180 L620,185 L595,175 Z'}
+];
+
+const TIMELINE_DATA = [
+  {year:'2025',type:'edu',title:'学校名称 · 专业/学位',desc:'简要描述'},
+  {year:'2024',type:'work',title:'公司/机构 · 职位',desc:'工作内容简述'},
+  {year:'2024',type:'proj',title:'项目名称',desc:'项目描述与你的角色'},
+  {year:'2023',type:'culture',title:'文化活动/交流',desc:'简要描述'},
+  {year:'2023',type:'honor',title:'荣誉/奖项',desc:'获奖描述'},
+  {year:'2023',type:'edu',title:'学校名称 · 专业/学位',desc:'简要描述'},
+  {year:'2022',type:'work',title:'公司/机构 · 职位',desc:'工作内容简述'},
+  {year:'2022',type:'proj',title:'项目名称',desc:'项目描述与你的角色'},
+  {year:'2022',type:'culture',title:'文化活动/交流',desc:'简要描述'},
+  {year:'2021',type:'honor',title:'荣誉/奖项',desc:'获奖描述'},
+  {year:'2021',type:'edu',title:'学校名称 · 专业/学位',desc:'简要描述'}
+];
+
+const SKILL_TREE_DATA = {
+  trunk:'核心能力',
+  branches:[
+    {name:'语言',color:'#3b82f6',leaves:['中文','English','日本語','한국어']},
+    {name:'金融',color:'#eab308',leaves:['投行','私募','期货','IPO']},
+    {name:'技术',color:'#22c55e',leaves:['Python','SQL','数据分析','AI']},
+    {name:'产品',color:'#f43f5e',leaves:['用户研究','原型设计','需求分析','项目管理']},
+    {name:'创意',color:'#a855f7',leaves:['写作','摄影','设计','音乐']},
+    {name:'软实力',color:'#06b6d4',leaves:['演讲','沟通','领导力','团队协作']}
+  ]
+};
+
+// ================================================================
+//  0. HERO FLOATING KEYWORDS
+// ================================================================
+(function(){
+  const kws = ['Resilient','Pivot','Assertive','Trade-off','Top-down','复利','节奏感',
+    '效率','审美','探索','自信','好学','主动','风险对冲','机会成本','着眼未来',
+    'Tango on','现充','向上管理','刨根究底','思想','多看事实'];
+  const container = document.getElementById('hero-keywords');
+  kws.forEach((w,i) => {
+    const el = document.createElement('span');
+    el.className = 'hero-kw';
+    el.textContent = w;
+    el.style.left = (5 + Math.random()*85) + '%';
+    el.style.top = (5 + Math.random()*85) + '%';
+    el.style.fontSize = (14 + Math.random()*28) + 'px';
+    el.style.animationDelay = (-Math.random()*8) + 's';
+    el.style.animationDuration = (6 + Math.random()*6) + 's';
+    container.appendChild(el);
+  });
+})();
+
+// ================================================================
+//  1.1 INTEREST CARD GAME
+// ================================================================
+(function(){
+  const board = document.getElementById('gameBoard');
+  const status = document.getElementById('gameStatus');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  let cards, flipped=[], matched=0, canFlip=true;
+
+  function buildSVGIcon(path){
+    return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="${path}"/></svg>`;
+  }
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+    return arr;
+  }
+
+  function initGame(){
+    board.innerHTML='';
+    cards=[...HOBBY_ITEMS];
+    shuffle(cards);
+    flipped=[];matched=0;canFlip=true;
+    status.textContent='翻开两张同类卡片试试看！';
+    cards.forEach(item=>{
+      const s=CATEGORY_STYLES[item.c];
+      const el=document.createElement('div');
+      el.className='card';
+      el.dataset.category=item.c;
+      el.dataset.name=item.n;
+      el.innerHTML=`<div class="card-inner"><div class="card-front" style="background:${s.color}"><span class="category-name">${s.label}</span><div class="category-logo">${buildSVGIcon(s.icon)}</div><span class="item-name">${item.n}</span></div><div class="card-back"></div></div>`;
+      el.addEventListener('click',()=>flipCard(el));
+      board.appendChild(el);
+    });
+  }
+
+  function flipCard(card){
+    if(!canFlip||card.classList.contains('flipped')||card.classList.contains('matched'))return;
+    card.classList.add('flipped');
+    flipped.push(card);
+    if(flipped.length===2){
+      canFlip=false;
+      const[a,b]=flipped;
+      if(a.dataset.category===b.dataset.category){
+        a.classList.add('matched');b.classList.add('matched');
+        flipped=[];matched+=2;canFlip=true;
+        status.textContent='配对成功！';
+        if(matched===cards.length) status.textContent='恭喜你完成全部配对！';
+      }else{
+        status.textContent='不匹配，再试一次';
+        setTimeout(()=>{a.classList.remove('flipped');b.classList.remove('flipped');flipped=[];canFlip=true;status.textContent='继续翻开两张卡片吧';},900);
+      }
+    }
+  }
+
+  shuffleBtn.addEventListener('click',initGame);
+  initGame();
+})();
+
+// ================================================================
+//  1.2 CAREER
+// ================================================================
+(function(){
+  // Finance
+  const finTrigger=document.getElementById('finance-trigger');
+  const bag=finTrigger.querySelector('.money-bag-svg');
+  const finLabel=document.getElementById('finance-label');
+  const coins=finTrigger.querySelectorAll('.coin');
+
+  finTrigger.addEventListener('mouseenter',()=>{
+    if(!finTrigger.classList.contains('active')) finLabel.classList.add('visible');
+    finLabel.textContent='金融经历';
+  });
+  finTrigger.addEventListener('mouseleave',()=>{
+    if(!finTrigger.classList.contains('active')) finLabel.classList.remove('visible');
+  });
+  finTrigger.addEventListener('click',(e)=>{
+    if(e.target.closest('.coin'))return;
+    const wasActive=finTrigger.classList.contains('active');
+    finTrigger.classList.toggle('active');
+    bag.classList.toggle('inverted');
+    if(!wasActive){finLabel.classList.add('visible');finLabel.textContent='金融经历';}
+  });
+  coins.forEach(c=>{
+    c.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      c.classList.toggle('pinned');
+    });
+  });
+
+  // Startup
+  const startTrigger=document.getElementById('startup-trigger');
+  const startLabel=document.getElementById('startup-label');
+  const cloudIcon=document.getElementById('cloud-icon');
+
+  startTrigger.addEventListener('mouseenter',()=>{
+    if(!startTrigger.classList.contains('active')){startLabel.classList.add('visible');startLabel.textContent='初创经历';}
+  });
+  startTrigger.addEventListener('mouseleave',()=>{
+    if(!startTrigger.classList.contains('active')) startLabel.classList.remove('visible');
+  });
+  startTrigger.addEventListener('click',(e)=>{
+    if(e.target.closest('.cloud-icon'))return;
+    if(!startTrigger.classList.contains('active')){
+      startTrigger.classList.add('active');
+      startLabel.classList.add('visible');
+      startLabel.textContent='初创经历';
+    }
+  });
+  cloudIcon.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    startLabel.textContent='沄视科技';
+    startLabel.classList.add('visible');
+  });
+})();
+
+// ================================================================
+//  1.3 KNOWLEDGE BUBBLES
+// ================================================================
+(function(){
+  const container=document.getElementById('knowledgeSpores');
+  if(!container)return;
+  const canvas=document.getElementById('sporesCanvas');
+  const bubblesEl=document.getElementById('sporesBubbles');
+  const hint=document.getElementById('sporesHint');
+  const overlay=document.getElementById('sporesOverlay');
+  const oTerm=document.getElementById('sporesOverlayTerm');
+  const oDesc=document.getElementById('sporesOverlayDesc');
+
+  const MIN_B=6,AMP=20,FLOAT_BASE=5;
+  let bubbles=[],particles=[],t0=0,raf=0,focused=false;
+
+  function resize(){
+    const r=container.getBoundingClientRect();
+    const dpr=devicePixelRatio||1;
+    canvas.width=r.width*dpr;canvas.height=r.height*dpr;
+    canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';
+    const ctx=canvas.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
+  }
+
+  function parseHex(h){const n=parseInt(h.slice(1),16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
+
+  function explode(cx,cy,hex){
+    const c=parseHex(hex);
+    for(let i=0;i<12;i++){
+      const a=Math.PI*2*i/12+Math.random()*.5,s=2+Math.random()*4;
+      particles.push({x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:.02+Math.random()*.02,r:c.r,g:c.g,b:c.b});
+    }
+  }
+
+  function createBubble(){
+    const topic=SPORES_TOPICS[Math.floor(Math.random()*SPORES_TOPICS.length)];
+    const r=container.getBoundingClientRect();
+    const size=55+Math.random()*35;
+    const baseX=size+Math.random()*(r.width-size*2);
+    const y=r.height+size;
+    const el=document.createElement('div');
+    el.className='spore-bubble';
+    el.style.width=el.style.height=size+'px';
+    el.style.left=(baseX-size/2)+'px';
+    el.style.top=(y-size/2)+'px';
+    const br=48+Math.random()*8;
+    el.style.borderRadius=br+'% '+(100-br)+'% '+(50+Math.random()*10)+'% '+(50+Math.random()*10)+'%';
+    const {r:cr,g:cg,b:cb}=parseHex(topic.color);
+    el.style.background=`radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 50%),radial-gradient(circle at 70% 70%,rgba(255,255,255,.1),transparent 45%),linear-gradient(135deg,${topic.color} 0%,${topic.color} 60%,rgba(${Math.min(255,cr+40)},${Math.min(255,cg+40)},${Math.min(255,cb+40)},.9) 100%)`;
+    el.style.boxShadow='inset -2px -2px 8px rgba(0,0,0,.2),inset 2px 2px 8px rgba(255,255,255,.15)';
+    el.textContent=topic.name;
+    el.dataset.topicId=topic.id;
+    const state={el,y:y-size/2,baseX,phase:Math.random()*Math.PI*2,speed:(r.height+100)/(FLOAT_BASE*60),topic,size};
+    bubbles.push(state);
+    bubblesEl.appendChild(el);
+    el.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const rect=container.getBoundingClientRect();
+      explode(e.clientX-rect.left,e.clientY-rect.top,state.topic.color);
+      const entries=state.topic.entries||[];
+      if(entries.length){
+        const entry=entries[Math.floor(Math.random()*entries.length)];
+        oTerm.textContent=entry.term;oDesc.textContent=entry.desc;
+        const c=parseHex(state.topic.color);
+        overlay.style.background=`radial-gradient(circle at 50% 20%,rgba(255,255,255,.15),transparent 55%),rgba(${c.r},${c.g},${c.b},.4)`;
+        overlay.classList.add('visible');focused=true;
+      }
+      state.el.remove();
+      bubbles=bubbles.filter(b=>b!==state);
+    });
+    return state;
+  }
+
+  function tick(t){
+    if(!container.isConnected){cancelAnimationFrame(raf);return;}
+    const r=container.getBoundingClientRect();
+    const dt=(t-t0)/1000;t0=t;
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,r.width,r.height);
+    particles=particles.filter(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vx*=.98;p.vy*=.98;p.life-=p.decay;
+      if(p.life<=0)return false;
+      ctx.globalAlpha=p.life;
+      ctx.fillStyle=`rgb(${p.r},${p.g},${p.b})`;
+      ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=1;return true;
+    });
+    const sf=focused?.15:1;
+    bubbles.forEach(b=>{
+      b.y-=b.speed*60*dt*sf;
+      const nx=b.baseX+AMP*Math.sin(t*.002+b.phase);
+      b.el.style.left=(nx-b.size/2)+'px';
+      b.el.style.top=b.y+'px';
+    });
+    bubbles=bubbles.filter(b=>{if(b.y<-b.size){b.el.remove();return false;}return true;});
+    if(bubbles.length<MIN_B)createBubble();
+    raf=requestAnimationFrame(tick);
+  }
+
+  resize();window.addEventListener('resize',resize);
+  hint.classList.add('visible');
+  setTimeout(()=>hint.classList.add('faded'),2500);
+  for(let i=0;i<MIN_B;i++) setTimeout(()=>createBubble(),i*350);
+  t0=performance.now();
+  raf=requestAnimationFrame(tick);
+  overlay.addEventListener('click',()=>{overlay.classList.remove('visible');focused=false;});
+})();
+
+// ================================================================
+//  1.4 WORLD MAP
+// ================================================================
+(function(){
+  const svg=document.getElementById('worldMapSvg');
+  const tooltip=document.getElementById('mapTooltip');
+  const container=document.getElementById('worldMapContainer');
+  const states=['','been','lang','both'];
+
+  MAP_REGIONS.forEach(region=>{
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',region.d);
+    path.setAttribute('class','map-region');
+    path.dataset.name=region.name;
+    path.dataset.state='0';
+    path.addEventListener('click',()=>{
+      let s=(parseInt(path.dataset.state)+1)%4;
+      path.dataset.state=s;
+      path.setAttribute('class','map-region'+(states[s]?' '+states[s]:''));
+    });
+    path.addEventListener('mouseenter',(e)=>{
+      const r=container.getBoundingClientRect();
+      tooltip.textContent=region.name;
+      tooltip.style.left=(e.clientX-r.left+12)+'px';
+      tooltip.style.top=(e.clientY-r.top-30)+'px';
+      tooltip.classList.add('visible');
+    });
+    path.addEventListener('mousemove',(e)=>{
+      const r=container.getBoundingClientRect();
+      tooltip.style.left=(e.clientX-r.left+12)+'px';
+      tooltip.style.top=(e.clientY-r.top-30)+'px';
+    });
+    path.addEventListener('mouseleave',()=>{tooltip.classList.remove('visible');});
+    svg.appendChild(path);
+  });
+})();
+
+// ================================================================
+//  SKILL TREE
+// ================================================================
+(function(){
+  const wrap=document.getElementById('skillTreeWrap');
+  const d=SKILL_TREE_DATA;
+  const W=700,H=520;
+  const cx=W/2,trunkBottom=H-30,trunkTop=160;
+
+  let svgStr=`<svg class="tree-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  // ground
+  svgStr+=`<ellipse cx="${cx}" cy="${trunkBottom+10}" rx="120" ry="12" fill="rgba(34,197,94,0.15)"/>`;
+  // trunk
+  svgStr+=`<path d="M${cx-12},${trunkBottom} Q${cx-14},${(trunkTop+trunkBottom)/2} ${cx-8},${trunkTop} L${cx+8},${trunkTop} Q${cx+14},${(trunkTop+trunkBottom)/2} ${cx+12},${trunkBottom} Z" fill="#78350f" opacity=".7"/>`;
+  svgStr+=`<text x="${cx}" y="${trunkBottom-5}" text-anchor="middle" font-size="13" fill="#fbbf24" font-weight="700">${d.trunk}</text>`;
+
+  const n=d.branches.length;
+  d.branches.forEach((br,i)=>{
+    const angle=-Math.PI/2+(i/(n-1))*Math.PI-Math.PI/2; // spread from left to right
+    const spread=Math.PI*0.85;
+    const a=-Math.PI/2-spread/2+spread*i/(n-1);
+    const len=140+Math.random()*30;
+    const bx=cx+Math.cos(a)*len;
+    const by=trunkTop+30+Math.sin(a)*len*0.5-20;
+    const mx=cx+Math.cos(a)*len*0.5;
+    const my=trunkTop+20+Math.sin(a)*len*0.25;
+    // branch line
+    svgStr+=`<path d="M${cx},${trunkTop+20} Q${mx},${my} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="3" opacity=".5"/>`;
+    svgStr+=`<text x="${bx}" y="${by-8}" text-anchor="middle" font-size="11" fill="${br.color}" font-weight="700">${br.name}</text>`;
+    // leaves
+    br.leaves.forEach((leaf,li)=>{
+      const la=a+((li-br.leaves.length/2+0.5)*0.3);
+      const ll=35+li*8;
+      const lx=bx+Math.cos(la)*ll;
+      const ly=by+Math.sin(la)*ll*0.6-10;
+      svgStr+=`<circle class="tree-leaf" cx="${lx}" cy="${ly}" r="20" fill="${br.color}" opacity=".2"/>`;
+      svgStr+=`<circle class="tree-leaf" cx="${lx}" cy="${ly}" r="16" fill="${br.color}" opacity=".15"/>`;
+      svgStr+=`<text x="${lx}" y="${ly+4}" text-anchor="middle" font-size="9" fill="${br.color}" font-weight="600">${leaf}</text>`;
+    });
+  });
+
+  svgStr+=`</svg>`;
+  wrap.innerHTML=svgStr;
+})();
+
+// ================================================================
+//  TIMELINES
+// ================================================================
+(function(){
+  const container=document.getElementById('timelineContainer');
+  const typeMap={edu:'tl-edu',work:'tl-work',proj:'tl-proj',culture:'tl-culture',honor:'tl-honor'};
+  const labelMap={edu:'学业',work:'工作',proj:'项目',culture:'文化',honor:'荣誉'};
+
+  TIMELINE_DATA.forEach(item=>{
+    const el=document.createElement('div');
+    el.className='tl-item '+typeMap[item.type];
+    el.innerHTML=`<div class="tl-dot"></div><div class="tl-time">${item.year} · ${labelMap[item.type]}</div><div class="tl-title">${item.title}</div><div class="tl-desc">${item.desc}</div>`;
+    container.appendChild(el);
+  });
+})();
+</script>
+
 </body>
 </html>
