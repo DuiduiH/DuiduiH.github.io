@@ -4,15 +4,7 @@
   var ov=document.getElementById('careerOv'),ovText=document.getElementById('careerOvText');
   if(!ov)return;
 
-  var LABELS={
-    '期货':{cn:'瑞达期货 · 投资研究助理',en:'Ruida Futures · Research Asst'},
-    '律所IPO':{cn:'国枫律所 · IPO助理',en:'Grandway Law · IPO Asst'},
-    '私募':{cn:'戊戌资产 · 投资研究助理',en:'Wuxu Asset · Research Asst'},
-    '券商投行':{cn:'国金证券 · 投行实习生',en:'Sinolink Securities · IB Intern'},
-    '沄视科技':{cn:'沄视科技 · AI产品经理 & CEO助理',en:'Yunshi Tech · AI PM & CEO Asst'},
-    '金融经历':{cn:'金融经历',en:'Finance Experience'},
-    '初创经历':{cn:'初创经历',en:'Startup Experience'}
-  };
+  var LABELS=(window.MODULE_DATA&&window.MODULE_DATA.careerLabels)||{};
 
   function showOv(key){
     var label=LABELS[key];
@@ -21,11 +13,12 @@
   }
   ov.addEventListener('click',function(){ov.classList.remove('show');});
 
-  // money bag
+  // money bag — click on the SVG itself
   var mbag=document.getElementById('mbag');
-  if(mbag){
-    mbag.addEventListener('click',function(e){
-      if(e.target.closest('.gcoin'))return;
+  var mbagSvg=mbag?mbag.querySelector('.mbag-svg'):null;
+  if(mbag&&mbagSvg){
+    mbagSvg.addEventListener('click',function(e){
+      e.stopPropagation();
       mbag.classList.toggle('open');
     });
     var coins=mbag.querySelectorAll('.gcoin');

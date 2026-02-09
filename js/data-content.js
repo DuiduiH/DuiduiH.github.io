@@ -1,0 +1,85 @@
+// ═══════════════════════════════════════════════════════════════
+//  data-content.js — 网页框架文字 & UI 标签 & 语录
+//  Website framework text, UI labels & quotes.
+//  修改此文件即可修改页面上所有静态文字。
+// ═══════════════════════════════════════════════════════════════
+window.SITE_TEXT = {
+
+  // ─── 翻译 (data-i18n 对应的中英文) ───
+  translations: {
+    'nav-hero':{cn:'我是谁',en:'About Me'},'nav-interest':{cn:'兴趣',en:'Interests'},'nav-career':{cn:'工作',en:'Career'},'nav-study':{cn:'学习',en:'Learning'},'nav-worldmap':{cn:'足迹',en:'Footprints'},'nav-timelines':{cn:'经历',en:'Experience'},'nav-skills':{cn:'技能',en:'Skills'},'nav-takeaway':{cn:'联系XD',en:'Contact XD'},
+    'hero-hint':{cn:'点击关键词了解更多',en:'Click a keyword to learn more'},
+    'dismiss-click':{cn:'点击任意处关闭',en:'Click anywhere to close'},
+    'interest-welcome':{cn:'欢迎来到兴趣游乐场',en:'Welcome to the Hobby Playground'},
+    'interest-desc':{cn:'了解一个人，从TA的兴趣开始<br>翻翻卡片，看看小对藏了哪些宝藏爱好',en:'The best way to know someone is through their hobbies<br>Flip the cards to discover XD\'s hidden interests'},
+    'interest-title':{cn:'兴趣对对碰',en:'Hobby Match'},
+    'interest-rules':{cn:'翻开两张同类卡片即可配对，点击「打乱重来」可重新开始',en:'Flip two cards of the same category to match. Click "Shuffle" to restart'},
+    'interest-rules-html':{cn:'翻开两张同类卡片即可配对，点击「<a class="shuffle-link" href="#">打乱重来</a>」可重新开始',en:'Flip two cards of the same category to match. Click "<a class="shuffle-link" href="#">Shuffle</a>" to restart'},
+    'shuffle-btn':{cn:'打乱重来',en:'Shuffle'},
+    'game-hint':{cn:'翻开两张同类卡片试试看！',en:'Try flipping two cards of the same type!'},
+    'career-welcome':{cn:'欢迎来到事业大楼',en:'Welcome to the Career Building'},
+    'career-desc':{cn:'小对的职业版图就藏在这里<br>点开钱袋和鸡蛋，来一探究竟',en:'XD\'s career path is hidden here<br>Click the money bag and egg to explore'},
+    'career-title':{cn:'金融 × 初创',en:'Finance × Startup'},
+    'career-rules':{cn:'点击左边的钱袋和右边的鸡蛋，探索小对的事业版图',en:'Click the money bag (left) and egg (right) to explore'},
+    'career-hint-bag':{cn:'点击钱袋',en:'Click the bag'},
+    'career-hint-egg':{cn:'点击鸡蛋',en:'Click the egg'},
+    'study-welcome':{cn:'欢迎来到知识湖',en:'Welcome to the Knowledge Lake'},
+    'study-desc':{cn:'知识湖里漂浮着许多泡泡<br>戳开一个，学习一个新词汇吧',en:'The Knowledge Lake is filled with bubbles<br>Pop one to learn a new term'},
+    'study-title':{cn:'知识泡泡',en:'Knowledge Bubbles'},
+    'study-rules':{cn:'湖里的泡泡装着各种知识——戳开它，随机学一个新词汇',en:'Each bubble holds knowledge — pop it to learn something new'},
+    'bubble-hint':{cn:'戳开泡泡试试看',en:'Try popping a bubble'},
+    'worldmap-welcome':{cn:'欢迎来到故事杂货铺',en:'Welcome to the Story Bazaar'},
+    'worldmap-desc':{cn:'这里有一份世界地图<br>来看看小对的足迹和语言版图吧',en:'Here\'s a world map to explore<br>See where XD has been and what languages she speaks'},
+    'worldmap-title':{cn:'我与世界',en:'Me & The World'},
+    'map-visit':{cn:'我去过',en:'Visited'},'map-lang':{cn:'我会说这里的语言',en:'I speak the language'},
+    'map-transit':{cn:'途经',en:'Transit'},'map-travel':{cn:'旅行',en:'Travel'},'map-short':{cn:'短居',en:'Short stay'},'map-long':{cn:'长住',en:'Long stay'},
+    'map-beginner':{cn:'入门',en:'Beginner'},'map-proficient':{cn:'熟练',en:'Proficient'},'map-fluent':{cn:'精通',en:'Fluent'},'map-native':{cn:'母语',en:'Native'},
+    'map-instr':{cn:'点击标记切换 · 滚轮缩放 · 拖拽平移',en:'Click to toggle · Scroll to zoom · Drag to pan'},
+    'timelines-welcome':{cn:'欢迎来到经历钟楼',en:'Welcome to the Experience Clock Tower'},
+    'timelines-desc':{cn:'每一段经历都值得被记住<br>跟着时间轴，回顾小对的成长足迹',en:'Every experience is worth remembering<br>Follow the timeline to trace XD\'s growth'},
+    'timelines-title':{cn:'时间轴',en:'Timeline'},
+    'timelines-rules':{cn:'按时间顺序记录学业、工作、项目、文化和荣誉',en:'Education, work, projects, culture & honors in chronological order'},
+    'tl-edu':{cn:'学业',en:'Education'},'tl-work':{cn:'工作',en:'Work'},'tl-proj':{cn:'项目',en:'Projects'},'tl-culture':{cn:'文化',en:'Culture'},'tl-honor':{cn:'荣誉',en:'Honors'},
+    'tl-hint':{cn:'点击上方标签可显示/隐藏对应内容',en:'Click a label above to show/hide its entries'},
+    'skills-welcome':{cn:'欢迎来到技能花园',en:'Welcome to the Skill Garden'},
+    'skills-desc':{cn:'每一片叶子都是一项技能<br>一起看看小对的技能全景图',en:'Every leaf represents a skill<br>Explore XD\'s full skill panorama'},
+    'skills-title':{cn:'个人技能树',en:'Skill Tree'},
+    'takeaway-welcome':{cn:'感谢你的探索',en:'Thanks for exploring'},
+    'takeaway-desc':{cn:'还没看够？快来联系我！<br>线上沟通、线下 Coffee Chat 都很欢迎',en:'Want to know more? Reach out!<br>Online or offline Coffee Chat — all welcome'},
+    'takeaway-title':{cn:'联系方式',en:'Contact'},
+    'contact-tel':{cn:'电话',en:'Phone'},'contact-email':{cn:'邮箱',en:'Email'},'contact-wechat':{cn:'微信',en:'WeChat'},'contact-red':{cn:'小红书',en:'RED'},'contact-linkedin':{cn:'领英',en:'LinkedIn'},'contact-strava':{cn:'Strava',en:'Strava'},
+    'coin-1':{cn:'期货',en:'Futures'},'coin-2':{cn:'律所',en:'Law'},'coin-3':{cn:'私募',en:'PE'},'coin-4':{cn:'投行',en:'IB'},'cloud-text':{cn:'沄视科技',en:'Yunshi Tech'},
+    'ending-label':{cn:'不知不觉就到最后啦<br>请查看小对给你的最后一个惊喜',en:'Before you know it, we\'re at the end<br>Check out XD\'s last surprise for you'},
+    'quote-trigger':{cn:'点击查看',en:'Click to View'},
+    'replay-btn':{cn:'再玩一次',en:'Play again'},
+    'unlock-congrats':{cn:'恭喜你解锁新场景',en:'You\'ve unlocked a new scene'},
+    'unlock-dismiss':{cn:'点击任意处继续',en:'Click anywhere to continue'},
+    'completion-title':{cn:'恭喜你顺利通关！',en:'Congratulations!'},
+    'completion-p1':{cn:'认识小对的小游戏到这里就结束啦，',en:'The adventure of getting to know XD ends here,'},
+    'completion-p2':{cn:'但小对和你的故事才刚刚开始，',en:'but XD\'s story with you is just beginning,'},
+    'completion-p3':{cn:'让我们一起继续探索吧，',en:'let\'s keep exploring together,'},
+    'completion-p4':{cn:'相信她一定会给你带来惊喜！',en:'she\'s sure to surprise you!'},
+    'quote-prev':{cn:'上一句',en:'Prev'},'quote-next':{cn:'换一句',en:'Next'},'quote-close':{cn:'点击空白处关闭',en:'Click outside to close'},
+    'map-title':{cn:'— 冒险地图 —',en:'— ADVENTURE MAP —'},
+    'map-b-hero':{cn:'关键词影院',en:'Keyword Cinema'},'map-b-interest':{cn:'兴趣游乐场',en:'Hobby Playground'},'map-b-career':{cn:'事业大楼',en:'Career Building'},'map-b-study':{cn:'知识湖',en:'Knowledge Lake'},'map-b-worldmap':{cn:'故事杂货铺',en:'Story Bazaar'},'map-b-timelines':{cn:'经历钟楼',en:'Experience Clock Tower'},'map-b-skills':{cn:'技能花园',en:'Skill Garden'}
+  },
+
+  // ─── XD送你的一句话 (15句，中英双语) ───
+  quotes: [
+    {cn:'乱了节奏也没关系，继续跳你的探戈吧。',en:'If you got tangled up, just tango on.'},
+    {cn:'最好的风景，永远在最难的路之后。',en:'The best view comes after the hardest climb.'},
+    {cn:'保持饥饿，保持愚蠢。',en:'Stay hungry, stay foolish.'},
+    {cn:'完成比完美更重要。',en:'Done is better than perfect.'},
+    {cn:'并非所有漫游者都迷失了方向。',en:'Not all those who wander are lost.'},
+    {cn:'做你自己，因为别人都有人做了。',en:'Be yourself; everyone else is already taken.'},
+    {cn:'困难之中，藏着机遇。',en:'In the middle of difficulty lies opportunity.'},
+    {cn:'未来属于那些相信梦想之美的人。',en:'The future belongs to those who believe in the beauty of their dreams.'},
+    {cn:'生活就是你忙着做其他计划时发生的事。',en:'Life is what happens when you\'re busy making other plans.'},
+    {cn:'你不出手，就注定100%错过。',en:'You miss 100% of the shots you don\'t take.'},
+    {cn:'跌倒七次，爬起来八次。',en:'Fall seven times, stand up eight.'},
+    {cn:'做出伟大作品的唯一方法，就是热爱你所做的事。',en:'The only way to do great work is to love what you do.'},
+    {cn:'杀不死你的，会让你更强大——也更有趣。',en:'What doesn\'t kill you makes you stronger — and funnier.'},
+    {cn:'怀疑比失败杀死了更多的梦想。',en:'Doubt kills more dreams than failure ever will.'},
+    {cn:'简历是扁平的经历，但我是一个立体的人。所以，来探索吧！',en:'A résumé is a flat record of experience, but I am a three-dimensional person. So come explore!'}
+  ]
+};

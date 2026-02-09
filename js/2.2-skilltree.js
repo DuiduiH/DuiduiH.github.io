@@ -1,32 +1,7 @@
 // ===== 2.2 Skill Tree — Real skills, Apple Tree =====
 (function(){
   var isEn=function(){return document.documentElement.lang==='en';};
-  var BRANCHES=[
-    {name:'语言认证',en:'Certifications',color:'#ef4444',skills:[
-      {cn:'CET-4',en:'CET-4',x:145,y:125},{cn:'CET-6',en:'CET-6',x:190,y:165},
-      {cn:'IELTS',en:'IELTS',x:160,y:200},{cn:'普通话',en:'Mandarin',x:210,y:210}
-    ]},
-    {name:'数据编程',en:'Data & Code',color:'#f59e0b',skills:[
-      {cn:'Python',en:'Python',x:250,y:100},{cn:'Stata',en:'Stata',x:300,y:115},
-      {cn:'Excel',en:'Excel',x:270,y:155},{cn:'VSCode',en:'VSCode',x:315,y:170}
-    ]},
-    {name:'产品能力',en:'Product',color:'#22c55e',skills:[
-      {cn:'PRD',en:'PRD',x:360,y:85},{cn:'Figma',en:'Figma',x:400,y:110},
-      {cn:'React',en:'React',x:370,y:145},{cn:'测试',en:'Testing',x:420,y:155}
-    ]},
-    {name:'AI工具',en:'AI Tools',color:'#3b82f6',skills:[
-      {cn:'GPT',en:'GPT',x:460,y:100},{cn:'Gemini',en:'Gemini',x:500,y:130},
-      {cn:'豆包',en:'Doubao',x:475,y:165},{cn:'Vibe',en:'Vibe',x:520,y:175}
-    ]},
-    {name:'创意宣发',en:'Creative',color:'#a855f7',skills:[
-      {cn:'Adobe',en:'Adobe',x:540,y:120},{cn:'视频',en:'Video',x:570,y:155},
-      {cn:'海报',en:'Poster',x:530,y:195},{cn:'排版',en:'Layout',x:565,y:205}
-    ]},
-    {name:'工程专业',en:'Engineering',color:'#ec4899',skills:[
-      {cn:'CAD',en:'CAD',x:300,y:195},{cn:'Rhino',en:'Rhino',x:350,y:215},
-      {cn:'Praat',en:'Praat',x:400,y:200},{cn:'Office',en:'Office',x:450,y:220}
-    ]}
-  ];
+  var BRANCHES=(window.MODULE_DATA&&window.MODULE_DATA.skillBranches)||[];
 
   var wrap=document.getElementById('stWrap');if(!wrap)return;
   var W=700,H=430;
@@ -56,7 +31,7 @@
       {cx:350,cy:210,r:55,c:'#14532d',o:.2},{cx:280,cy:105,r:38,c:'#22c55e',o:.18}
     ];
     greens.forEach(function(g){s+='<circle cx="'+g.cx+'" cy="'+g.cy+'" r="'+g.r+'" fill="'+g.c+'" opacity="'+g.o+'"/>';});
-    s+='<text x="350" y="'+(H-25)+'" text-anchor="middle" font-size="12" fill="var(--gold,#fbbf24)" font-weight="700">'+(en?'Core Skills':'核心能力')+'</text>';
+    // (no text label at bottom)
     BRANCHES.forEach(function(br){
       var avgX=0,avgY=0;
       br.skills.forEach(function(sk){avgX+=sk.x;avgY+=sk.y;});
