@@ -1,124 +1,146 @@
-// ===== 1.4 关于我 — World Map with Region Highlighting =====
+// ===== 1.4 World Map — Real data, theme-aware tiles =====
 (function(){
   if(typeof L==='undefined') return;
-  const mapEl = document.getElementById('leafletMap');
+  var mapEl=document.getElementById('leafletMap');
   if(!mapEl) return;
 
-  const map = L.map('leafletMap',{scrollWheelZoom:true,zoomSnap:.5,zoomDelta:.5}).setView([25,105],2.5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-    attribution:'&copy; OSM &copy; CARTO',maxZoom:18,subdomains:'abcd'
-  }).addTo(map);
+  var map=L.map('leafletMap',{scrollWheelZoom:true,zoomSnap:.5,zoomDelta:.5}).setView([30,80],2.5);
+
+  // Theme-aware tiles
+  var isDark=function(){return document.documentElement.getAttribute('data-theme')!=='light';};
+  var darkUrl='https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  var lightUrl='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+  var tileOpts={attribution:'&copy; OSM &copy; CARTO',maxZoom:18,subdomains:'abcd'};
+  var currentTile=L.tileLayer(isDark()?darkUrl:lightUrl,tileOpts).addTo(map);
+
+  // Swap tiles on theme change
+  var obs=new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.attributeName==='data-theme'){
+        map.removeLayer(currentTile);
+        currentTile=L.tileLayer(isDark()?darkUrl:lightUrl,tileOpts).addTo(map);
+        // Re-style default borders
+        updateDefaultStyles();
+      }
+    });
+  });
+  obs.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
   // Color scales
-  const VISIT_COLORS = {travel:'#93c5fd',short:'#3b82f6',long:'#1d4ed8'};
-  const VISIT_LABELS = {travel:'旅行',short:'短居',long:'长住'};
-  const LANG_COLORS  = {beginner:'#d8b4fe',proficient:'#a78bfa',fluent:'#7c3aed',native:'#4c1d95'};
-  const LANG_LABELS  = {beginner:'入门',proficient:'熟练',fluent:'精通',native:'母语'};
+  var VISIT_COLORS={travel:'#93c5fd',short:'#3b82f6',long:'#1d4ed8'};
+  var LANG_COLORS={beginner:'#d8b4fe',proficient:'#a78bfa',fluent:'#7c3aed',native:'#4c1d95'};
+  var VISIT_LABELS={travel:'旅行',short:'短居',long:'长住'};
+  var LANG_LABELS={beginner:'入门',proficient:'熟练',fluent:'精通',native:'母语'};
 
-  // Data keyed by country name (Natural Earth naming) or Chinese province name (DataV naming)
-  const VISIT_DATA = {
-    '北京市':'long','上海市':'short','广东省':'travel','四川省':'travel',
-    '香港特别行政区':'travel','Japan':'travel','South Korea':'travel',
-    'Singapore':'travel','Thailand':'travel','United Kingdom':'travel',
-    'France':'travel','Australia':'travel'
+  // ===== REAL DATA =====
+  var VISIT_DATA={
+    // China provinces
+    '陕西省':'long','上海市':'long',
+    '北京市':'travel','浙江省':'travel','江苏省':'travel','广东省':'travel','四川省':'travel','湖北省':'travel',
+    '香港特别行政区':'travel',
+    // International — 15 countries
+    'United States of America':'short',
+    'Norway':'short',
+    'Germany':'travel','Austria':'travel','Switzerland':'travel',
+    'France':'travel','Italy':'travel','Spain':'travel',
+    'United Kingdom':'travel','Denmark':'travel','Sweden':'travel',
+    'Netherlands':'travel','Belgium':'travel','Japan':'travel',
+    'Thailand':'travel'
   };
-  const LANG_DATA = {
-    '北京市':'native','上海市':'native','广东省':'native','四川省':'native',
-    '香港特别行政区':'native','Japan':'beginner','South Korea':'beginner',
-    'France':'beginner','United Kingdom':'proficient','United States':'proficient',
-    'Australia':'proficient'
+  var LANG_DATA={
+    // Native — Chinese
+    '陕西省':'native','上海市':'native','北京市':'native','广东省':'native',
+    '四川省':'native','浙江省':'native','江苏省':'native','湖北省':'native',
+    '香港特别行政区':'native',
+    // Fluent — English
+    'United States of America':'fluent','United Kingdom':'fluent','Australia':'fluent',
+    // Proficient — German, Norwegian
+    'Germany':'proficient','Austria':'proficient','Switzerland':'proficient','Norway':'proficient',
+    // Beginner — French, Italian, Spanish, Japanese, Russian
+    'France':'beginner','Italy':'beginner','Spain':'beginner',
+    'Japan':'beginner','Russia':'beginner'
   };
 
-  let visitWorldLayer=null, visitChinaLayer=null;
-  let langWorldLayer=null, langChinaLayer=null;
-  let currentMode='visit';
+  var visitWorldLayer=null,visitChinaLayer=null;
+  var langWorldLayer=null,langChinaLayer=null;
+  var currentMode='visit';
 
-  const DEFAULT_STYLE = {fillColor:'transparent',fillOpacity:0,color:'rgba(255,255,255,.08)',weight:.5};
+  function getDefaultStyle(){
+    var dark=isDark();
+    return {fillColor:'transparent',fillOpacity:0,color:dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)',weight:.5};
+  }
 
   function visitStyle(name){
-    const lv=VISIT_DATA[name];
-    if(!lv)return DEFAULT_STYLE;
-    return {fillColor:VISIT_COLORS[lv],fillOpacity:.45,color:'rgba(255,255,255,.2)',weight:1};
+    var lv=VISIT_DATA[name];
+    if(!lv) return getDefaultStyle();
+    return {fillColor:VISIT_COLORS[lv],fillOpacity:.45,color:isDark()?'rgba(255,255,255,.2)':'rgba(0,0,0,.12)',weight:1};
   }
   function langStyle(name){
-    const lv=LANG_DATA[name];
-    if(!lv)return DEFAULT_STYLE;
-    return {fillColor:LANG_COLORS[lv],fillOpacity:.45,color:'rgba(255,255,255,.2)',weight:1};
+    var lv=LANG_DATA[name];
+    if(!lv) return getDefaultStyle();
+    return {fillColor:LANG_COLORS[lv],fillOpacity:.45,color:isDark()?'rgba(255,255,255,.2)':'rgba(0,0,0,.12)',weight:1};
   }
-  function makeTooltip(name, data, labels){
-    const lv=data[name];
-    if(!lv)return null;
+  function makeTooltip(name,data,labels){
+    var lv=data[name];if(!lv) return null;
     return name+' · '+labels[lv];
   }
 
-  // ——— Load GeoJSON ———
-  const WORLD_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
-  const CHINA_URL='https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json';
+  var WORLD_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
+  var CHINA_URL='https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json';
 
-  function getName(f){
-    const p=f.properties;
-    return p.name||p.NAME||p.ADMIN||p.NAME_EN||'';
+  function getName(f){var p=f.properties;return p.name||p.NAME||p.ADMIN||p.NAME_EN||'';}
+
+  function updateDefaultStyles(){
+    [visitWorldLayer,visitChinaLayer,langWorldLayer,langChinaLayer].forEach(function(layer){
+      if(layer){
+        layer.eachLayer(function(l){
+          var name=getName(l.feature);
+          if(currentMode==='visit') l.setStyle(visitStyle(name));
+          else l.setStyle(langStyle(name));
+        });
+      }
+    });
   }
 
   Promise.all([
-    fetch(WORLD_URL).then(r=>r.ok?r.json():null).catch(()=>null),
-    fetch(CHINA_URL).then(r=>r.ok?r.json():null).catch(()=>null)
-  ]).then(([worldGeo, chinaGeo])=>{
+    fetch(WORLD_URL).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
+    fetch(CHINA_URL).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+  ]).then(function(results){
+    var worldGeo=results[0],chinaGeo=results[1];
 
     if(worldGeo){
-      // Filter out China (we use province-level)
-      const features = worldGeo.features.filter(f=>{
-        const n=getName(f);
-        return n!=='China' && n!=='People\'s Republic of China';
+      var features=worldGeo.features.filter(function(f){
+        var n=getName(f);return n!=='China'&&n!=="People's Republic of China";
       });
 
-      visitWorldLayer = L.geoJSON({type:'FeatureCollection',features},{
-        style: f=>visitStyle(getName(f)),
-        onEachFeature:(f,layer)=>{
-          const tip=makeTooltip(getName(f),VISIT_DATA,VISIT_LABELS);
-          if(tip) layer.bindTooltip(tip,{sticky:true});
-        }
+      visitWorldLayer=L.geoJSON({type:'FeatureCollection',features:features},{
+        style:function(f){return visitStyle(getName(f));},
+        onEachFeature:function(f,layer){var tip=makeTooltip(getName(f),VISIT_DATA,VISIT_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
       });
-
-      langWorldLayer = L.geoJSON({type:'FeatureCollection',features},{
-        style: f=>langStyle(getName(f)),
-        onEachFeature:(f,layer)=>{
-          const tip=makeTooltip(getName(f),LANG_DATA,LANG_LABELS);
-          if(tip) layer.bindTooltip(tip,{sticky:true});
-        }
+      langWorldLayer=L.geoJSON({type:'FeatureCollection',features:features},{
+        style:function(f){return langStyle(getName(f));},
+        onEachFeature:function(f,layer){var tip=makeTooltip(getName(f),LANG_DATA,LANG_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
       });
     }
 
     if(chinaGeo){
-      const chinaFeatures = chinaGeo.features || (chinaGeo.type==='FeatureCollection'?chinaGeo.features:[]);
+      var chinaFeatures=chinaGeo.features||(chinaGeo.type==='FeatureCollection'?chinaGeo.features:[]);
 
-      visitChinaLayer = L.geoJSON({type:'FeatureCollection',features:chinaFeatures},{
-        style: f=>visitStyle(f.properties.name),
-        onEachFeature:(f,layer)=>{
-          const tip=makeTooltip(f.properties.name,VISIT_DATA,VISIT_LABELS);
-          if(tip) layer.bindTooltip(tip,{sticky:true});
-        }
+      visitChinaLayer=L.geoJSON({type:'FeatureCollection',features:chinaFeatures},{
+        style:function(f){return visitStyle(f.properties.name);},
+        onEachFeature:function(f,layer){var tip=makeTooltip(f.properties.name,VISIT_DATA,VISIT_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
       });
-
-      langChinaLayer = L.geoJSON({type:'FeatureCollection',features:chinaFeatures},{
-        style: f=>langStyle(f.properties.name),
-        onEachFeature:(f,layer)=>{
-          const tip=makeTooltip(f.properties.name,LANG_DATA,LANG_LABELS);
-          if(tip) layer.bindTooltip(tip,{sticky:true});
-        }
+      langChinaLayer=L.geoJSON({type:'FeatureCollection',features:chinaFeatures},{
+        style:function(f){return langStyle(f.properties.name);},
+        onEachFeature:function(f,layer){var tip=makeTooltip(f.properties.name,LANG_DATA,LANG_LABELS);if(tip)layer.bindTooltip(tip,{sticky:true});}
       });
     }
-
     showMode('visit');
   });
 
   function showMode(mode){
     currentMode=mode;
-    // Remove all layers
-    [visitWorldLayer,visitChinaLayer,langWorldLayer,langChinaLayer].forEach(l=>{
-      if(l) map.removeLayer(l);
-    });
-    // Add active layers
+    [visitWorldLayer,visitChinaLayer,langWorldLayer,langChinaLayer].forEach(function(l){if(l)map.removeLayer(l);});
     if(mode==='visit'){
       if(visitWorldLayer) visitWorldLayer.addTo(map);
       if(visitChinaLayer) visitChinaLayer.addTo(map);
@@ -128,10 +150,9 @@
     }
   }
 
-  // Legend interaction
-  document.querySelectorAll('.map-legend-btn').forEach(el=>{
-    el.addEventListener('click',()=>{
-      document.querySelectorAll('.map-legend-btn').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.map-legend-btn').forEach(function(el){
+    el.addEventListener('click',function(){
+      document.querySelectorAll('.map-legend-btn').forEach(function(e){e.classList.remove('active');});
       el.classList.add('active');
       showMode(el.dataset.mode);
     });

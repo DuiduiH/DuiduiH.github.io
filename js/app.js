@@ -8,7 +8,6 @@
 
   var unlocked = new Set(['hero']);
   var overlaysShown = new Set();
-  var completionShown = false;
   var lastScrollY = window.scrollY;
   var scrollingDown = true;
 
@@ -17,7 +16,6 @@
     lastScrollY = window.scrollY;
   },{passive:true});
 
-  // ——— Minimap dot unlock ———
   function unlockDot(id){
     if(unlocked.has(id)) return;
     unlocked.add(id);
@@ -27,7 +25,6 @@
     if(bld) bld.classList.add('unlocked');
   }
 
-  // Init hero
   (function(){
     var d=document.getElementById('mini-dot-hero');
     if(d){d.setAttribute('fill',DOT_COLORS.hero);d.setAttribute('opacity','.85');}
@@ -60,7 +57,7 @@
     });
   }
 
-  // ——— Section divider observers — only trigger on scroll DOWN ———
+  // ——— Section divider observers ———
   document.querySelectorAll('.section-divider').forEach(function(div){
     var nextId=div.dataset.nextId,nextLabel=div.dataset.nextLabel;
     var obs=new IntersectionObserver(function(entries){
@@ -75,27 +72,17 @@
     obs.observe(div);
   });
 
-  // ——— Completion overlay ———
-  var completionOv=document.getElementById('completionOverlay');
-  if(completionOv){
-    var endingEl=document.querySelector('[data-map-id="ending"]');
-    if(endingEl){
-      var endObs=new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if(entry.isIntersecting&&scrollingDown&&!completionShown){
-            completionShown=true;
-            Object.keys(DOT_COLORS).forEach(function(id){unlockDot(id);});
-            completionOv.classList.add('show');
-            document.body.style.overflow='hidden';
-          }
-        });
-      },{threshold:0.3});
-      endObs.observe(endingEl);
-    }
-    completionOv.addEventListener('click',function(){
-      completionOv.classList.remove('show');
-      document.body.style.overflow='';
-    });
+  // ——— Unlock all dots when completion section comes into view ———
+  var completionEl=document.getElementById('completionSection');
+  if(completionEl){
+    var compObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting&&scrollingDown){
+          Object.keys(DOT_COLORS).forEach(function(id){unlockDot(id);});
+        }
+      });
+    },{threshold:0.3});
+    compObs.observe(completionEl);
   }
 
   // ——— Map Overlay ———
@@ -109,15 +96,22 @@
     mapBtn.addEventListener('click',window.toggleMapOverlay);
     var mapClose=mapOverlay.querySelector('.map-close');
     if(mapClose) mapClose.addEventListener('click',window.toggleMapOverlay);
+
+    // All map buildings are always clickable (no unlock check)
     mapOverlay.querySelectorAll('.map-building').forEach(function(b){
       b.addEventListener('click',function(){
         var target=b.dataset.target;
-        if(target&&unlocked.has(target)){
-          var el=document.querySelector('[data-map-id="'+target+'"]');
-          if(el){mapOverlay.classList.remove('open');document.body.style.overflow='';setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},100);}
+        if(target){
+          var el=document.getElementById(target)||document.querySelector('[data-map-id="'+target+'"]');
+          if(el){
+            mapOverlay.classList.remove('open');
+            document.body.style.overflow='';
+            setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},100);
+          }
         }
       });
     });
+
     mapOverlay.addEventListener('click',function(e){if(e.target===mapOverlay){mapOverlay.classList.remove('open');document.body.style.overflow='';}});
   }
 
@@ -146,8 +140,9 @@
   },{threshold:0.15});
   document.querySelectorAll('[data-map-id]').forEach(function(el){navObs.observe(el);});
 
-  // ——— Quote Overlay with Prev/Next ———
+  // ——— Quote Overlay ———
   var QUOTES=[
+    '简历是扁平的经历，但我是一个立体的人。',
     'If you got tangled up, just tango on.',
     'The best time to plant a tree was 20 years ago. The second best time is now.',
     'Stay hungry, stay foolish.',
@@ -213,7 +208,7 @@
       if(dot){dot.setAttribute('fill','#374151');dot.setAttribute('opacity','.4');dot.setAttribute('r','3');}
     });
     document.querySelectorAll('.map-building').forEach(function(b){b.classList.remove('unlocked');});
-    unlocked=new Set(['hero']);overlaysShown=new Set();completionShown=false;
+    unlocked=new Set(['hero']);overlaysShown=new Set();
     var heroDot=document.getElementById('mini-dot-hero');
     if(heroDot){heroDot.setAttribute('fill',DOT_COLORS.hero);heroDot.setAttribute('opacity','.85');}
     var heroBld=document.querySelector('.map-building[data-target="hero"]');
@@ -222,7 +217,6 @@
     var egg=document.getElementById('eggArea');if(egg)egg.classList.remove('cracked');
     var shuffleBtn=document.getElementById('shuffleBtn');if(shuffleBtn)shuffleBtn.click();
     if(unlockOv)unlockOv.classList.remove('show');
-    if(completionOv)completionOv.classList.remove('show');
     if(quoteOv)quoteOv.classList.remove('show');
     document.body.style.overflow='';
     window.scrollTo({top:0,behavior:'smooth'});
@@ -235,8 +229,6 @@
       var html=document.documentElement;
       var isLight=html.getAttribute('data-theme')==='light';
       html.setAttribute('data-theme',isLight?'dark':'light');
-      themeToggle.textContent=isLight?'':'';
-      // Update SVG icon
       themeToggle.innerHTML=isLight
         ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
         :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
@@ -283,7 +275,8 @@
     'takeaway-welcome':{cn:'感谢你的探索',en:'Thanks for exploring'},
     'takeaway-desc':{cn:'希望你对小对有了更深的了解',en:'Hope you know XD a little better now'},
     'takeaway-title':{cn:'联系方式',en:'Contact'},
-    'contact-wechat':{cn:'微信',en:'WeChat'},'contact-email':{cn:'邮箱',en:'Email'},'contact-linkedin':{cn:'领英',en:'LinkedIn'},
+    'contact-tel':{cn:'电话',en:'Phone'},'contact-email':{cn:'邮箱',en:'Email'},'contact-wechat':{cn:'微信',en:'WeChat'},'contact-red':{cn:'小红书',en:'Xiaohongshu'},'contact-linkedin':{cn:'领英',en:'LinkedIn'},
+    'coin-1':{cn:'期货',en:'Futures'},'coin-2':{cn:'律所',en:'Law'},'coin-3':{cn:'私募',en:'PE'},'coin-4':{cn:'投行',en:'IB'},'cloud-text':{cn:'沄视科技',en:'Yunshi Tech'},
     'ending-label':{cn:'旅途的终点',en:'End of the journey'},
     'quote-trigger':{cn:'点击查看 XD 送给你的一句话',en:'Click to see a quote from XD'},
     'replay-btn':{cn:'再玩一次',en:'Play again'},

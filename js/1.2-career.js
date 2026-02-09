@@ -1,15 +1,15 @@
-// ===== 1.2 Career — Money Bag (flip) & Egg =====
+// ===== 1.2 Career — Money Bag (flip) & Egg, real companies =====
 (function(){
   var isEn=function(){return document.documentElement.lang==='en';};
   var ov=document.getElementById('careerOv'),ovText=document.getElementById('careerOvText');
   if(!ov)return;
 
   var LABELS={
-    '期货':{cn:'期货',en:'Futures'},
-    '律所IPO':{cn:'律所IPO',en:'Law Firm IPO'},
-    '私募':{cn:'私募',en:'Private Equity'},
-    '券商投行':{cn:'券商投行',en:'Investment Bank'},
-    '沄视科技':{cn:'沄视科技',en:'Yunshi Tech'},
+    '期货':{cn:'瑞达期货 · 投资研究助理',en:'Ruida Futures · Research Asst'},
+    '律所IPO':{cn:'国枫律所 · IPO助理',en:'Grandway Law · IPO Asst'},
+    '私募':{cn:'戊戌资产 · 投资研究助理',en:'Wuxu Asset · Research Asst'},
+    '券商投行':{cn:'国金证券 · 投行实习生',en:'Sinolink Securities · IB Intern'},
+    '沄视科技':{cn:'沄视科技 · AI产品经理 & CEO助理',en:'Yunshi Tech · AI PM & CEO Asst'},
     '金融经历':{cn:'金融经历',en:'Finance Experience'},
     '初创经历':{cn:'初创经历',en:'Startup Experience'}
   };
