@@ -32,21 +32,24 @@
       --msky1:#7EC8E3;--msky2:#A8D8EA;--msky3:#C8E6F0;--mgrass1:#4CAF50;--mgrass2:#388E3C;--mgrass3:#66BB6A
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+    html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
     body{font-family:"Inter","SF Pro Display","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;transition:background .35s,color .35s}
 
-    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border);display:flex;align-items:center;justify-content:center;gap:1.6rem;padding:0 7rem 0 1rem;z-index:1000;transition:background .35s,border-color .35s}
-    .nav a{color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600;transition:color .2s;white-space:nowrap}
+    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border);display:flex;align-items:center;justify-content:center;gap:2rem;padding:0 8rem 0 1.5rem;z-index:1000;transition:background .35s,border-color .35s;overflow:visible}
+    .nav a{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:600;transition:color .2s;white-space:nowrap;display:flex;align-items:center;gap:.35rem;flex-shrink:0;position:relative}
     .nav a:hover,.nav a.active{color:var(--accent)}
+    .nav a .nav-icon{width:16px;height:16px;flex-shrink:0;display:block}
+    .nav a .nav-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .nav a .nav-label{display:inline}
+    .nav a::after{content:attr(data-tooltip);position:absolute;top:100%;left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:4px;background:var(--bg2);color:var(--text);font-size:.65rem;font-weight:500;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;border:1px solid var(--frame-border);margin-top:4px;display:none;z-index:1001;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+    .nav a:hover::after{opacity:1}
 
     .toggle-group{position:fixed;top:12px;right:16px;z-index:1001;display:flex;gap:8px;align-items:center}
-    .lang-toggle,.theme-toggle{height:30px;border:1px solid var(--toggle-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.7rem;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:1px;user-select:none;display:flex;align-items:center;justify-content:center;line-height:1}
-    .lang-toggle{padding:0 .65rem}
+    .lang-toggle,.theme-toggle{width:32px;height:32px;border:1px solid var(--toggle-border);border-radius:50%;background:var(--toggle-bg);color:var(--muted);font-size:.65rem;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.5px;user-select:none;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
     .lang-toggle:hover,.theme-toggle:hover{color:var(--accent);border-color:rgba(56,189,248,.3)}
-    .theme-toggle{width:30px;padding:0;border-radius:50%}
     .theme-toggle svg{width:15px;height:15px}
 
-    .sw{max-width:1100px;margin:0 auto;padding:0 1.5rem;width:100%;box-sizing:border-box}
+    .sw{max-width:1100px;margin:0 auto;padding:0 1rem;width:100%;box-sizing:border-box}
     .btn{padding:.5rem 1.4rem;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.08);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.4rem}
     .btn:hover{background:rgba(56,189,248,.18);border-color:rgba(56,189,248,.5);transform:scale(1.04)}
     .btn:active{transform:scale(.97)}
@@ -56,7 +59,7 @@
     .map-star{transition:opacity .35s}.map-sun{display:none;transition:opacity .35s}
     [data-theme="light"] .map-star{opacity:0!important}
     [data-theme="light"] .map-sun{display:inline!important}
-    .section-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:80px 1.5rem 40px;position:relative;scroll-snap-align:start;box-sizing:border-box}
+    .section-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:calc(52px + 1rem) 1rem 1rem;position:relative;scroll-snap-align:start;box-sizing:border-box}
     .section-page>.sw{margin-top:auto;margin-bottom:auto}
 
     /* ===== INTRO PAGE (buffer) ===== */
@@ -72,12 +75,12 @@
     .section-welcome{font-size:1.6rem;font-weight:800;color:var(--accent);margin-bottom:.6rem}
     .section-desc{font-size:.88rem;color:var(--muted);line-height:1.9}
 
-    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:1.5rem;width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s;box-sizing:border-box}
+    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:1rem;width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s;box-sizing:border-box}
     .section-page[data-map-id="interest"] .section-frame{background:rgba(22,30,48,.65);backdrop-filter:blur(8px)}
     .section-page[data-map-id="skills"] .section-frame{background:rgba(22,30,48,.92);backdrop-filter:blur(4px)}
     [data-theme="light"] .section-page[data-map-id="interest"] .section-frame{background:rgba(255,255,255,.6)}
     [data-theme="light"] .section-page[data-map-id="skills"] .section-frame{background:rgba(255,255,255,.88)}
-    .section-header{text-align:center;margin-bottom:1rem}
+    .section-header{text-align:center;margin-bottom:.75rem}
     .section-title{font-size:1.25rem;font-weight:700;color:var(--primary);margin-bottom:.3rem}
     .section-rules{font-size:.78rem;color:var(--muted);opacity:.6}
 
@@ -101,18 +104,18 @@
 
     /* ===== CARD GAME ===== */
     .interest-s{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5rem 0 1rem;width:100%}
-    .game-board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:min(500px,80vw);margin:0 auto}
-    .card{width:100%;aspect-ratio:4/5;perspective:600px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1}
+    .game-board{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(3px,0.8vh,6px);width:100%;max-width:min(500px,80vw);margin:0 auto}
+    .card{width:100%;aspect-ratio:4/5;perspective:600px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1;max-height:clamp(48px,12vh,110px)}
     .card-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform .5s;transform-style:preserve-3d;pointer-events:none}
     .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
     .card.matched .card-inner{box-shadow:none}
     .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:600;padding:6px;pointer-events:none}
-    .card-front{color:#fff;transform:rotateY(180deg);justify-content:space-between;padding:8px 6px}
-    .cname{font-size:10px;opacity:.85}.clogo{width:32px;height:32px;fill:currentColor;color:rgba(255,255,255,.9)}.clogo svg{width:100%;height:100%}
-    .iname{font-size:12px;font-weight:700}
+    .card-front{color:#fff;transform:rotateY(180deg);justify-content:space-between;padding:clamp(3px,1vh,8px) clamp(3px,0.6vh,6px)}
+    .cname{font-size:clamp(6px,1.2vh,10px);opacity:.85}.clogo{width:clamp(16px,3.5vh,32px);height:clamp(16px,3.5vh,32px);fill:currentColor;color:rgba(255,255,255,.9)}.clogo svg{width:100%;height:100%}
+    .iname{font-size:clamp(7px,1.4vh,12px);font-weight:700}
     .card-back{background:var(--card-back-bg);border:1.5px solid var(--card-back-border);color:var(--muted);transition:background .35s,border-color .35s}
-    .card-back::after{content:'?';font-size:1.6rem;opacity:.4}
-    .gstatus{margin-top:.8rem;font-size:.85rem;color:var(--muted);font-weight:500}
+    .card-back::after{content:'?';font-size:clamp(.8rem,2vh,1.6rem);opacity:.4}
+    .gstatus{margin-top:clamp(.3rem,1vh,.8rem);font-size:clamp(.7rem,1.2vh,.85rem);color:var(--muted);font-weight:500}
     .shuffle-link{color:var(--accent);text-decoration:underline;cursor:pointer;font-weight:700;text-underline-offset:2px}
     .shuffle-link:hover{color:var(--gold);text-decoration-style:wavy}
 
@@ -162,17 +165,19 @@
     .sp-ov-desc{font-size:.88rem;line-height:1.8;color:var(--muted)}
 
     /* ===== LEAFLET MAP ===== */
-    .map-inner-frame{border-radius:var(--radius);overflow:hidden}
-    #leafletMap{height:400px}
-    .map-footer{padding:.7rem 1rem;background:var(--bg2);display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:background .35s}
+    .map-inner-frame{border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+    #leafletMap{height:min(400px,calc(100vh - 340px));min-height:220px;flex-shrink:1}
+    .leaflet-popup-content img{display:block;width:100%;border-radius:6px}
+    .map-footer{padding:.3rem 1rem 0;background:var(--bg2);display:flex;flex-direction:column;align-items:center;gap:.1rem;transition:background .35s}
     .map-legend{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;justify-content:center}
     .map-legend-btn{display:flex;align-items:center;gap:.4rem;padding:.3rem .6rem;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .2s;font-size:.75rem;color:var(--muted)}
     .map-legend-btn:hover,.map-legend-btn.active{border-color:var(--frame-border);background:var(--toggle-bg);color:var(--primary)}
     .map-legend-btn span{font-weight:600;margin-right:.3rem}
-    .ml-scale{display:flex;gap:.35rem;align-items:center}
+    .ml-scale{display:flex;gap:.15rem;align-items:center}
     .ml-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;display:inline-block}
-    .ml-scale small{font-size:.65rem;color:var(--muted)}
-    .map-instr{text-align:center;padding:.35rem;font-size:.7rem;color:var(--muted);opacity:.45}
+    .ml-scale small{font-size:.65rem;color:var(--muted);margin-right:.4rem}
+    .ml-scale small:last-child{margin-right:0}
+    .map-instr{text-align:center;padding:.1rem 0 0;font-size:.7rem;color:var(--muted);opacity:.45;margin-bottom:0}
 
     /* ===== TIMELINE ===== */
     .tl-wrap{position:relative;padding:.8rem 0 .8rem 2.5rem;max-height:52vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--frame-border) transparent}
@@ -192,8 +197,18 @@
     .tl-legend-hint{text-align:center;font-size:.68rem;color:var(--muted);opacity:.35;margin-bottom:.6rem}
 
     /* ===== SKILL TREE ===== */
-    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:.5rem 0;max-height:calc(100vh - 280px);overflow-y:auto}
+    .skill-tree-wrap{display:flex;flex-direction:column;align-items:center;padding:.5rem 0;overflow:hidden;max-height:calc(100vh - 200px)}
     .tree-svg{max-width:700px;width:100%}
+    .skill-tree-wrap .leaf-blob{will-change:transform,opacity}
+    .skill-tree-wrap .tree-apple{will-change:opacity,transform}
+    .skill-tree-wrap .apple-tip{font-family:Inter,'Noto Sans SC',sans-serif}
+    .skill-tree-wrap .cluster-label{will-change:opacity;font-family:Inter,'Noto Sans SC',sans-serif}
+    [data-theme="light"] .skill-tree-wrap .tree-apple{filter:brightness(1.05);border-color:rgba(0,0,0,.1)!important}
+    [data-theme="light"] .skill-tree-wrap .leaf-blob{background:#7BC67B!important;opacity:.55!important}
+    [data-theme="light"] .skill-tree-wrap .cluster-label{text-shadow:0 1px 4px rgba(255,255,255,.8)!important}
+    [data-theme="light"] .tree-svg path[fill="#5c3a1e"]{fill:#8B6D4F}
+    [data-theme="light"] .tree-svg path[stroke="#5c3a1e"]{stroke:#8B6D4F}
+    
 
     /* ===== CONTACT ===== */
     .contact-list{list-style:none;margin-top:.6rem}
@@ -230,12 +245,13 @@
     .quote-ov-dismiss{margin-top:1.8rem;font-size:.72rem;color:var(--muted);opacity:.3;cursor:pointer}
 
     /* ===== MAP OVERLAYS ===== */
-    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;overflow:auto;-webkit-overflow-scrolling:touch}
     .map-overlay.open{display:flex;opacity:1;pointer-events:auto}
-    .map-close{position:absolute;top:20px;right:28px;font-size:2rem;color:var(--muted);cursor:pointer;z-index:10;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--toggle-bg);transition:all .2s}
+    .map-close{position:fixed;top:20px;right:28px;font-size:2rem;color:var(--muted);cursor:pointer;z-index:2010;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--toggle-bg);transition:all .2s}
     .map-close:hover{color:var(--primary)}
-    .map-overlay-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;font-family:"Courier New",monospace;opacity:.7}
-    .illustrated-map{width:92%;max-width:1200px;height:auto}
+    .map-overlay-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;font-family:Inter,sans-serif;opacity:.7}
+    .map-svg-wrap{width:92%;max-width:1200px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+    .illustrated-map{width:100%;min-width:700px;height:auto}
     .map-building{cursor:pointer;transition:transform .2s,filter .2s,opacity .3s;transform-origin:center bottom;opacity:.2}
     .map-building.unlocked{opacity:1}
     .map-building:hover{transform:translateY(-5px);filter:drop-shadow(0 8px 16px rgba(251,191,36,.15))}
@@ -278,25 +294,33 @@
     .unlock-dismiss{margin-top:2rem;font-size:.75rem;color:var(--muted);opacity:.3}
     @keyframes unlockPulse{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
 
+    @media(max-width:768px){
+      .nav{gap:1.6rem;padding:0 6rem 0 .5rem}
+      .nav a .nav-label{display:none}
+      .nav a .nav-icon{width:20px;height:20px}
+      .nav a::after{display:block}
+    }
     @media(max-width:600px){
-      .nav{gap:.5rem;padding:0 6rem 0 .5rem;height:46px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch}
+      .nav{gap:1.1rem;padding:0 5.5rem 0 .5rem;height:46px;overflow:visible;justify-content:center}
       .nav a{font-size:.68rem;flex-shrink:0}
+      .nav a .nav-icon{width:18px;height:18px}
       .toggle-group{top:10px;right:10px;gap:5px}
-      .lang-toggle{font-size:.6rem;padding:.2rem .4rem}
-      .theme-toggle{width:26px;height:26px}
+      .lang-toggle,.theme-toggle{width:28px;height:28px;font-size:.58rem}
       .theme-toggle svg{width:12px;height:12px}
-      .section-page{padding:56px .5rem 24px}
+      .section-page{padding:calc(46px + .5rem) .5rem .5rem}
+      .section-frame{padding:.75rem}
       .section-intro-page{padding:62px 1.5rem 30px}
       .section-intro-page .section-welcome{font-size:1.6rem}
       .section-intro-page .section-desc{font-size:.92rem}
       .section-welcome{font-size:1.3rem}
-      .game-board{grid-template-columns:repeat(5,58px);gap:4px;margin:0 auto}
-      .card{aspect-ratio:4/5}.clogo{width:18px;height:18px}.iname{font-size:8px}.cname{font-size:7px}
+      .game-board{grid-template-columns:repeat(5,1fr);gap:clamp(2px,0.6vh,4px);margin:0 auto;max-width:min(320px,85vw)}
+      .card{aspect-ratio:4/5;max-height:clamp(40px,11vh,90px)}.clogo{width:clamp(14px,3vh,18px);height:clamp(14px,3vh,18px)}.iname{font-size:clamp(6px,1.2vh,8px)}.cname{font-size:clamp(5px,1vh,7px)}
       .career-wrap{flex-direction:column;min-height:auto}
       .career-pane:first-child{border-right:none;border-bottom:1px solid var(--frame-border)}
-      .illustrated-map{width:98%}
+      .map-svg-wrap{width:100%;padding:0 .5rem}
+      .illustrated-map{min-width:600px}
       .kspores{height:min(360px,55vh)}
-      #leafletMap{height:300px}
+      #leafletMap{height:min(300px,calc(100vh - 320px));min-height:180px}
       .section-divider{height:4vh;min-height:20px}
       .map-legend{flex-direction:column;gap:.4rem}
     }
@@ -305,14 +329,14 @@
 <body>
 
 <nav class="nav">
-  <a href="#hero" data-i18n="nav-hero">关于</a>
-  <a href="#interest" data-i18n="nav-interest">兴趣</a>
-  <a href="#career" data-i18n="nav-career">工作</a>
-  <a href="#study" data-i18n="nav-study">学习</a>
-  <a href="#worldmap" data-i18n="nav-worldmap">足迹</a>
-  <a href="#timelines" data-i18n="nav-timelines">经历</a>
-  <a href="#skills" data-i18n="nav-skills">技能</a>
-  <a href="#takeaway" data-i18n="nav-takeaway">联系</a>
+  <a href="#hero" data-tooltip="关于" data-tooltip-key="nav-hero"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg></span><span class="nav-label" data-i18n="nav-hero">关于</span></a>
+  <a href="#interest" data-tooltip="兴趣" data-tooltip-key="nav-interest"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="nav-label" data-i18n="nav-interest">兴趣</span></a>
+  <a href="#career" data-tooltip="工作" data-tooltip-key="nav-career"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span class="nav-label" data-i18n="nav-career">工作</span></a>
+  <a href="#study" data-tooltip="学习" data-tooltip-key="nav-study"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="nav-label" data-i18n="nav-study">学习</span></a>
+  <a href="#worldmap" data-tooltip="足迹" data-tooltip-key="nav-worldmap"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><ellipse cx="12" cy="12" rx="4" ry="10"/></svg></span><span class="nav-label" data-i18n="nav-worldmap">足迹</span></a>
+  <a href="#timelines" data-tooltip="经历" data-tooltip-key="nav-timelines"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="nav-label" data-i18n="nav-timelines">经历</span></a>
+  <a href="#skills" data-tooltip="技能" data-tooltip-key="nav-skills"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 22v-8"/><path d="M8 22c0-5 4-8 4-14 0 6 4 9 4 14"/><circle cx="7" cy="8" r="3"/><circle cx="17" cy="6" r="2.5"/><circle cx="12" cy="4" r="3"/></svg></span><span class="nav-label" data-i18n="nav-skills">技能</span></a>
+  <a href="#takeaway" data-tooltip="联系" data-tooltip-key="nav-takeaway"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg></span><span class="nav-label" data-i18n="nav-takeaway">联系</span></a>
 </nav>
 <div class="toggle-group">
   <div class="lang-toggle" id="langToggle">EN</div>
@@ -328,6 +352,7 @@
     <h1>Who am I?</h1>
     <p class="hero-sub-hint" data-i18n="hero-hint">点击关键词了解更多</p>
   </div>
+  <div class="scroll-hint"><div class="scroll-hint-text" data-i18n="scroll-hint">向下滑动</div><div class="scroll-hint-arrow">&#8964;</div></div>
 </div>
 <div id="heroOverlay" class="hero-overlay">
   <div class="hero-ov-content">
@@ -676,6 +701,7 @@
 <div id="map-overlay" class="map-overlay">
   <div class="map-close">&times;</div>
   <div class="map-overlay-title" data-i18n="map-title">— 冒险地图 —</div>
+  <div class="map-svg-wrap">
   <svg class="illustrated-map" viewBox="0 0 1400 620" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="msky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--msky1)"/><stop offset="60%" style="stop-color:var(--msky2)"/><stop offset="100%" style="stop-color:var(--msky3)"/></linearGradient>
@@ -784,6 +810,7 @@
       <text x="1283" y="428" class="map-label" data-i18n="map-b-skills">技能花园</text>
     </g>
   </svg>
+  </div>
 </div>
 
 <!-- ═══════════ MINIMAP ═══════════ -->
@@ -808,7 +835,7 @@
     <g class="mini-bld" data-target="worldmap"><rect x="80.5" y="32.5" width="5.5" height="4.5" rx=".4" fill="#047857"/><path d="M80,32.5 L87,32.5 L86.5,31 L80.5,31 Z" fill="#059669"/></g>
     <g class="mini-bld" data-target="timelines"><rect x="99" y="22" width="6" height="7" rx=".4" fill="#5b21b6"/><circle cx="102" cy="25" r="1.9" fill="#1e1b4b" stroke="#a78bfa" stroke-width=".3"/></g>
     <g class="mini-bld" data-target="skills"><rect x="117.5" y="33.5" width="1.2" height="3" fill="#78350f" opacity=".7"/><circle cx="118.2" cy="32" r="2.7" fill="#166534" opacity=".7"/><circle cx="116.5" cy="33.2" r="1.9" fill="#15803d" opacity=".6"/><circle cx="120" cy="32.5" r="2" fill="#14532d" opacity=".6"/></g>
-    <text x="65" y="15" text-anchor="middle" font-size="6" style="fill:var(--muted)" font-weight="700" letter-spacing="2" font-family="Courier New,monospace" opacity=".45">MAP</text>
+    <g opacity=".4"><line x1="5" y1="10" x2="125" y2="10" stroke="var(--muted)" stroke-width=".3" stroke-dasharray="1 2"/><text x="65" y="12" text-anchor="middle" font-size="5" style="fill:var(--muted)" font-weight="600" letter-spacing="4" font-family="Inter,sans-serif">EXPLORE</text></g>
   </svg>
 </div>
 

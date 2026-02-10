@@ -93,12 +93,12 @@ window.MODULE_DATA = {
 
   // ─── 技能树 ───
   skillBranches: [
-    {name:'语言认证',en:'Certifications',color:'#ef4444',skills:[{cn:'CET-4',en:'CET-4',x:145,y:125},{cn:'CET-6',en:'CET-6',x:190,y:165},{cn:'IELTS',en:'IELTS',x:160,y:200},{cn:'普通话',en:'Mandarin',x:210,y:210}]},
-    {name:'数据编程',en:'Data & Code',color:'#f59e0b',skills:[{cn:'Python',en:'Python',x:250,y:100},{cn:'Stata',en:'Stata',x:300,y:115},{cn:'Excel',en:'Excel',x:270,y:155},{cn:'VSCode',en:'VSCode',x:315,y:170}]},
-    {name:'产品能力',en:'Product',color:'#22c55e',skills:[{cn:'PRD',en:'PRD',x:360,y:85},{cn:'Figma',en:'Figma',x:400,y:110},{cn:'React',en:'React',x:370,y:145},{cn:'测试',en:'Testing',x:420,y:155}]},
-    {name:'AI工具',en:'AI Tools',color:'#3b82f6',skills:[{cn:'GPT',en:'GPT',x:460,y:100},{cn:'Gemini',en:'Gemini',x:500,y:130},{cn:'豆包',en:'Doubao',x:475,y:165},{cn:'Vibe',en:'Vibe',x:520,y:175}]},
-    {name:'创意宣发',en:'Creative',color:'#a855f7',skills:[{cn:'Adobe',en:'Adobe',x:540,y:120},{cn:'视频',en:'Video',x:570,y:155},{cn:'海报',en:'Poster',x:530,y:195},{cn:'排版',en:'Layout',x:565,y:205}]},
-    {name:'工程专业',en:'Engineering',color:'#ec4899',skills:[{cn:'CAD',en:'CAD',x:300,y:195},{cn:'Rhino',en:'Rhino',x:350,y:215},{cn:'Praat',en:'Praat',x:400,y:200},{cn:'Office',en:'Office',x:450,y:220}]}
+    {name:'语言认证',en:'Certifications',color:'#ef4444',skills:[{cn:'CET-4 603',en:'CET-4 603',p:'熟练',pEn:'Proficient',x:145,y:125},{cn:'CET-6 586',en:'CET-6 586',p:'熟练',pEn:'Proficient',x:190,y:165},{cn:'IELTS 7.0',en:'IELTS 7.0',p:'熟练',pEn:'Proficient',x:160,y:200},{cn:'普通话二甲',en:'Mandarin 2A',p:'精通',pEn:'Expert',x:210,y:210}]},
+    {name:'数据编程',en:'Data & Code',color:'#f59e0b',skills:[{cn:'Python',en:'Python',p:'熟练',pEn:'Proficient',x:250,y:100},{cn:'Stata',en:'Stata',p:'掌握',pEn:'Competent',x:300,y:115},{cn:'Excel',en:'Excel',p:'精通',pEn:'Expert',x:270,y:155},{cn:'VSCode',en:'VSCode',p:'熟练',pEn:'Proficient',x:315,y:170}]},
+    {name:'产品能力',en:'Product',color:'#22c55e',skills:[{cn:'PRD',en:'PRD',p:'熟练',pEn:'Proficient',x:360,y:85},{cn:'Figma',en:'Figma',p:'掌握',pEn:'Competent',x:400,y:110},{cn:'React',en:'React',p:'入门',pEn:'Beginner',x:370,y:145},{cn:'测试',en:'Testing',p:'掌握',pEn:'Competent',x:420,y:155}]},
+    {name:'AI工具',en:'AI Tools',color:'#3b82f6',skills:[{cn:'GPT',en:'GPT',p:'精通',pEn:'Expert',x:460,y:100},{cn:'Gemini',en:'Gemini',p:'精通',pEn:'Expert',x:500,y:130},{cn:'豆包',en:'Doubao',p:'熟练',pEn:'Proficient',x:475,y:165},{cn:'Vibe',en:'Vibe Coding',p:'掌握',pEn:'Competent',x:520,y:175}]},
+    {name:'创意宣发',en:'Creative',color:'#a855f7',skills:[{cn:'Adobe',en:'Adobe',p:'熟练',pEn:'Proficient',x:540,y:120},{cn:'视频',en:'Video',p:'熟练',pEn:'Proficient',x:570,y:155},{cn:'海报',en:'Poster',p:'掌握',pEn:'Competent',x:530,y:195},{cn:'排版',en:'Layout',p:'掌握',pEn:'Competent',x:565,y:205}]},
+    {name:'工程专业',en:'Engineering',color:'#ec4899',skills:[{cn:'CAD',en:'CAD',p:'入门',pEn:'Beginner',x:300,y:195},{cn:'Rhino',en:'Rhino',p:'入门',pEn:'Beginner',x:350,y:215},{cn:'Praat',en:'Praat',p:'掌握',pEn:'Competent',x:400,y:200},{cn:'Office',en:'Office',p:'精通',pEn:'Expert',x:450,y:220}]}
   ],
 
   // ─── 世界地图 — 城市级标记 ───
@@ -113,7 +113,7 @@ window.MODULE_DATA = {
     {name:'衢州',en:'Quzhou',lat:28.97,lng:118.87,visit:'short',desc:'古城墙下的江南水乡',descEn:'A water town beneath ancient city walls',img:'quzhou.jpg'},
     {name:'三亚',en:'Sanya',lat:18.25,lng:109.5,visit:'short',desc:'椰风海韵，度假胜地',descEn:'Coconut palms, ocean breeze — tropical paradise',img:'sanya.jpg'},
     // ═══ 中国 · 旅行 ═══
-    {name:'北京',en:'Beijing',lat:39.9,lng:116.4,visit:'travel',lang:'native',langLabel:'中国 · 普通话',langLabelEn:'China · Mandarin',langDesc:'从小说普通话，母语',langDescEn:'Native speaker, spoken since birth',desc:'故宫、长城、胡同，历史与现代交织',descEn:'Forbidden City, Great Wall, hutongs — history meets modernity',img:'beijing.jpg'},
+    {name:'北京',en:'Beijing',lat:39.9,lng:116.4,visit:'travel',lang:'native',langLabel:'中国 · 普通话',langLabelEn:'China · Mandarin',langDesc:'"你好"在普通话中是"nǐ hǎo"，国际音标 [ni˨˩˦ xaʊ˨˩˦]',langDescEn:'"Hello" in Mandarin is "nǐ hǎo", IPA [ni˨˩˦ xaʊ˨˩˦]',desc:'故宫、长城、胡同，历史与现代交织',descEn:'Forbidden City, Great Wall, hutongs — history meets modernity',img:'beijing.jpg'},
     {name:'武汉',en:'Wuhan',lat:30.59,lng:114.3,visit:'travel',desc:'热干面、黄鹤楼，英雄之城',descEn:'Hot dry noodles, Yellow Crane Tower — city of heroes',img:'wuhan.jpg'},
     {name:'西宁',en:'Xining',lat:36.62,lng:101.77,visit:'travel',desc:'青藏高原门户，塔尔寺朝圣',descEn:'Gateway to the Tibetan Plateau, Kumbum Monastery',img:'xining.jpg'},
     {name:'南京',en:'Nanjing',lat:32.06,lng:118.8,visit:'travel',desc:'六朝古都，梧桐大道美极了',descEn:'Ancient capital, gorgeous sycamore-lined avenues',img:'nanjing.jpg'},
@@ -139,15 +139,15 @@ window.MODULE_DATA = {
     {name:'重庆',en:'Chongqing',lat:29.56,lng:106.55,visit:'transit',desc:'8D魔幻城市，火锅之都',descEn:'8D magical city, hotpot capital',img:'chongqing.jpg'},
     {name:'成都',en:'Chengdu',lat:30.57,lng:104.07,visit:'transit',desc:'天府之国，熊猫故里',descEn:'Land of Abundance, home of pandas',img:'chengdu.jpg'},
     // ═══ 欧洲 · 长住 ═══
-    {name:'奥斯陆',en:'Oslo',lat:59.91,lng:10.75,visit:'long',lang:'proficient',langLabel:'挪威 · 挪威语',langLabelEn:'Norway · Norwegian',langDesc:'交换期间沉浸式学习挪威语',langDescEn:'Immersive Norwegian learning during exchange',desc:'交换学期，爱上了北欧的宁静',descEn:'Exchange semester — fell in love with Nordic tranquility',img:'oslo.jpg'},
+    {name:'奥斯陆',en:'Oslo',lat:59.91,lng:10.75,visit:'long',lang:'proficient',langLabel:'挪威 · 挪威语',langLabelEn:'Norway · Norwegian',langDesc:'"你好"在挪威语中是"Hei"，国际音标 [hæɪ]',langDescEn:'"Hello" in Norwegian is "Hei", IPA [hæɪ]',desc:'交换学期，爱上了北欧的宁静',descEn:'Exchange semester — fell in love with Nordic tranquility',img:'oslo.jpg'},
     // ═══ 欧洲 · 旅行 ═══
     {name:'维也纳',en:'Vienna',lat:48.21,lng:16.37,visit:'travel',desc:'音乐之都，古典之美',descEn:'City of Music, classical beauty everywhere',img:'vienna.jpg'},
     {name:'慕尼黑',en:'Munich',lat:48.14,lng:11.58,visit:'travel',desc:'巴伐利亚的啤酒和艺术',descEn:'Bavarian beer and art',img:'munich.jpg'},
-    {name:'柏林',en:'Berlin',lat:52.52,lng:13.41,visit:'travel',lang:'proficient',langLabel:'德国 · 德语',langLabelEn:'Germany · German',langDesc:'大学期间系统学习德语',langDescEn:'Systematically studied German at university',desc:'历史与前卫并存的酷城市',descEn:'A cool city where history and avant-garde coexist',img:'berlin.jpg'},
+    {name:'柏林',en:'Berlin',lat:52.52,lng:13.41,visit:'travel',lang:'proficient',langLabel:'德国 · 德语',langLabelEn:'Germany · German',langDesc:'"你好"在德语中是"Hallo"，国际音标 [haˈloː]',langDescEn:'"Hello" in German is "Hallo", IPA [haˈloː]',desc:'历史与前卫并存的酷城市',descEn:'A cool city where history and avant-garde coexist',img:'berlin.jpg'},
     {name:'萨尔茨堡',en:'Salzburg',lat:47.8,lng:13.04,visit:'travel',desc:'莫扎特故乡，音乐之声取景地',descEn:'Mozart\'s hometown, Sound of Music filming site',img:'salzburg.jpg'},
     {name:'布拉格',en:'Prague',lat:50.08,lng:14.44,visit:'travel',desc:'千塔之城，波西米亚风情',descEn:'City of a thousand spires, Bohemian charm',img:'prague.jpg'},
     {name:'布达佩斯',en:'Budapest',lat:47.5,lng:19.04,visit:'travel',desc:'多瑙河畔的明珠',descEn:'Pearl of the Danube',img:'budapest.jpg'},
-    {name:'巴黎',en:'Paris',lat:48.86,lng:2.35,visit:'travel',lang:'beginner',langLabel:'法国 · 法语',langLabelEn:'France · French',langDesc:'多邻国学习法语',langDescEn:'Learning French on Duolingo',desc:'铁塔、卢浮宫、塞纳河畔的浪漫',descEn:'Eiffel Tower, Louvre, romance along the Seine',img:'paris.jpg'},
+    {name:'巴黎',en:'Paris',lat:48.86,lng:2.35,visit:'travel',lang:'beginner',langLabel:'法国 · 法语',langLabelEn:'France · French',langDesc:'"你好"在法语中是"Bonjour"，国际音标 [bɔ̃ʒuʁ]',langDescEn:'"Hello" in French is "Bonjour", IPA [bɔ̃ʒuʁ]',desc:'铁塔、卢浮宫、塞纳河畔的浪漫',descEn:'Eiffel Tower, Louvre, romance along the Seine',img:'paris.jpg'},
     {name:'哥本哈根',en:'Copenhagen',lat:55.68,lng:12.57,visit:'travel',desc:'安徒生的故乡，童话般的城市',descEn:'Andersen\'s hometown, a fairytale city',img:'copenhagen.jpg'},
     {name:'斯德哥尔摩',en:'Stockholm',lat:59.33,lng:18.07,visit:'travel',desc:'水上之城，北欧设计美学',descEn:'City on water, Nordic design aesthetics',img:'stockholm.jpg'},
     {name:'塔林',en:'Tallinn',lat:59.44,lng:24.75,visit:'travel',desc:'中世纪古城，波罗的海宝石',descEn:'Medieval old town, Baltic gem',img:'tallinn.jpg'},
@@ -176,19 +176,19 @@ window.MODULE_DATA = {
   // 语言独立标记（不与城市重合的语言标记，定位到首都）
   langOnlyPlaces: [
     // 母语
-    {name:'中国 · 普通话',en:'China · Mandarin',lat:39.91,lng:116.4,lang:'native',desc:'从小说普通话，母语',descEn:'Native speaker, spoken since birth'},
+    {name:'中国 · 普通话',en:'China · Mandarin',lat:39.91,lng:116.4,lang:'native',desc:'"你好"在普通话中是"nǐ hǎo"，国际音标 [ni˨˩˦ xaʊ˨˩˦]',descEn:'"Hello" in Mandarin is "nǐ hǎo", IPA [ni˨˩˦ xaʊ˨˩˦]'},
     // 精通
-    {name:'英国 · 英语',en:'UK · English',lat:51.51,lng:-0.13,lang:'fluent',desc:'从小学习英语，CET-6 586 / IELTS 7.0',descEn:'Studied since childhood, CET-6 586 / IELTS 7.0'},
-    {name:'美国 · 英语',en:'USA · English',lat:38.91,lng:-77.04,lang:'fluent',desc:'UT Austin暑校全英文环境',descEn:'Full English immersion at UT Austin summer school'},
+    {name:'英国 · 英语',en:'UK · English',lat:51.51,lng:-0.13,lang:'fluent',desc:'"你好"在英语中是"Hello"，国际音标 [həˈləʊ]',descEn:'"Hello" in English is "Hello", IPA [həˈləʊ]'},
+    {name:'美国 · 英语',en:'USA · English',lat:38.91,lng:-77.04,lang:'fluent',desc:'"你好"在英语中是"Hello"，国际音标 [həˈloʊ]',descEn:'"Hello" in English is "Hello", IPA [həˈloʊ]'},
     // 入门
-    {name:'西班牙 · 西班牙语',en:'Spain · Spanish',lat:40.42,lng:-3.7,lang:'beginner',desc:'多邻国学习西班牙语',descEn:'Learning Spanish on Duolingo'},
-    {name:'墨西哥 · 西班牙语',en:'Mexico · Spanish',lat:19.43,lng:-99.13,lang:'beginner',desc:'多邻国学习西班牙语',descEn:'Learning Spanish on Duolingo'},
-    {name:'中国 · 粤语',en:'China · Cantonese',lat:22.32,lng:114.17,lang:'beginner',desc:'日常接触学习粤语',descEn:'Picked up Cantonese through daily exposure'},
-    {name:'日本 · 日语',en:'Japan · Japanese',lat:35.68,lng:139.69,lang:'beginner',desc:'多邻国学习日语',descEn:'Learning Japanese on Duolingo'},
-    {name:'韩国 · 韩语',en:'Korea · Korean',lat:37.57,lng:126.98,lang:'beginner',desc:'日常接触学习韩语',descEn:'Picked up Korean through daily exposure'},
-    {name:'俄罗斯 · 俄语',en:'Russia · Russian',lat:55.76,lng:37.62,lang:'beginner',desc:'多邻国学习俄语',descEn:'Learning Russian on Duolingo'},
-    {name:'意大利 · 意大利语',en:'Italy · Italian',lat:41.9,lng:12.5,lang:'beginner',desc:'多邻国学习意大利语',descEn:'Learning Italian on Duolingo'},
-    {name:'法国 · 法语',en:'France · French',lat:48.86,lng:2.35,lang:'beginner',desc:'多邻国学习法语',descEn:'Learning French on Duolingo'}
+    {name:'西班牙 · 西班牙语',en:'Spain · Spanish',lat:40.42,lng:-3.7,lang:'beginner',desc:'"你好"在西班牙语中是"Hola"，国际音标 [ˈola]',descEn:'"Hello" in Spanish is "Hola", IPA [ˈola]'},
+    {name:'墨西哥 · 西班牙语',en:'Mexico · Spanish',lat:19.43,lng:-99.13,lang:'beginner',desc:'"你好"在西班牙语中是"Hola"，国际音标 [ˈola]',descEn:'"Hello" in Spanish is "Hola", IPA [ˈola]'},
+    {name:'中国 · 粤语',en:'China · Cantonese',lat:22.32,lng:114.17,lang:'beginner',desc:'"你好"在粤语中是"néih hóu"，国际音标 [nei̯˨˩ hou̯˨˥]',descEn:'"Hello" in Cantonese is "néih hóu", IPA [nei̯˨˩ hou̯˨˥]'},
+    {name:'日本 · 日语',en:'Japan · Japanese',lat:35.68,lng:139.69,lang:'beginner',desc:'"你好"在日语中是"こんにちは"，国际音标 [konnitɕiwa]',descEn:'"Hello" in Japanese is "こんにちは", IPA [konnitɕiwa]'},
+    {name:'韩国 · 韩语',en:'Korea · Korean',lat:37.57,lng:126.98,lang:'beginner',desc:'"你好"在韩语中是"안녕하세요"，国际音标 [annjʌŋhaseyo]',descEn:'"Hello" in Korean is "안녕하세요", IPA [annjʌŋhaseyo]'},
+    {name:'俄罗斯 · 俄语',en:'Russia · Russian',lat:55.76,lng:37.62,lang:'beginner',desc:'"你好"在俄语中是"Привет"，国际音标 [prʲɪˈvʲet]',descEn:'"Hello" in Russian is "Привет", IPA [prʲɪˈvʲet]'},
+    {name:'意大利 · 意大利语',en:'Italy · Italian',lat:41.9,lng:12.5,lang:'beginner',desc:'"你好"在意大利语中是"Ciao"，国际音标 [ˈtʃaːo]',descEn:'"Hello" in Italian is "Ciao", IPA [ˈtʃaːo]'},
+    {name:'法国 · 法语',en:'France · French',lat:48.86,lng:2.35,lang:'beginner',desc:'"你好"在法语中是"Bonjour"，国际音标 [bɔ̃ʒuʁ]',descEn:'"Hello" in French is "Bonjour", IPA [bɔ̃ʒuʁ]'}
   ],
 
   // ─── 时间轴 ───

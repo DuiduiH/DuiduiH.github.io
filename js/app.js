@@ -123,9 +123,26 @@
         if(target){
           var el=document.getElementById(target)||document.querySelector('[data-map-id="'+target+'"]');
           if(el){
+            // Mark all intermediate sections as already shown so they don't trigger overlays
+            var targetIdx=ALL_SECTIONS.indexOf(target);
+            if(targetIdx>-1){
+              for(var i=0;i<=targetIdx;i++){
+                overlaysShown.add(ALL_SECTIONS[i]);
+                unlockDot(ALL_SECTIONS[i]);
+              }
+            }
             mapOverlay.classList.remove('open');
             unlockScroll();
-            setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},100);
+            // Temporarily disable scroll-snap for instant jump, then re-enable
+            document.documentElement.style.scrollSnapType='none';
+            document.documentElement.style.scrollBehavior='auto';
+            setTimeout(function(){
+              el.scrollIntoView({block:'start'});
+              setTimeout(function(){
+                document.documentElement.style.scrollSnapType='';
+                document.documentElement.style.scrollBehavior='';
+              },50);
+            },100);
           }
         }
       });
@@ -147,6 +164,33 @@
     });
   },{threshold:0.2});
   document.querySelectorAll('[data-map-id]').forEach(function(el){sectionObs.observe(el);});
+
+  // ——— Nav link click: suppress intermediate unlock overlays ———
+  document.querySelectorAll('.nav a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var target=a.getAttribute('href').replace('#','');
+      if(target){
+        e.preventDefault();
+        var targetIdx=ALL_SECTIONS.indexOf(target);
+        if(targetIdx>-1){
+          for(var i=0;i<=targetIdx;i++){
+            overlaysShown.add(ALL_SECTIONS[i]);
+            unlockDot(ALL_SECTIONS[i]);
+          }
+        }
+        var el=document.getElementById(target)||document.querySelector('[data-map-id="'+target+'"]');
+        if(el){
+          document.documentElement.style.scrollSnapType='none';
+          document.documentElement.style.scrollBehavior='auto';
+          el.scrollIntoView({block:'start'});
+          setTimeout(function(){
+            document.documentElement.style.scrollSnapType='';
+            document.documentElement.style.scrollBehavior='';
+          },50);
+        }
+      }
+    });
+  });
 
   // ——— Nav active link ———
   var navObs=new IntersectionObserver(function(entries){
@@ -295,7 +339,12 @@
       var key=el.dataset.i18nHtml;
       if(TRANSLATIONS[key]&&TRANSLATIONS[key][lang]) el.innerHTML=TRANSLATIONS[key][lang];
     });
-    if(langToggle) langToggle.textContent=lang==='cn'?'EN':'中文';
+    // Update nav tooltip text for icon-only mode
+    document.querySelectorAll('[data-tooltip-key]').forEach(function(el){
+      var key=el.dataset.tooltipKey;
+      if(TRANSLATIONS[key]&&TRANSLATIONS[key][lang]) el.dataset.tooltip=TRANSLATIONS[key][lang];
+    });
+    if(langToggle) langToggle.textContent=lang==='cn'?'EN':'CN';
     document.documentElement.lang=lang==='cn'?'zh-CN':'en';
     // Update the currently visible quote if the overlay is open
     if(quoteOv&&quoteOv.classList.contains('show')&&quoteOvText){
@@ -334,6 +383,35 @@
     return null;
   }
 
+  // Hero page: click bottom half → scroll to next
+  var heroPage=document.getElementById('hero');
+  if(heroPage){
+    heroPage.addEventListener('click',function(e){
+      if(e.target.closest('.scroll-hint')) return;
+      if(e.target.closest('.hkw')) return; // keyword clicks
+      if(e.target.closest('#hero-c')) return;
+      var rect=heroPage.getBoundingClientRect();
+      if(e.clientY > rect.top+rect.height*0.5){
+        var next=findNextSnap(heroPage);
+        if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  }
+
+  // Ending page: click top half → scroll to previous
+  var endingPage=document.getElementById('ending');
+  if(endingPage){
+    endingPage.addEventListener('click',function(e){
+      if(e.target.closest('button')) return;
+      if(e.target.closest('a')) return;
+      var rect=endingPage.getBoundingClientRect();
+      if(e.clientY < rect.top+rect.height*0.5){
+        var prev=findPrevSnap(endingPage);
+        if(prev) prev.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  }
+
   // Intro pages: top → previous, bottom → next
   document.querySelectorAll('.section-intro-page').forEach(function(intro){
     intro.addEventListener('click',function(e){
@@ -352,6 +430,7 @@
 
   // Section pages: click outside frame — above frame = previous, below frame = next
   document.querySelectorAll('.section-page').forEach(function(page){
+    if(page.id==='hero') return; // handled above
     page.addEventListener('click',function(e){
       if(e.target.closest('.section-frame')) return;
       if(e.target.closest('button')) return;
