@@ -8,6 +8,7 @@ window.SITE_TEXT = {
   // ─── 翻译 (data-i18n 对应的中英文) ───
   translations: {
     'nav-hero':{cn:'关于',en:'About'},'nav-interest':{cn:'兴趣',en:'Interests'},'nav-career':{cn:'工作',en:'Career'},'nav-study':{cn:'学习',en:'Learning'},'nav-worldmap':{cn:'足迹',en:'Footprints'},'nav-timelines':{cn:'经历',en:'Experience'},'nav-skills':{cn:'技能',en:'Skills'},'nav-takeaway':{cn:'联系',en:'Contact'},
+    'hero-title':{cn:'我是谁？',en:'Who am I?'},
     'hero-hint':{cn:'点击关键词了解更多',en:'Click a keyword to learn more'},
     'scroll-hint':{cn:'向下滑动',en:'Scroll down'},
     'dismiss-click':{cn:'点击任意处关闭',en:'Click anywhere to close'},
@@ -62,27 +63,27 @@ window.SITE_TEXT = {
     'completion-p4':{cn:'相信她一定会给你带来惊喜！',en:'she\'s sure to surprise you!'},
     'quote-prev':{cn:'上一句',en:'Prev'},'quote-next':{cn:'换一句',en:'Next'},'quote-close':{cn:'点击空白处关闭',en:'Click outside to close'},
     'map-title':{cn:'— 冒险地图 —',en:'— ADVENTURE MAP —'},
-    'map-b-hero':{cn:'关键词影院',en:'Keyword Cinema'},'map-b-interest':{cn:'兴趣游乐场',en:'Hobby Playground'},'map-b-career':{cn:'事业大楼',en:'Career Building'},'map-b-study':{cn:'知识湖',en:'Knowledge Lake'},'map-b-worldmap':{cn:'故事杂货铺',en:'Story Bazaar'},'map-b-timelines':{cn:'经历钟楼',en:'Experience Clock Tower'},'map-b-skills':{cn:'技能花园',en:'Skill Garden'}
+    'map-b-hero':{cn:'关键词影院',en:'Keyword Cinema'},'map-b-interest':{cn:'兴趣游乐场',en:'Hobby Playground'},'map-b-career':{cn:'事业大楼',en:'Career Building'},'map-b-study':{cn:'知识湖',en:'Knowledge Lake'},'map-b-worldmap':{cn:'故事杂货铺',en:'Story Bazaar'},'map-b-timelines':{cn:'经历钟楼',en:'Experience Clock Tower'},'map-b-skills':{cn:'技能花园',en:'Skill Garden'},'map-b-takeaway':{cn:'邮局',en:'Post Office'},'map-b-ending':{cn:'终点',en:'Finish'}
   },
 
   // ─── XD送你的一句话 (20句，中英双语) ───
   quotes: [
-    {cn:'永远不要把任何事视为理所当然。',en:'Never take anything for granted.'},
+    {cn:'不要把任何事视为理所当然。',en:'Never take anything for granted.'},
     {cn:'相信复利的力量。',en:'Believe in the power of compounding.'},
     {cn:'多看事实，少看观点。',en:'Focus on facts, not opinions.'},
     {cn:'观点会过时，能力不会。',en:'Opinions fade; abilities endure.'},
     {cn:'无所求必满载而归。',en:'Expect nothing, and you\'ll return with everything.'},
-    {cn:'保持节奏——慌乱中成不了事。',en:'Keep your rhythm — nothing great is done in a rush.'},
+    {cn:'保持节奏，慌乱下一定成不了事。',en:'Keep your rhythm — nothing great is done in a rush.'},
     {cn:'着眼未来。',en:'Keep your eyes on the horizon.'},
-    {cn:'慢慢来，就是最快的。',en:'Go slow to go fast.'},
+    {cn:'慢慢来就是最快的。',en:'Go slow to go fast.'},
     {cn:'做人就像做游戏，做个有意思的人。',en:'Life is like a game — make yourself an interesting character.'},
     {cn:'乱了节奏也没关系，继续跳你的探戈吧。',en:'If you got tangled up, just tango on.'},
-    {cn:'上帝给你关上一扇门，那就把它打开——门就是用来开的。',en:'When God closes a door, open it back up. That\'s how doors work.'},
-    {cn:'允许一切发生。',en:'Let everything happen to you.'},
+    {cn:'上帝给你关上一扇门，那就把它打开。因为门就是这样用的。',en:'When God closes a door, open it back up. That\'s how doors work.'},
+    {cn:'允许一切发生。',en:'Let everything happen.'},
     {cn:'如果生活给你柠檬，那就做成柠檬水，再加点伏特加。',en:'When life gives you lemons, make lemonade — and add some vodka.'},
     {cn:'先完成，再完美。',en:'Done first, perfect later.'},
     {cn:'行动比情绪可靠。',en:'Action is more reliable than emotion.'},
-    {cn:'做你自己，因为别人都有人做了。',en:'Be yourself; everyone else is already taken.'},
+    {cn:'做自己，因为别人都有人做了。',en:'Be yourself; everyone else is already taken.'},
     {cn:'简历是扁平的经历，但我是一个立体的人。',en:'A résumé is flat, but I am three-dimensional.'},
     {cn:'不要因为走了太远，而忘记我们为什么出发。',en:'Don\'t go so far that you forget why you set out.'},
     {cn:'每个人都有自己的时区。',en:'Everyone has their own timezone.'},

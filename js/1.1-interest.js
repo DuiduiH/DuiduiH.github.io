@@ -6,6 +6,33 @@
   var HOBBIES=(window.MODULE_DATA&&window.MODULE_DATA.hobbies)||[];
   var T=(window.SITE_TEXT&&window.SITE_TEXT.translations)||{};
 
+  // ─── Hobby detail popup (like map popup) ───
+  var hobbyOv=document.createElement('div');
+  hobbyOv.id='hobbyDetailOverlay';
+  hobbyOv.style.cssText='position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px);cursor:pointer';
+  var hobbyCard=document.createElement('div');
+  hobbyCard.style.cssText='background:var(--bg2);border:1px solid var(--frame-border);border-radius:16px;padding:1.5rem;max-width:320px;width:90%;text-align:center;cursor:default;box-shadow:0 12px 40px rgba(0,0,0,.3)';
+  hobbyOv.appendChild(hobbyCard);
+  document.body.appendChild(hobbyOv);
+  hobbyOv.addEventListener('click',function(e){if(e.target===hobbyOv)hobbyOv.style.display='none';});
+  hobbyCard.addEventListener('click',function(e){e.stopPropagation();});
+
+  function showHobbyDetail(data){
+    var en=isEn();
+    var catInfo=CAT[data.catKey];
+    var catLabel=en?(catInfo?catInfo.en:''):(catInfo?catInfo.l:'');
+    var itemLabel=en?(data.itemEn||data.itemCn):data.itemCn;
+    var desc=en?(data.dEn||data.d):data.d;
+    var color=getColor(data.catKey);
+    var imgPath=data.img?('img/hobbies/'+data.img+'/cover.svg'):'';
+    var html='<div style="font-weight:700;font-size:1rem;color:'+color+';margin-bottom:.5rem">'+catLabel+' · '+itemLabel+'</div>';
+    if(imgPath) html+='<img src="'+imgPath+'" style="width:160px;height:160px;object-fit:cover;border-radius:10px;margin:.5rem auto;display:block;cursor:pointer" onclick="event.stopPropagation();window._expandCityImg&&window._expandCityImg(this.src)" onerror="this.style.display=\'none\'" />';
+    html+='<div style="font-size:.88rem;color:var(--muted);line-height:1.8;margin-top:.5rem">'+desc+'</div>';
+    html+='<div style="font-size:.7rem;color:var(--muted);opacity:.35;margin-top:1rem;cursor:pointer" onclick="this.parentElement.parentElement.style.display=\'none\'">'+(en?'Click anywhere to close':'点击任意处关闭')+'</div>';
+    hobbyCard.innerHTML=html;
+    hobbyOv.style.display='flex';
+  }
+
   var board=document.getElementById('gameBoard');
   // Use the section-rules element for game status feedback
   var rulesEl=board?board.closest('.section-frame').querySelector('.section-rules'):null;
@@ -59,6 +86,7 @@
     cards.forEach(function(it){
       var s=CAT[it.c],el=document.createElement('div');
       el.className='card';el.dataset.category=it.c;el.dataset.itemCn=it.n;el.dataset.itemEn=it.en||it.n;el.dataset.catKey=it.c;
+      el.dataset.hobbyImg=it.img||'';el.dataset.hobbyD=it.d||'';el.dataset.hobbyDen=it.dEn||'';
       var catLabel=en?(s.en||s.l):s.l;
       var itemLabel=en?(it.en||it.n):it.n;
       var color=getColor(it.c);
@@ -109,10 +137,23 @@
     }
   }
 
-  // Event delegation on the board — click anywhere inside a .card triggers flip
+  // Event delegation on the board — click anywhere inside a .card triggers flip or detail popup
   board.addEventListener('click',function(e){
     var card=e.target.closest('.card');
-    if(card) flip(card);
+    if(!card) return;
+    // If card is already matched, show detail popup instead of flipping
+    if(card.classList.contains('matched')){
+      showHobbyDetail({
+        catKey:card.dataset.catKey,
+        itemCn:card.dataset.itemCn,
+        itemEn:card.dataset.itemEn,
+        img:card.dataset.hobbyImg,
+        d:card.dataset.hobbyD,
+        dEn:card.dataset.hobbyDen
+      });
+      return;
+    }
+    flip(card);
   });
 
   // Event delegation for shuffle-link inside the rules area (survives innerHTML updates)

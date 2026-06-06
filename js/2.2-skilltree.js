@@ -4,43 +4,32 @@
   var BRANCHES=(window.MODULE_DATA&&window.MODULE_DATA.skillBranches)||[];
 
   var wrap=document.getElementById('stWrap');if(!wrap)return;
-  var W=700,H=500;
+  var W=700,H=540; // slightly taller to avoid cropping canopy
 
   /* ── Each branch has a fixed cluster center on the tree ──
      Laid out so each cluster sits on its own major branch,
-     forming a round 🌳 canopy shape. */
+     forming a round 🌳 canopy shape. Pulled inward to avoid clipping. */
 
   var CLUSTER_CENTERS=[
-    {cx:140,cy:165},  // 0 — far left branch (语言认证)
-    {cx:245,cy:95},   // 1 — upper-left branch (数据编程)
-    {cx:350,cy:65},   // 2 — top center branch (产品能力)
-    {cx:455,cy:95},   // 3 — upper-right branch (AI工具)
-    {cx:560,cy:165},  // 4 — far right branch (创意宣发)
-    {cx:350,cy:195}   // 5 — center-low branch (工程专业)
+    {cx:155,cy:185},  // 0 — far left branch (语言认证)
+    {cx:245,cy:115},  // 1 — upper-left branch (数据编程)
+    {cx:350,cy:85},   // 2 — top center branch (产品能力)
+    {cx:455,cy:115},  // 3 — upper-right branch (AI工具)
+    {cx:545,cy:185},  // 4 — far right branch (创意宣发)
+    {cx:350,cy:225}   // 5 — center-low branch (工程专业)
   ];
 
-  // Red apple palette — varying red shades for a natural look
-  var APPLE_REDS=['#dc2626','#ef4444','#b91c1c','#f87171','#e11d48','#c0392b','#e74c3c','#d63031'];
-
-  // Compute non-overlapping apple positions — scattered organically
-  // Uses a seeded offset pattern so apples don't form a perfect grid
+  // Compute non-overlapping apple positions — more scattered and organic
   function arrangeApples(count,cx,cy,radius,brIdx){
     var positions=[];
-    // Pre-defined organic offsets per slot (dx%, dy% from center)
-    // Each branch gets a different scatter pattern via brIdx
+    // Wide-spread, irregular offsets per branch — each is unique
     var patterns=[
-      // pattern 0: diamond-ish
-      [{dx:-0.55,dy:-0.15},{dx:0.1,dy:-0.55},{dx:0.55,dy:0.15},{dx:-0.1,dy:0.55}],
-      // pattern 1: zigzag
-      [{dx:-0.5,dy:-0.4},{dx:0.35,dy:-0.2},{dx:-0.25,dy:0.35},{dx:0.55,dy:0.45}],
-      // pattern 2: scattered arc
-      [{dx:-0.45,dy:-0.5},{dx:0.45,dy:-0.35},{dx:-0.5,dy:0.3},{dx:0.3,dy:0.5}],
-      // pattern 3: loose cluster
-      [{dx:-0.3,dy:-0.55},{dx:0.5,dy:-0.1},{dx:-0.55,dy:0.25},{dx:0.2,dy:0.5}],
-      // pattern 4: spread wide
-      [{dx:-0.55,dy:-0.3},{dx:0.2,dy:-0.55},{dx:0.55,dy:0.2},{dx:-0.2,dy:0.5}],
-      // pattern 5: diagonal scatter
-      [{dx:-0.5,dy:-0.45},{dx:0.15,dy:-0.2},{dx:-0.15,dy:0.3},{dx:0.5,dy:0.5}]
+      [{dx:-0.6,dy:-0.2},{dx:0.15,dy:-0.65},{dx:0.6,dy:0.1},{dx:-0.15,dy:0.6}],
+      [{dx:-0.55,dy:-0.5},{dx:0.4,dy:-0.15},{dx:-0.2,dy:0.45},{dx:0.6,dy:0.55}],
+      [{dx:-0.5,dy:-0.6},{dx:0.5,dy:-0.4},{dx:-0.55,dy:0.35},{dx:0.35,dy:0.55}],
+      [{dx:-0.35,dy:-0.6},{dx:0.55,dy:-0.15},{dx:-0.6,dy:0.3},{dx:0.25,dy:0.6}],
+      [{dx:-0.6,dy:-0.35},{dx:0.25,dy:-0.6},{dx:0.6,dy:0.25},{dx:-0.25,dy:0.55}],
+      [{dx:-0.55,dy:-0.5},{dx:0.2,dy:-0.25},{dx:-0.2,dy:0.35},{dx:0.55,dy:0.55}]
     ];
     var pat=patterns[brIdx%patterns.length];
     for(var i=0;i<count;i++){
@@ -50,15 +39,15 @@
     return positions;
   }
 
-  var APPLE_SIZE=32; // uniform apple diameter
+  var APPLE_SIZE=30; // uniform apple diameter
 
   function render(){
     var en=isEn();
     wrap.innerHTML='';
 
-    // Scaling wrapper
+    // Scaling wrapper — uses new H for aspect ratio
     var scaler=document.createElement('div');
-    scaler.style.cssText='width:100%;max-width:min(700px, calc((100vh - 220px) * 1.4));margin:0 auto;aspect-ratio:700/500;position:relative;overflow:visible';
+    scaler.style.cssText='width:100%;max-width:min(700px, calc((100vh - 200px) * 700 / 540));margin:0 auto;aspect-ratio:700/540;position:relative;overflow:visible';
 
     var container=document.createElement('div');
     container.style.cssText='position:absolute;inset:0;width:100%;height:100%';
@@ -73,32 +62,30 @@
     svg.innerHTML='<ellipse cx="350" cy="'+H+'" rx="280" ry="22" fill="rgba(34,197,94,.08)"/>';
 
     // Trunk — thicker, rooted
-    svg.innerHTML+='<path d="M320,'+H+' C310,420 308,370 325,290 L375,290 C392,370 390,420 380,'+H+' Z" fill="#5c3a1e" opacity=".75"/>';
+    svg.innerHTML+='<path d="M320,'+H+' C310,460 308,400 325,320 L375,320 C392,400 390,460 380,'+H+' Z" fill="#5c3a1e" opacity=".75"/>';
     // Trunk texture
-    svg.innerHTML+='<path d="M340,440 Q338,390 342,340" fill="none" stroke="#3d2511" stroke-width="1.5" opacity=".18"/>';
-    svg.innerHTML+='<path d="M362,445 Q360,400 365,355" fill="none" stroke="#3d2511" stroke-width="1" opacity=".12"/>';
+    svg.innerHTML+='<path d="M340,480 Q338,420 342,370" fill="none" stroke="#3d2511" stroke-width="1.5" opacity=".18"/>';
+    svg.innerHTML+='<path d="M362,485 Q360,430 365,385" fill="none" stroke="#3d2511" stroke-width="1" opacity=".12"/>';
 
-    // === Major branches — one per cluster, spreading out round ===
-    // 0: far-left — curves left and slightly down
-    svg.innerHTML+='<path d="M330,295 C290,275 230,240 155,185" fill="none" stroke="#5c3a1e" stroke-width="9" stroke-linecap="round" opacity=".55"/>';
+    // === Major branches — one per cluster, pulled inward ===
+    // 0: far-left
+    svg.innerHTML+='<path d="M330,325 C290,300 230,260 165,205" fill="none" stroke="#5c3a1e" stroke-width="9" stroke-linecap="round" opacity=".55"/>';
     // 1: upper-left
-    svg.innerHTML+='<path d="M338,290 C320,250 290,180 250,115" fill="none" stroke="#5c3a1e" stroke-width="8" stroke-linecap="round" opacity=".55"/>';
+    svg.innerHTML+='<path d="M338,318 C320,275 290,200 250,135" fill="none" stroke="#5c3a1e" stroke-width="8" stroke-linecap="round" opacity=".55"/>';
     // 2: straight up center
-    svg.innerHTML+='<path d="M350,290 C350,240 350,160 350,80" fill="none" stroke="#5c3a1e" stroke-width="8" stroke-linecap="round" opacity=".55"/>';
+    svg.innerHTML+='<path d="M350,318 C350,270 350,180 350,100" fill="none" stroke="#5c3a1e" stroke-width="8" stroke-linecap="round" opacity=".55"/>';
     // 3: upper-right
-    svg.innerHTML+='<path d="M362,290 C380,250 410,180 450,115" fill="none" stroke="#5c3a1e" stroke-width="8" stroke-linecap="round" opacity=".55"/>';
-    // 4: far-right — curves right and slightly down
-    svg.innerHTML+='<path d="M370,295 C410,275 470,240 545,185" fill="none" stroke="#5c3a1e" stroke-width="9" stroke-linecap="round" opacity=".55"/>';
-    // 5: center-low — short stubby branch going down-center
-    svg.innerHTML+='<path d="M350,295 C350,310 350,330 350,215" fill="none" stroke="#5c3a1e" stroke-width="7" stroke-linecap="round" opacity=".45"/>';
+    svg.innerHTML+='<path d="M362,318 C380,275 410,200 450,135" fill="none" stroke="#5c3a1e" stroke-width="8" stroke-linecap="round" opacity=".55"/>';
+    // 4: far-right
+    svg.innerHTML+='<path d="M370,325 C410,300 470,260 535,205" fill="none" stroke="#5c3a1e" stroke-width="9" stroke-linecap="round" opacity=".55"/>';
+    // 5: center-low — short stubby branch
+    svg.innerHTML+='<path d="M350,320 C350,340 350,360 350,245" fill="none" stroke="#5c3a1e" stroke-width="7" stroke-linecap="round" opacity=".45"/>';
 
-    // Small sub-branches for visual richness
-    svg.innerHTML+='<path d="M200,225 C185,210 170,200 155,195" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
-    svg.innerHTML+='<path d="M290,160 C275,140 260,125 248,115" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
-    svg.innerHTML+='<path d="M410,160 C425,140 440,125 452,115" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
-    svg.innerHTML+='<path d="M500,225 C515,210 530,200 545,195" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
-
-    // (canopy backdrop removed for minimal style)
+    // Small sub-branches
+    svg.innerHTML+='<path d="M210,250 C195,235 180,220 165,215" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
+    svg.innerHTML+='<path d="M290,180 C275,160 260,145 248,135" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
+    svg.innerHTML+='<path d="M410,180 C425,160 440,145 452,135" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
+    svg.innerHTML+='<path d="M490,250 C505,235 520,220 535,215" fill="none" stroke="#5c3a1e" stroke-width="3" stroke-linecap="round" opacity=".3"/>';
 
     container.appendChild(svg);
 
@@ -114,7 +101,7 @@
 
     BRANCHES.forEach(function(br,brIdx){
       var center=CLUSTER_CENTERS[brIdx]||{cx:350,cy:200};
-      var positions=arrangeApples(br.skills.length,center.cx,center.cy,52,brIdx);
+      var positions=arrangeApples(br.skills.length,center.cx,center.cy,58,brIdx);
 
       // Calculate cluster bounding box from apple positions
       var pad=APPLE_SIZE/2+18;
@@ -164,47 +151,72 @@
       });
       cluster.appendChild(leafWrap);
 
-      // ── Apple slots (flat, minimal, red shades) ──
+      // ── Apple slots — branch-colored with stem + leaf ──
+      var brColor=br.color||'#dc2626';
       br.skills.forEach(function(sk,skIdx){
         var pos=positions[skIdx];
         var appleX=(pos.x-minX)/cw*100;
         var appleY=(pos.y-minY)/ch*100;
-        var redColor=APPLE_REDS[(brIdx*4+skIdx)%APPLE_REDS.length];
         var apple=document.createElement('div');
         apple.className='tree-apple';
         apple.style.cssText='position:absolute;z-index:3;'+
           'left:calc('+appleX+'% - '+(APPLE_SIZE/2)+'px);top:calc('+appleY+'% - '+(APPLE_SIZE/2)+'px);'+
-          'width:'+APPLE_SIZE+'px;height:'+APPLE_SIZE+'px;border-radius:50%;'+
-          'background:'+redColor+';opacity:0;transform:scale(.5);'+
+          'width:'+APPLE_SIZE+'px;height:'+(APPLE_SIZE+8)+'px;'+
+          'opacity:0;transform:scale(.5);'+
           'transition:opacity .35s .08s,transform .35s .08s;'+
-          'display:flex;align-items:center;justify-content:center;'+
-          'border:1.5px solid rgba(255,255,255,.15);'+
-          'pointer-events:auto;cursor:default';
+          'pointer-events:auto;cursor:default;display:flex;flex-direction:column;align-items:center';
+
+        // Stem + leaf (top part)
+        var stemWrap=document.createElement('div');
+        stemWrap.style.cssText='width:100%;height:8px;position:relative;flex-shrink:0';
+        // Stem
+        var stem=document.createElement('div');
+        stem.style.cssText='position:absolute;left:50%;top:0;width:2px;height:7px;background:#5c3a1e;border-radius:1px;transform:translateX(-50%)';
+        stemWrap.appendChild(stem);
+        // Leaf
+        var leaf=document.createElement('div');
+        leaf.style.cssText='position:absolute;left:calc(50% + 1px);top:1px;width:8px;height:5px;background:#22c55e;border-radius:0 60% 60% 0;transform:rotate(15deg);opacity:.7';
+        stemWrap.appendChild(leaf);
+        apple.appendChild(stemWrap);
+
+        // Apple body (round)
+        var body=document.createElement('div');
+        body.style.cssText='width:'+APPLE_SIZE+'px;height:'+APPLE_SIZE+'px;border-radius:50%;'+
+          'background:'+brColor+';display:flex;align-items:center;justify-content:center;'+
+          'border:1.5px solid rgba(255,255,255,.15);box-shadow:0 2px 8px rgba(0,0,0,.1),inset -2px -2px 4px rgba(0,0,0,.1),inset 1px 1px 3px rgba(255,255,255,.12);position:relative;transition:box-shadow .2s';
+
+        // Small highlight on apple
+        var highlight=document.createElement('div');
+        highlight.style.cssText='position:absolute;top:4px;left:5px;width:7px;height:5px;border-radius:50%;background:rgba(255,255,255,.2)';
+        body.appendChild(highlight);
 
         // Skill name text
         var txt=document.createElement('div');
-        txt.style.cssText='font-size:7px;font-weight:700;color:#fff;text-align:center;line-height:1.1;position:relative;z-index:1;padding:0 2px;user-select:none';
+        txt.style.cssText='font-size:6.5px;font-weight:500;color:#fff;text-align:center;line-height:1.15;position:relative;z-index:1;padding:0 2px;user-select:none;font-family:Inter,Noto Sans SC,sans-serif';
         txt.textContent=en?sk.en:sk.cn;
-        apple.appendChild(txt);
+        body.appendChild(txt);
 
-        // Proficiency tooltip — below apple, high z-index, never obstructed
+        // Proficiency tooltip — placed in floatingLabel so it's never obscured
         var tip=document.createElement('div');
         tip.className='apple-tip';
-        tip.style.cssText='position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%) scale(.85);'+
+        var tipX=(pos.x/W*100);
+        var tipY=((pos.y+APPLE_SIZE/2+6)/H*100);
+        tip.style.cssText='position:absolute;left:'+tipX+'%;top:'+tipY+'%;transform:translateX(-50%) scale(.9);'+
           'background:var(--bg2,#161e30);border:1px solid var(--frame-border,rgba(255,255,255,.08));'+
-          'border-radius:6px;padding:3px 8px;white-space:nowrap;font-size:10px;font-weight:600;'+
-          'color:'+redColor+';opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;'+
-          'box-shadow:0 2px 8px rgba(0,0,0,.2)';
+          'border-radius:8px;padding:4px 10px;white-space:nowrap;font-size:9px;font-weight:500;'+
+          'color:'+brColor+';opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;'+
+          'box-shadow:0 3px 12px rgba(0,0,0,.15);font-family:Inter,Noto Sans SC,sans-serif;letter-spacing:.3px';
         tip.textContent=en?sk.pEn:sk.p;
-        apple.appendChild(tip);
+        floatingLabel.appendChild(tip);
 
-        apple.addEventListener('mouseenter',function(){
+        body.addEventListener('mouseenter',function(){
           tip.style.opacity='1';tip.style.transform='translateX(-50%) scale(1)';
         });
-        apple.addEventListener('mouseleave',function(){
-          tip.style.opacity='0';tip.style.transform='translateX(-50%) scale(.85)';
+        body.addEventListener('mouseleave',function(){
+          tip.style.opacity='0';tip.style.transform='translateX(-50%) scale(.9)';
         });
 
+        apple.appendChild(body);
         cluster.appendChild(apple);
       });
 
@@ -214,9 +226,9 @@
       lbl.style.cssText='position:absolute;'+
         'left:'+(center.cx/W*100)+'%;top:'+((minY-8)/H*100)+'%;'+
         'transform:translateX(-50%);'+
-        'font-size:12px;font-weight:800;letter-spacing:.5px;color:'+br.color+';'+
+        'font-size:11px;font-weight:600;letter-spacing:.5px;color:'+br.color+';'+
         'opacity:0;white-space:nowrap;pointer-events:none;text-align:center;'+
-        'transition:opacity .3s;text-shadow:0 1px 6px rgba(0,0,0,.4);z-index:101';
+        'transition:opacity .3s;text-shadow:0 1px 6px rgba(0,0,0,.25);z-index:101;font-family:Inter,Noto Sans SC,sans-serif';
       lbl.textContent=en?br.en:br.name;
       floatingLabel.appendChild(lbl);
 

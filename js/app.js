@@ -1,6 +1,6 @@
 // ===== App — Unlock, Map, Replay, Quote Overlay, Lang, Theme =====
 (function(){
-  var ALL_SECTIONS = ['hero','interest','career','study','worldmap','timelines','skills','takeaway'];
+  var ALL_SECTIONS = ['hero','interest','career','study','worldmap','timelines','skills','takeaway','ending'];
 
   var unlocked = new Set(['hero']);
   var overlaysShown = new Set();
@@ -149,6 +149,20 @@
     });
 
     mapOverlay.addEventListener('click',function(e){if(e.target===mapOverlay){mapOverlay.classList.remove('open');unlockScroll();}});
+
+    // ——— Dynamic viewBox: adapt to container aspect ratio ———
+    var mapSvg=mapOverlay.querySelector('.illustrated-map');
+    var mapWrap=mapOverlay.querySelector('.map-svg-wrap');
+    if(mapSvg&&mapWrap&&typeof ResizeObserver!=='undefined'){
+      var MAP_CX=450,MAP_CY=260,MAP_BW=860,MAP_BH=540,MAP_BAR=MAP_BW/MAP_BH;
+      new ResizeObserver(function(entries){
+        var r=entries[0].contentRect;
+        if(!r.width||!r.height) return;
+        var ar=r.width/r.height,vw,vh;
+        if(ar>MAP_BAR){vh=MAP_BH;vw=MAP_BH*ar;}else{vw=MAP_BW;vh=MAP_BW/ar;}
+        mapSvg.setAttribute('viewBox',(MAP_CX-vw/2)+' '+(MAP_CY-vh/2)+' '+vw+' '+vh);
+      }).observe(mapWrap);
+    }
   }
 
   // ——— Current section highlight ———
@@ -333,7 +347,27 @@
     currentLang=lang;
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var key=el.dataset.i18n;
-      if(TRANSLATIONS[key]&&TRANSLATIONS[key][lang]) el.textContent=TRANSLATIONS[key][lang];
+      if(!TRANSLATIONS[key]||!TRANSLATIONS[key][lang]) return;
+      var txt=TRANSLATIONS[key][lang];
+      // SVG map labels: split English words into tspan lines
+      if(el.classList&&el.classList.contains('map-label')){
+        var words=lang==='en'?txt.split(' '):[txt];
+        if(words.length>1){
+          var baseY=parseFloat(el.getAttribute('y'))||0;
+          el.textContent='';
+          words.forEach(function(w,i){
+            var ts=document.createElementNS('http://www.w3.org/2000/svg','tspan');
+            ts.setAttribute('x',el.getAttribute('x'));
+            ts.setAttribute('dy',i===0?'0':'1.15em');
+            ts.textContent=w;
+            el.appendChild(ts);
+          });
+        } else {
+          el.textContent=txt;
+        }
+      } else {
+        el.textContent=txt;
+      }
     });
     document.querySelectorAll('[data-i18n-html]').forEach(function(el){
       var key=el.dataset.i18nHtml;
@@ -352,6 +386,32 @@
     }
   }
   if(langToggle) langToggle.addEventListener('click',function(){setLang(currentLang==='cn'?'en':'cn');});
+
+  // ——— Nav overflow detection: auto icon-only when labels would collide ———
+  var navEl=document.querySelector('.nav');
+  function checkNavOverflow(){
+    if(!navEl) return;
+    // Temporarily show labels to measure
+    navEl.classList.remove('icon-only');
+    // requestAnimationFrame to let the browser layout
+    requestAnimationFrame(function(){
+      var navRight=navEl.getBoundingClientRect().right;
+      var toggleGroup=document.querySelector('.toggle-group');
+      var toggleLeft=toggleGroup?toggleGroup.getBoundingClientRect().left:navRight;
+      // Check if any nav link's right edge would reach the toggle area
+      var links=navEl.querySelectorAll('a');
+      var lastLink=links[links.length-1];
+      var lastRight=lastLink?lastLink.getBoundingClientRect().right:0;
+      // Also check if scrollWidth exceeds clientWidth (overflow)
+      var overflows=navEl.scrollWidth>navEl.clientWidth || lastRight>(toggleLeft-12);
+      if(overflows) navEl.classList.add('icon-only');
+    });
+  }
+  checkNavOverflow();
+  window.addEventListener('resize',checkNavOverflow);
+  // Re-check after language switch (labels change width)
+  var origSetLang=setLang;
+  setLang=function(lang){origSetLang(lang);setTimeout(checkNavOverflow,50);};
 
   // Scroll-hint click -> smooth scroll to next section
   document.querySelectorAll('.scroll-hint').forEach(function(hint){

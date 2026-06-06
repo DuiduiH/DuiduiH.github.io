@@ -1,3 +1,19 @@
+// ===== City image lightbox =====
+(function(){
+  var ov=document.createElement('div');
+  ov.id='cityImgLightbox';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px)';
+  var img=document.createElement('img');
+  img.style.cssText='max-width:88vw;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.5);transition:transform .25s';
+  ov.appendChild(img);
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(){ov.style.display='none';});
+  window._expandCityImg=function(src){
+    img.src=src;
+    ov.style.display='flex';
+  };
+})();
+
 // ===== 1.4 World Map — Separate visit/lang modes with distinct popups =====
 (function(){
   if(typeof L==='undefined') return;
@@ -51,10 +67,10 @@
     var desc=en?(place.descEn||place.desc):place.desc;
     var lbl=en?(VISIT_L[place.visit]?VISIT_L[place.visit].en:''):(VISIT_L[place.visit]?VISIT_L[place.visit].cn:'');
     var imgPath=getCityImgPath(place.img);
-    var html='<div style="text-align:center;min-width:180px;max-width:240px;font-family:Inter,Noto Sans SC,sans-serif;padding:6px 2px">';
+    var html='<div style="text-align:center;min-width:180px;max-width:260px;font-family:Inter,Noto Sans SC,sans-serif;padding:6px 2px">';
     html+='<div style="font-weight:700;font-size:14px;color:#1e293b;margin-bottom:8px">'+title+'</div>';
     if(lbl) html+='<div style="font-size:11.5px;color:#6366f1;font-weight:600;margin-bottom:10px;letter-spacing:.3px">'+lbl+'</div>';
-    if(imgPath) html+='<img src="'+imgPath+'" style="width:100%;max-height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px" onerror="this.style.display=\'none\'" />';
+    if(imgPath) html+='<img src="'+imgPath+'" class="popup-city-img" style="width:140px;height:140px;object-fit:cover;border-radius:8px;margin:0 auto 8px;display:block;cursor:pointer" onclick="event.stopPropagation();window._expandCityImg(this.src)" onerror="this.style.display=\'none\'" />';
     html+='<div style="font-size:12px;color:#64748b;line-height:1.65">'+desc+'</div>';
     html+='</div>';
     return html;

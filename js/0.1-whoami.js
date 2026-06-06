@@ -64,4 +64,13 @@
       },50);
     }
   });
+
+  // Hero title hover: swap text to name
+  var heroH1=document.querySelector('#hero-c h1');
+  if(heroH1){
+    var getTitle=function(){return isEn()?'Who am I?':'我是谁？';};
+    var getName=function(){return isEn()?'Duidui Hu':'胡对对';};
+    heroH1.addEventListener('mouseenter',function(){heroH1.textContent=getName();});
+    heroH1.addEventListener('mouseleave',function(){heroH1.textContent=getTitle();});
+  }
 })();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,8 @@
       --hkw-color:rgba(129,140,248,.22);--hkw-hover:rgba(251,191,36,.55);
       --toggle-border:rgba(255,255,255,.12);--toggle-bg:rgba(255,255,255,.05);
       --bub-text:rgba(255,255,255,.85);--bub-shadow:rgba(0,0,0,.3);
-      --msky1:#1a2744;--msky2:#1e3a5f;--msky3:#0f2940;--mgrass1:#166534;--mgrass2:#14532d;--mgrass3:#15803d
+      --mgrass1:#166534;--mgrass2:#14532d;--mgrass3:#15803d;
+      --nav-h:52px;--page-pad:clamp(.6rem,1.5vw,1.2rem);--frame-pad:var(--page-pad)
     }
     [data-theme="light"]{--bg:#f0f4f8;--bg2:#ffffff;--primary:#1e293b;--accent:#0369a1;--accent2:#6d28d9;--text:#334155;--muted:#64748b;--gold:#b45309;
       --nav-bg:rgba(255,255,255,.92);--nav-border:rgba(0,0,0,.06);--frame-border:rgba(0,0,0,.08);--card-back-bg:#f8fafc;--card-back-border:rgba(0,0,0,.1);
@@ -29,19 +30,24 @@
       --hkw-color:rgba(99,102,241,.15);--hkw-hover:rgba(217,119,6,.55);
       --toggle-border:rgba(0,0,0,.1);--toggle-bg:rgba(0,0,0,.04);
       --bub-text:rgba(0,0,0,.75);--bub-shadow:rgba(255,255,255,.3);
-      --msky1:#7EC8E3;--msky2:#A8D8EA;--msky3:#C8E6F0;--mgrass1:#4CAF50;--mgrass2:#388E3C;--mgrass3:#66BB6A
+      --mgrass1:#A5D6A7;--mgrass2:#81C784;--mgrass3:#C8E6C9
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
     body{font-family:"Inter","SF Pro Display","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;transition:background .35s,color .35s}
 
-    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border);display:flex;align-items:center;justify-content:center;gap:2rem;padding:0 8rem 0 1.5rem;z-index:1000;transition:background .35s,border-color .35s;overflow:visible}
+    .nav{position:fixed;top:0;left:0;right:0;height:52px;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border);display:flex;align-items:center;justify-content:center;gap:2rem;padding:0 9rem 0 1.5rem;z-index:1000;transition:background .35s,border-color .35s;overflow:visible}
     .nav a{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:600;transition:color .2s;white-space:nowrap;display:flex;align-items:center;gap:.35rem;flex-shrink:0;position:relative}
     .nav a:hover,.nav a.active{color:var(--accent)}
     .nav a .nav-icon{width:16px;height:16px;flex-shrink:0;display:block}
     .nav a .nav-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .nav a .nav-label{display:inline}
     .nav a::after{content:attr(data-tooltip);position:absolute;top:100%;left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:4px;background:var(--bg2);color:var(--text);font-size:.65rem;font-weight:500;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;border:1px solid var(--frame-border);margin-top:4px;display:none;z-index:1001;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+    .nav.icon-only a .nav-label{display:none}
+    .nav.icon-only a .nav-icon{width:20px;height:20px}
+    .nav.icon-only a::after{display:block}
+    .nav.icon-only a:hover::after{opacity:1}
+    .nav.icon-only{gap:1.6rem;padding:0 6rem 0 1rem}
     .nav a:hover::after{opacity:1}
 
     .toggle-group{position:fixed;top:12px;right:16px;z-index:1001;display:flex;gap:8px;align-items:center}
@@ -49,21 +55,19 @@
     .lang-toggle:hover,.theme-toggle:hover{color:var(--accent);border-color:rgba(56,189,248,.3)}
     .theme-toggle svg{width:15px;height:15px}
 
-    .sw{max-width:1100px;margin:0 auto;padding:0 1rem;width:100%;box-sizing:border-box}
+    .sw{max-width:1100px;margin:0 auto;padding:0 var(--page-pad);width:100%;box-sizing:border-box}
     .btn{padding:.5rem 1.4rem;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.08);color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.4rem}
     .btn:hover{background:rgba(56,189,248,.18);border-color:rgba(56,189,248,.5);transform:scale(1.04)}
     .btn:active{transform:scale(.97)}
     .btn .btn-icon{display:inline-block;transition:transform .3s}
     .btn:hover .btn-icon{transform:rotate(180deg)}
 
-    .map-star{transition:opacity .35s}.map-sun{display:none;transition:opacity .35s}
-    [data-theme="light"] .map-star{opacity:0!important}
-    [data-theme="light"] .map-sun{display:inline!important}
-    .section-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:calc(52px + 1rem) 1rem 1rem;position:relative;scroll-snap-align:start;box-sizing:border-box}
+    /* flat map — no sky elements */
+    .section-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:calc(var(--nav-h) + var(--page-pad)) var(--page-pad) var(--page-pad);position:relative;scroll-snap-align:start;box-sizing:border-box}
     .section-page>.sw{margin-top:auto;margin-bottom:auto}
 
     /* ===== INTRO PAGE (buffer) ===== */
-    .section-intro-page{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 2rem 40px;scroll-snap-align:start;position:relative;box-sizing:border-box}
+    .section-intro-page{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:calc(var(--nav-h) + var(--page-pad)) var(--page-pad) var(--page-pad);scroll-snap-align:start;position:relative;box-sizing:border-box}
     .section-intro-page .section-welcome{font-size:2.4rem;margin-bottom:1.2rem}
     .section-intro-page .section-desc{font-size:1.08rem;max-width:520px;margin:0 auto;line-height:2.2}
     .scroll-hint{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);text-align:center;opacity:.35;padding:1.5rem 3rem;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -75,7 +79,7 @@
     .section-welcome{font-size:1.6rem;font-weight:800;color:var(--accent);margin-bottom:.6rem}
     .section-desc{font-size:.88rem;color:var(--muted);line-height:1.9}
 
-    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:1rem;width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s;box-sizing:border-box}
+    .section-frame{border:1px solid var(--frame-border);border-radius:var(--radius);background:var(--bg2);overflow:visible;padding:var(--frame-pad);width:100%;max-width:1100px;position:relative;z-index:1;transition:background .35s,border-color .35s;box-sizing:border-box}
     .section-page[data-map-id="interest"] .section-frame{background:rgba(22,30,48,.65);backdrop-filter:blur(8px)}
     .section-page[data-map-id="skills"] .section-frame{background:rgba(22,30,48,.92);backdrop-filter:blur(4px)}
     [data-theme="light"] .section-page[data-map-id="interest"] .section-frame{background:rgba(255,255,255,.6)}
@@ -87,13 +91,13 @@
     .section-divider{height:8vh;min-height:40px;flex-shrink:0}
 
     /* ===== HERO ===== */
-    #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,var(--hero-grad1),var(--hero-grad2) 70%);overflow:hidden;padding-top:52px;position:relative}
+    #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,var(--hero-grad1),var(--hero-grad2) 70%);overflow:hidden;padding-top:var(--nav-h);position:relative}
     #hero-kw{position:absolute;inset:0}
     .hkw{position:absolute;color:var(--hkw-color);font-weight:700;white-space:nowrap;animation:kwf 6s ease-in-out infinite;pointer-events:auto;cursor:pointer;transition:color .25s,text-shadow .25s;user-select:none;z-index:5;padding:10px 14px;border-radius:6px}
     .hkw:hover{color:var(--hkw-hover);text-shadow:0 0 20px rgba(251,191,36,.2);z-index:100;background:rgba(251,191,36,.06)}
     @keyframes kwf{0%{transform:translateY(4px)}50%{transform:translateY(-6px)}100%{transform:translateY(4px)}}
     #hero-c{position:relative;z-index:1;text-align:center;pointer-events:none}
-    #hero-c h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    #hero-c h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;pointer-events:auto;cursor:default;transition:opacity .2s}
     .hero-sub-hint{color:var(--muted);font-size:.7rem;margin-top:.8rem;opacity:.45;letter-spacing:.5px}
     .hero-overlay{position:fixed;inset:0;z-index:100;background:var(--overlay-bg);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
     .hero-overlay.show{display:flex;opacity:1;pointer-events:auto}
@@ -104,11 +108,13 @@
 
     /* ===== CARD GAME ===== */
     .interest-s{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5rem 0 1rem;width:100%}
-    .game-board{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(3px,0.8vh,6px);width:100%;max-width:min(500px,80vw);margin:0 auto}
+    .game-board{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(5px,1.2vh,10px);width:100%;max-width:min(500px,80vw);margin:0 auto}
     .card{width:100%;aspect-ratio:4/5;perspective:600px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1;max-height:clamp(48px,12vh,110px)}
     .card-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform .5s;transform-style:preserve-3d;pointer-events:none}
     .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
     .card.matched .card-inner{box-shadow:none}
+    .card.matched{cursor:pointer}
+    .card.matched:hover .card-inner{transform:rotateY(180deg) scale(1.05);transition:transform .2s}
     .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:600;padding:6px;pointer-events:none}
     .card-front{color:#fff;transform:rotateY(180deg);justify-content:space-between;padding:clamp(3px,1vh,8px) clamp(3px,0.6vh,6px)}
     .cname{font-size:clamp(6px,1.2vh,10px);opacity:.85}.clogo{width:clamp(16px,3.5vh,32px);height:clamp(16px,3.5vh,32px);fill:currentColor;color:rgba(255,255,255,.9)}.clogo svg{width:100%;height:100%}
@@ -120,7 +126,7 @@
     .shuffle-link:hover{color:var(--gold);text-decoration-style:wavy}
 
     /* ===== CAREER ===== */
-    .career-wrap{display:flex;min-height:min(380px,55vh);border-radius:var(--radius);overflow:hidden;position:relative}
+    .career-wrap{display:flex;min-height:min(380px,55vh);max-height:65vh;border-radius:var(--radius);overflow:hidden;position:relative}
     .career-pane{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem .8rem;min-height:0}
     .career-pane:first-child{border-right:1px solid var(--frame-border)}
     #cl,#cr{background:var(--bg2)}
@@ -129,8 +135,7 @@
     .mbag-area.open .mbag-svg{transform:scaleY(-1) translateY(-10px)}
     .coins-row{display:flex;gap:8px;margin-top:8px;opacity:0;transform:translateY(-18px);transition:all .6s cubic-bezier(.34,1.56,.64,1)}
     .mbag-area.open .coins-row{opacity:1;transform:translateY(0)}
-    .gcoin{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fef3c7,#fbbf24 45%,#b45309 100%);border:2.5px solid #92400e;display:flex;justify-content:center;align-items:center;font-weight:800;color:#451a03;font-size:9px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 -2px 5px rgba(0,0,0,.25),inset 0 2px 5px rgba(255,255,255,.35);position:relative;transition:transform .2s;opacity:0;transform:scale(0)}
-    .gcoin::after{content:'';position:absolute;inset:3px;border-radius:50%;border:1.5px solid rgba(120,53,15,.25)}
+    .gcoin{width:44px;height:44px;border-radius:50%;background:#fbbf24;border:2px solid #d97706;display:flex;justify-content:center;align-items:center;font-weight:700;color:#78350f;font-size:9px;cursor:pointer;position:relative;transition:transform .2s;opacity:0;transform:scale(0);font-family:Inter,'Noto Sans SC',sans-serif}
     .mbag-area.open .gcoin{opacity:1;transform:scale(1)}
     .mbag-area.open .gcoin:nth-child(1){transition-delay:.15s}.mbag-area.open .gcoin:nth-child(2){transition-delay:.25s}.mbag-area.open .gcoin:nth-child(3){transition-delay:.35s}.mbag-area.open .gcoin:nth-child(4){transition-delay:.45s}
     .gcoin:hover{transform:scale(1.12)!important}
@@ -180,7 +185,7 @@
     .map-instr{text-align:center;padding:.1rem 0 0;font-size:.7rem;color:var(--muted);opacity:.45;margin-bottom:0}
 
     /* ===== TIMELINE ===== */
-    .tl-wrap{position:relative;padding:.8rem 0 .8rem 2.5rem;max-height:52vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--frame-border) transparent}
+    .tl-wrap{position:relative;padding:.8rem 0 .8rem 2.5rem;height:52vh;min-height:52vh;max-height:52vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--frame-border) transparent}
     .tl-wrap::-webkit-scrollbar{width:4px}
     .tl-wrap::-webkit-scrollbar-thumb{background:var(--frame-border);border-radius:4px}
     .tl-line{position:absolute;left:12px;top:0;bottom:0;width:2px;background:var(--tl-line);transition:background .35s}
@@ -227,7 +232,7 @@
     .completion-overlay .unlock-dismiss{margin-top:2rem;font-size:.75rem;color:var(--muted);opacity:.3}
 
     /* ===== ENDING + REPLAY ===== */
-    .ending-section{text-align:center;padding:3rem 1.5rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;scroll-snap-align:start;position:relative;z-index:100}
+    .ending-section{text-align:center;padding:calc(var(--nav-h) + var(--page-pad)) var(--page-pad) var(--page-pad);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;scroll-snap-align:start;position:relative;z-index:100;box-sizing:border-box}
     .ending-btns{display:flex;flex-direction:column;gap:1.2rem;align-items:center;margin-top:1rem;position:relative;z-index:200}
     .quote-trigger,.replay-btn{padding:.7rem 2rem;border:1.5px solid var(--frame-border);border-radius:999px;background:var(--toggle-bg);color:var(--muted);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .3s;letter-spacing:.5px;position:relative;z-index:200;-webkit-tap-highlight-color:transparent}
     .quote-trigger:hover,.replay-btn:hover{color:var(--accent);border-color:var(--accent);background:rgba(56,189,248,.06)}
@@ -245,27 +250,56 @@
     .quote-ov-dismiss{margin-top:1.8rem;font-size:.72rem;color:var(--muted);opacity:.3;cursor:pointer}
 
     /* ===== MAP OVERLAYS ===== */
-    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;overflow:auto;-webkit-overflow-scrolling:touch}
+    .map-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg2);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;overflow:hidden;-webkit-overflow-scrolling:touch;padding:var(--page-pad)}
     .map-overlay.open{display:flex;opacity:1;pointer-events:auto}
     .map-close{position:fixed;top:20px;right:28px;font-size:2rem;color:var(--muted);cursor:pointer;z-index:2010;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--toggle-bg);transition:all .2s}
     .map-close:hover{color:var(--primary)}
-    .map-overlay-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;font-family:Inter,sans-serif;opacity:.7}
-    .map-svg-wrap{width:92%;max-width:1200px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
-    .illustrated-map{width:100%;min-width:700px;height:auto}
-    .map-building{cursor:pointer;transition:transform .2s,filter .2s,opacity .3s;transform-origin:center bottom;opacity:.2}
-    .map-building.unlocked{opacity:1}
-    .map-building:hover{transform:translateY(-5px);filter:drop-shadow(0 8px 16px rgba(251,191,36,.15))}
-    .map-building.unlocked:hover{filter:drop-shadow(0 8px 16px rgba(251,191,36,.25))}
-    .map-building text{pointer-events:none}
-    .map-label{font-size:12px;fill:var(--primary);font-weight:700;text-anchor:middle}
-    .mini-bld{opacity:.2;transition:opacity .3s,filter .3s}
-    .mini-bld.unlocked{opacity:1}
+    .map-overlay-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:.8rem;font-family:Inter,sans-serif;opacity:.7;flex-shrink:0}
+    .map-svg-wrap{width:calc(100% - 2 * var(--page-pad));max-width:96vw;height:calc(100vh - 90px);max-height:calc(100vh - 90px);border:1px solid var(--frame-border);border-radius:var(--radius);overflow:hidden;background:var(--mgrass2);box-sizing:border-box;position:relative;display:flex;align-items:center;justify-content:center}
+    .illustrated-map{width:100%;height:100%;display:block}
+    .map-building{cursor:pointer;transition:transform .25s ease,filter .35s;filter:grayscale(1) brightness(.6) contrast(.8)}
+    .map-building.unlocked{filter:none}
+    .map-building:hover{transform:translate(2px,-3px);filter:none;filter:drop-shadow(0 6px 12px rgba(251,191,36,.25))}
+    .map-building.unlocked:hover{filter:drop-shadow(0 6px 12px rgba(251,191,36,.3))}
+    .map-building text{pointer-events:none;opacity:0;transition:opacity .25s}
+    .map-building:hover text{opacity:1}
+    .map-label{font-size:14px;fill:#fff;font-weight:400;text-anchor:middle;stroke:none;letter-spacing:2px;font-family:'Noto Sans SC',Inter,sans-serif;opacity:.85}
+    [lang="en"] .map-label{letter-spacing:.5px;font-size:11.5px;font-family:Inter,'Noto Sans SC',sans-serif}
+    .mini-bld{filter:grayscale(1) brightness(.6) contrast(.8);transition:filter .35s}
+    .mini-bld.unlocked{filter:none}
     .mini-bld.active{filter:drop-shadow(0 0 3px rgba(56,189,248,.7))}
     /* Light mode overrides */
-    [data-theme="light"] .illustrated-map{filter:brightness(1.15) saturate(.8) contrast(.95)}
-    [data-theme="light"] #map-btn svg{filter:brightness(1.15) saturate(.8) contrast(.95)}
-    [data-theme="light"] .mbag-svg path[fill="url(#bg1)"]{filter:brightness(1.3) saturate(.7)}
-    [data-theme="light"] .cloud-reveal svg{filter:brightness(1.1) saturate(.7)}
+    [data-theme="light"] .map-building rect[fill="#4338ca"],[data-theme="light"] .mini-bld rect[fill="#4338ca"]{fill:#818cf8!important}
+    [data-theme="light"] .map-building rect[fill="#312e81"],[data-theme="light"] .mini-bld rect[fill="#312e81"]{fill:#a5b4fc!important}
+    [data-theme="light"] .map-building rect[fill="#d97706"],[data-theme="light"] .mini-bld rect[fill="#d97706"]{fill:#fbbf24!important}
+    [data-theme="light"] .map-building rect[fill="#5b21b6"],[data-theme="light"] .mini-bld rect[fill="#5b21b6"]{fill:#a78bfa!important}
+    [data-theme="light"] .map-building rect[fill="#047857"],[data-theme="light"] .mini-bld rect[fill="#047857"]{fill:#34d399!important}
+    [data-theme="light"] .map-building rect[fill="#92400e"],[data-theme="light"] .mini-bld rect[fill="#92400e"]{fill:#b45309!important}
+    [data-theme="light"] .map-label{fill:#1e293b}
+    [data-theme="light"] .map-building{filter:grayscale(1) brightness(.85) contrast(.7)}
+    [data-theme="light"] .map-building.unlocked{filter:none}
+    [data-theme="light"] .map-building:hover{filter:none;filter:drop-shadow(0 6px 12px rgba(180,130,50,.2))}
+    [data-theme="light"] .map-building.unlocked:hover{filter:drop-shadow(0 6px 12px rgba(180,130,50,.25))}
+    [data-theme="light"] .mini-bld{filter:grayscale(1) brightness(.85) contrast(.7)}
+    [data-theme="light"] .mini-bld.unlocked{filter:none}
+    [data-theme="light"] .mini-bld.active{filter:drop-shadow(0 0 3px rgba(3,105,161,.5))}
+    [data-theme="light"] .map-building circle[fill="#166534"],[data-theme="light"] .mini-bld circle[fill="#166534"]{fill:#4ade80!important}
+    [data-theme="light"] .map-building circle[fill="#15803d"],[data-theme="light"] .mini-bld circle[fill="#15803d"]{fill:#86efac!important}
+    [data-theme="light"] .map-building circle[fill="#14532d"],[data-theme="light"] .mini-bld circle[fill="#14532d"]{fill:#6ee7b7!important}
+    [data-theme="light"] .map-building circle[fill="#1e1b4b"],[data-theme="light"] .mini-bld circle[fill="#1e1b4b"]{fill:#ddd6fe!important}
+    [data-theme="light"] .map-building circle[fill="#22c55e"]{fill:#86efac!important}
+    [data-theme="light"] .map-building rect[fill="#0369a1"],[data-theme="light"] .mini-bld rect[fill="#0369a1"]{fill:#38bdf8!important}
+    [data-theme="light"] .map-building rect[fill="#0284c7"],[data-theme="light"] .mini-bld rect[fill="#0284c7"]{fill:#7dd3fc!important}
+    [data-theme="light"] .map-building rect[fill="#fbbf24"]{fill:#fde68a!important}
+    [data-theme="light"] .map-building circle[fill="#dc2626"]{fill:#f87171!important}
+    [data-theme="light"] .map-building circle[fill="#ef4444"]{fill:#fca5a5!important}
+    [data-theme="light"] .map-building rect[stroke="#6366f1"]{stroke:#a5b4fc!important}
+    [data-theme="light"] .map-building rect[stroke="#b45309"]{stroke:#f59e0b!important}
+    [data-theme="light"] .map-building rect[stroke="#059669"]{stroke:#34d399!important}
+    [data-theme="light"] .map-building rect[stroke="#7c3aed"]{stroke:#c4b5fd!important}
+    [data-theme="light"] .map-building circle[stroke="#ec4899"]{stroke:#f9a8d4!important}
+    [data-theme="light"] .map-building circle[stroke="#a78bfa"]{stroke:#c4b5fd!important}
+    /* minimap uses CSS vars — no filter needed */
     /* Light mode card colors — bright & cute pastels */
     [data-theme="light"] .card-front[style*="#9333ea"]{background:#c4a8d8!important}
     [data-theme="light"] .card-front[style*="#16a34a"]{background:#8ec5a0!important}
@@ -275,13 +309,14 @@
     [data-theme="light"] .card-front[style*="#8ec5a0"]{background:#8ec5a0!important}
     [data-theme="light"] .card-front[style*="#89bdd3"]{background:#89bdd3!important}
     [data-theme="light"] .card-front[style*="#e0b08a"]{background:#e0b08a!important}
-    /* Light mode career — no black strokes */
-    [data-theme="light"] .mbag-svg path{stroke:#c5a24e!important}
-    [data-theme="light"] .mbag-svg ellipse[stroke]{stroke:#c5a24e!important}
-    [data-theme="light"] .gcoin{border-color:#c9943a!important;box-shadow:0 3px 10px rgba(0,0,0,.12),inset 0 -2px 5px rgba(0,0,0,.08),inset 0 2px 5px rgba(255,255,255,.4)!important}
-    [data-theme="light"] .gcoin::after{border-color:rgba(160,120,40,.15)!important}
-    [data-theme="light"] .egg-crack-line path{stroke:#a0845a!important}
-    [data-theme="light"] .egg-bottom-half,[data-theme="light"] .egg-top-half{filter:brightness(1.08) saturate(.85)}
+    /* Light mode career — softer tones */
+    [data-theme="light"] .mbag-svg path[fill="#d97706"]{fill:#e8a317!important}
+    [data-theme="light"] .mbag-svg path[stroke="#b45309"]{stroke:#c9943a!important}
+    [data-theme="light"] .mbag-svg rect[fill="#b45309"]{fill:#c9943a!important}
+    [data-theme="light"] .gcoin{background:#fde68a!important;border-color:#d4a017!important;color:#92400e!important}
+    [data-theme="light"] .egg-bottom-half ellipse[fill="#f5e6d0"],[data-theme="light"] .egg-top-half ellipse[fill="#f5e6d0"]{fill:#faf0e4!important;stroke:#c9b89a!important}
+    [data-theme="light"] .cloud-reveal circle,[data-theme="light"] .cloud-reveal ellipse{fill:#e0e7ff!important;stroke:#c7d2fe!important}
+    [data-theme="light"] .cloud-reveal circle[fill="#ddd6fe"]{fill:#ede9fe!important}
 
     #map-btn{position:fixed;bottom:16px;right:20px;z-index:1000;cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid var(--map-btn-border);box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .3s;background:var(--map-btn-bg)}
     #map-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,0,0,.3);border-color:var(--accent)}
@@ -299,26 +334,33 @@
       .nav a .nav-label{display:none}
       .nav a .nav-icon{width:20px;height:20px}
       .nav a::after{display:block}
+      .nav a:hover::after{opacity:1}
     }
     @media(max-width:600px){
+      :root{--nav-h:46px;--page-pad:clamp(.4rem,1.2vw,.6rem);--frame-pad:clamp(.9rem,3vw,1.4rem)}
       .nav{gap:1.1rem;padding:0 5.5rem 0 .5rem;height:46px;overflow:visible;justify-content:center}
       .nav a{font-size:.68rem;flex-shrink:0}
       .nav a .nav-icon{width:18px;height:18px}
       .toggle-group{top:10px;right:10px;gap:5px}
       .lang-toggle,.theme-toggle{width:28px;height:28px;font-size:.58rem}
       .theme-toggle svg{width:12px;height:12px}
-      .section-page{padding:calc(46px + .5rem) .5rem .5rem}
-      .section-frame{padding:.75rem}
-      .section-intro-page{padding:62px 1.5rem 30px}
       .section-intro-page .section-welcome{font-size:1.6rem}
       .section-intro-page .section-desc{font-size:.92rem}
       .section-welcome{font-size:1.3rem}
-      .game-board{grid-template-columns:repeat(5,1fr);gap:clamp(2px,0.6vh,4px);margin:0 auto;max-width:min(320px,85vw)}
+      .game-board{grid-template-columns:repeat(5,1fr);gap:clamp(3px,0.8vh,6px);margin:0 auto;max-width:min(320px,85vw)}
       .card{aspect-ratio:4/5;max-height:clamp(40px,11vh,90px)}.clogo{width:clamp(14px,3vh,18px);height:clamp(14px,3vh,18px)}.iname{font-size:clamp(6px,1.2vh,8px)}.cname{font-size:clamp(5px,1vh,7px)}
-      .career-wrap{flex-direction:column;min-height:auto}
-      .career-pane:first-child{border-right:none;border-bottom:1px solid var(--frame-border)}
-      .map-svg-wrap{width:100%;padding:0 .5rem}
-      .illustrated-map{min-width:600px}
+      .career-wrap{flex-direction:row;min-height:auto}
+      .career-pane{padding:.8rem .4rem}
+      .career-pane:first-child{border-right:1px solid var(--frame-border);border-bottom:none}
+      .mbag-area,.egg-area{width:clamp(90px,28vw,170px);height:clamp(140px,38vh,260px)}
+      .mbag-svg{width:clamp(70px,22vw,140px);height:clamp(90px,28vw,180px)}
+      .gcoin{width:clamp(24px,7vw,44px);height:clamp(24px,7vw,44px);font-size:clamp(6px,1.6vw,9px);border-width:1.5px}
+      .coins-row{gap:clamp(3px,1vw,8px);margin-top:clamp(4px,1vw,8px)}
+      .egg-wrap{width:clamp(60px,18vw,110px);height:clamp(80px,24vw,145px)}
+      .cloud-reveal svg{width:clamp(60px,18vw,110px)!important;height:clamp(45px,14vw,80px)!important}
+      .career-overlay-text{font-size:clamp(1rem,4vw,2rem)}
+      .career-overlay-sub{font-size:clamp(.55rem,1.8vw,.8rem)}
+      .map-svg-wrap{width:calc(100% - 2 * var(--page-pad));max-width:98vw;height:calc(100vh - 70px);max-height:calc(100vh - 70px)}
       .kspores{height:min(360px,55vh)}
       #leafletMap{height:min(300px,calc(100vh - 320px));min-height:180px}
       .section-divider{height:4vh;min-height:20px}
@@ -341,7 +383,7 @@
 <div class="toggle-group">
   <div class="lang-toggle" id="langToggle">EN</div>
   <div class="theme-toggle" id="themeToggle" title="Toggle theme">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
   </div>
 </div>
 
@@ -349,7 +391,7 @@
 <div class="section-page" id="hero" data-map-id="hero">
   <div id="hero-kw"></div>
   <div id="hero-c">
-    <h1>Who am I?</h1>
+    <h1 data-i18n="hero-title">我是谁？</h1>
     <p class="hero-sub-hint" data-i18n="hero-hint">点击关键词了解更多</p>
   </div>
   <div class="scroll-hint"><div class="scroll-hint-text" data-i18n="scroll-hint">向下滑动</div><div class="scroll-hint-arrow">&#8964;</div></div>
@@ -409,17 +451,21 @@
         <div class="career-pane" id="cl">
           <div class="mbag-area" id="mbag">
             <svg class="mbag-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="bg1" x1="0" y1="0" x2=".3" y2="1"><stop offset="0%" stop-color="#d4a017"/><stop offset="50%" stop-color="#b8860b"/><stop offset="100%" stop-color="#8b6914"/></linearGradient>
-                <radialGradient id="bs1" cx=".35" cy=".3"><stop offset="0%" stop-color="rgba(255,255,255,.3)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
-                <linearGradient id="rope" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a0522d"/><stop offset="100%" stop-color="#6b3a1f"/></linearGradient>
-              </defs>
-              <ellipse cx="80" cy="192" rx="55" ry="6" fill="rgba(0,0,0,.3)"/>
-              <path d="M32,52 C8,75 8,140 16,165 C24,185 55,195 80,195 C105,195 136,185 144,165 C152,140 152,75 128,52 Z" fill="url(#bg1)" stroke="#6b3a1f" stroke-width="1"/>
-              <path d="M32,52 C8,75 8,140 16,165 C24,185 55,195 80,195 C105,195 136,185 144,165 C152,140 152,75 128,52 Z" fill="url(#bs1)"/>
-              <path d="M45,52 Q45,38 55,30 L105,30 Q115,38 115,52 Z" fill="url(#bg1)" stroke="#6b3a1f" stroke-width="1"/>
-              <ellipse cx="80" cy="52" rx="38" ry="6" fill="none" stroke="url(#rope)" stroke-width="4"/>
-              <text x="80" y="140" text-anchor="middle" font-size="52" fill="#6b3a1f" font-weight="900" font-family="Georgia,serif" opacity=".4">$</text>
+              <!-- Flat 2D money bag -->
+              <!-- Shadow -->
+              <ellipse cx="80" cy="192" rx="48" ry="5" fill="rgba(0,0,0,.1)"/>
+              <!-- Bag body — rounded pouch -->
+              <path d="M30,58 C10,80 12,145 20,168 C30,188 55,196 80,196 C105,196 130,188 140,168 C148,145 150,80 130,58 Z" fill="#d97706" stroke="#b45309" stroke-width="2"/>
+              <!-- Bag neck / tie area -->
+              <rect x="48" y="38" width="64" height="22" rx="6" fill="#b45309"/>
+              <!-- Bag top flap -->
+              <path d="M52,40 Q52,26 64,20 L96,20 Q108,26 108,40 Z" fill="#d97706" stroke="#b45309" stroke-width="1.5"/>
+              <!-- Rope / string -->
+              <ellipse cx="80" cy="56" rx="32" ry="5" fill="none" stroke="#92400e" stroke-width="3.5" opacity=".7"/>
+              <!-- Dollar sign — flat -->
+              <text x="80" y="142" text-anchor="middle" font-size="48" fill="#92400e" font-weight="800" font-family="Inter,sans-serif" opacity=".3">$</text>
+              <!-- Subtle highlight -->
+              <ellipse cx="62" cy="100" rx="18" ry="35" fill="rgba(255,255,255,.1)" transform="rotate(-8 62 100)"/>
             </svg>
             <div class="coins-row">
               <div class="gcoin" data-co="期货" data-i18n="coin-1">期货</div>
@@ -432,12 +478,32 @@
         <div class="career-pane" id="cr">
           <div class="egg-area" id="eggArea">
             <div class="egg-wrap">
-              <svg class="egg-bottom-half" viewBox="0 0 130 170"><defs><radialGradient id="eg1" cx=".45" cy=".45"><stop offset="0%" stop-color="#faf5eb"/><stop offset="50%" stop-color="#ede0cc"/><stop offset="100%" stop-color="#c4a77d"/></radialGradient></defs><ellipse cx="65" cy="92" rx="55" ry="72" fill="url(#eg1)"/><ellipse cx="50" cy="62" rx="16" ry="22" fill="rgba(255,255,255,.15)" transform="rotate(-15 50 62)"/></svg>
-              <svg class="egg-top-half" viewBox="0 0 130 170"><defs><radialGradient id="eg2" cx=".45" cy=".45"><stop offset="0%" stop-color="#faf5eb"/><stop offset="50%" stop-color="#ede0cc"/><stop offset="100%" stop-color="#c4a77d"/></radialGradient></defs><ellipse cx="65" cy="92" rx="55" ry="72" fill="url(#eg2)"/><ellipse cx="50" cy="62" rx="16" ry="22" fill="rgba(255,255,255,.18)" transform="rotate(-15 50 62)"/></svg>
-              <svg class="egg-crack-line" viewBox="0 0 120 12"><path d="M0,6 L12,2 L22,10 L35,1 L48,11 L58,3 L72,10 L82,2 L95,9 L105,3 L120,6" fill="none" stroke="#654321" stroke-width="3" stroke-linecap="round"/></svg>
+              <svg class="egg-bottom-half" viewBox="0 0 130 170">
+                <!-- Flat 2D egg — bottom half -->
+                <ellipse cx="65" cy="95" rx="52" ry="68" fill="#f5e6d0" stroke="#d4b896" stroke-width="2"/>
+                <ellipse cx="52" cy="68" rx="12" ry="20" fill="rgba(255,255,255,.15)" transform="rotate(-10 52 68)"/>
+              </svg>
+              <svg class="egg-top-half" viewBox="0 0 130 170">
+                <!-- Flat 2D egg — top half -->
+                <ellipse cx="65" cy="95" rx="52" ry="68" fill="#f5e6d0" stroke="#d4b896" stroke-width="2"/>
+                <ellipse cx="52" cy="68" rx="12" ry="20" fill="rgba(255,255,255,.18)" transform="rotate(-10 52 68)"/>
+              </svg>
+              <svg class="egg-crack-line" viewBox="0 0 120 12"><path d="M0,6 L14,2 L26,10 L40,1 L54,11 L66,3 L80,10 L94,2 L108,9 L120,6" fill="none" stroke="#b8956a" stroke-width="2.5" stroke-linecap="round"/></svg>
             </div>
             <div class="cloud-reveal" id="cloudReveal">
-              <svg width="130" height="88" viewBox="0 0 140 95"><defs><radialGradient id="cg1" cx=".4" cy=".3"><stop offset="0%" stop-color="#f0f4ff"/><stop offset="100%" stop-color="#c7d2fe"/></radialGradient><radialGradient id="cg2" cx=".5" cy=".4"><stop offset="0%" stop-color="#e0e7ff"/><stop offset="100%" stop-color="#a5b4fc"/></radialGradient><filter id="cshadow"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity=".15"/></filter></defs><g filter="url(#cshadow)"><ellipse cx="70" cy="58" rx="55" ry="25" fill="url(#cg1)"/><circle cx="42" cy="40" r="25" fill="url(#cg1)"/><circle cx="75" cy="33" r="28" fill="url(#cg2)"/><circle cx="100" cy="45" r="20" fill="url(#cg1)"/></g><text x="70" y="63" text-anchor="middle" font-size="13" fill="#4338ca" font-weight="700" data-i18n="cloud-text">沄视科技</text></svg>
+              <svg width="130" height="88" viewBox="0 0 140 95">
+                <!-- Flat 2D cloud -->
+                <ellipse cx="70" cy="60" rx="52" ry="22" fill="#c7d2fe" stroke="#a5b4fc" stroke-width="1.5"/>
+                <circle cx="44" cy="42" r="23" fill="#c7d2fe" stroke="#a5b4fc" stroke-width="1.5"/>
+                <circle cx="75" cy="35" r="26" fill="#ddd6fe" stroke="#a5b4fc" stroke-width="1.5"/>
+                <circle cx="98" cy="47" r="18" fill="#c7d2fe" stroke="#a5b4fc" stroke-width="1.5"/>
+                <!-- Fill overlap seams -->
+                <ellipse cx="70" cy="55" rx="48" ry="18" fill="#c7d2fe"/>
+                <circle cx="44" cy="42" r="21" fill="#c7d2fe"/>
+                <circle cx="75" cy="35" r="24" fill="#ddd6fe"/>
+                <circle cx="98" cy="47" r="16" fill="#c7d2fe"/>
+                <text x="70" y="63" text-anchor="middle" font-size="13" fill="#4338ca" font-weight="600" font-family="Inter,'Noto Sans SC',sans-serif" data-i18n="cloud-text">沄视科技</text>
+              </svg>
             </div>
           </div>
         </div>
@@ -650,6 +716,7 @@
     if(window.resetApp){window.resetApp();return;}
     // Inline fallback reset
     document.querySelectorAll('.unlock-overlay,.quote-overlay,.completion-overlay,.map-overlay').forEach(function(o){o.classList.remove('show','open');});
+    var hOv=document.getElementById('hobbyDetailOverlay');if(hOv)hOv.style.display='none';
     document.body.style.overflow='';document.documentElement.style.overflow='';
     document.documentElement.style.scrollBehavior='auto';
     window.scrollTo(0,0);
@@ -702,112 +769,228 @@
   <div class="map-close">&times;</div>
   <div class="map-overlay-title" data-i18n="map-title">— 冒险地图 —</div>
   <div class="map-svg-wrap">
-  <svg class="illustrated-map" viewBox="0 0 1400 620" xmlns="http://www.w3.org/2000/svg">
+  <svg class="illustrated-map" viewBox="20 -10 860 540" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="msky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--msky1)"/><stop offset="60%" style="stop-color:var(--msky2)"/><stop offset="100%" style="stop-color:var(--msky3)"/></linearGradient>
-      <linearGradient id="mgrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--mgrass1)"/><stop offset="100%" style="stop-color:var(--mgrass2)"/></linearGradient>
-      <linearGradient id="mwater" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".5"/><stop offset="100%" stop-color="#0284c7" stop-opacity=".3"/></linearGradient>
+      <pattern id="mgrid" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="none"/><path d="M40,0 L0,0 0,40" fill="none" stroke="rgba(255,255,255,.04)" stroke-width=".5"/></pattern>
+      <linearGradient id="mwater2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".35"/><stop offset="100%" stop-color="#0ea5e9" stop-opacity=".25"/></linearGradient>
     </defs>
-    <rect width="1400" height="620" fill="url(#msky)"/>
-    <g class="map-star"><circle cx="80" cy="40" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="350" cy="55" r="1" fill="#fff" opacity=".4"/><circle cx="600" cy="35" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="850" cy="50" r="1" fill="#fff" opacity=".3"/><circle cx="1050" cy="40" r="1.5" fill="#fbbf24" opacity=".5"/><circle cx="1300" cy="55" r="1" fill="#fff" opacity=".4"/></g>
-    <g class="map-sun"><circle cx="1250" cy="80" r="35" fill="#FFF9C4" opacity=".2"/><circle cx="1250" cy="80" r="24" fill="#FFD54F" opacity=".8"/><circle cx="1250" cy="80" r="15" fill="#FFECB3"/></g>
-    <!-- Rolling hills terrain — gentle, smooth curves -->
-    <path d="M0,525 C60,520 110,510 160,495 C230,470 290,435 360,405 C430,375 465,345 500,320 C535,295 565,320 610,370 C660,420 695,460 720,472 C745,460 785,435 840,415 C890,395 930,385 970,365 C1010,345 1055,320 1100,310 C1145,300 1200,335 1250,375 C1300,405 1360,430 1400,442 L1400,620 L0,620 Z" fill="url(#mgrass)"/>
-    <path d="M0,555 C70,548 140,530 210,510 C310,480 410,430 500,380 C560,350 610,380 680,450 C720,480 750,470 800,445 C860,420 920,400 980,375 C1040,350 1080,335 1100,330 C1150,320 1210,365 1280,405 C1340,430 1380,450 1400,460 L1400,620 L0,620 Z" style="fill:var(--mgrass3)" opacity=".35"/>
-    <!-- Lake in valley -->
-    <ellipse cx="720" cy="478" rx="80" ry="16" fill="url(#mwater)"/>
-    <!-- Dotted path -->
-    <path d="M60,505 C110,496 170,478 260,440 C340,410 420,365 470,340 C520,315 560,335 610,375 C660,420 700,460 720,465 C750,450 800,430 860,410 C920,390 960,370 1020,345 C1070,325 1100,310 1140,315 C1190,335 1240,370 1290,395 C1330,415 1370,432 1400,442" fill="none" stroke="rgba(212,175,116,.18)" stroke-width="3" stroke-dasharray="8 5"/>
-    <!-- Decorative trees -->
-    <g opacity=".3">
-      <rect x="55" y="498" width="4" height="11" fill="#78350f"/><circle cx="57" cy="493" r="9" style="fill:var(--mgrass1)"/>
-      <rect x="220" y="448" width="4" height="9" fill="#78350f"/><circle cx="222" cy="443" r="7" style="fill:var(--mgrass3)"/>
-      <rect x="430" y="350" width="3" height="8" fill="#78350f"/><circle cx="432" cy="345" r="6" style="fill:var(--mgrass1)"/>
-      <rect x="635" y="425" width="3" height="7" fill="#78350f"/><circle cx="637" cy="421" r="6" style="fill:var(--mgrass3)"/>
-      <rect x="835" y="410" width="3" height="8" fill="#78350f"/><circle cx="837" cy="405" r="7" style="fill:var(--mgrass1)"/>
-      <rect x="1210" y="370" width="3" height="8" fill="#78350f"/><circle cx="1212" cy="365" r="6" style="fill:var(--mgrass3)"/>
-      <rect x="1355" y="428" width="3" height="7" fill="#78350f"/><circle cx="1357" cy="423" r="6" style="fill:var(--mgrass1)"/>
+    <!-- Flat grass background (oversized to fill any viewBox) -->
+    <rect x="-400" y="-400" width="1800" height="1400" style="fill:var(--mgrass2)"/>
+    <rect x="-400" y="-400" width="1800" height="1400" fill="url(#mgrid)"/>
+    <!-- Terrain patches — more varied -->
+    <ellipse cx="130" cy="85" rx="100" ry="50" style="fill:var(--mgrass1)" opacity=".2"/>
+    <ellipse cx="450" cy="55" rx="80" ry="30" style="fill:var(--mgrass3)" opacity=".1"/>
+    <ellipse cx="720" cy="120" rx="70" ry="35" style="fill:var(--mgrass1)" opacity=".15"/>
+    <ellipse cx="700" cy="240" rx="120" ry="50" style="fill:var(--mgrass3)" opacity=".12"/>
+    <ellipse cx="400" cy="280" rx="80" ry="35" style="fill:var(--mgrass1)" opacity=".14"/>
+    <ellipse cx="170" cy="250" rx="65" ry="30" style="fill:var(--mgrass3)" opacity=".1"/>
+    <ellipse cx="150" cy="400" rx="75" ry="40" style="fill:var(--mgrass1)" opacity=".16"/>
+    <ellipse cx="460" cy="445" rx="95" ry="40" style="fill:var(--mgrass3)" opacity=".12"/>
+    <ellipse cx="740" cy="410" rx="65" ry="32" style="fill:var(--mgrass1)" opacity=".1"/>
+    <ellipse cx="300" cy="160" rx="55" ry="25" style="fill:var(--mgrass1)" opacity=".08"/>
+    <ellipse cx="820" cy="320" rx="50" ry="28" style="fill:var(--mgrass3)" opacity=".08"/>
+    <!-- Fluid serpentine dirt path — one smooth continuous stroke -->
+    <path d="M130,80 C160,110 200,20 280,45 S370,90 445,60 S570,10 640,65 S730,50 720,108 S770,190 720,220 S680,180 700,228 S650,300 540,310 S440,260 400,278 S310,330 250,290 S200,220 170,248 S120,305 135,355 S130,380 145,400 S200,460 310,465 S400,435 455,442 S550,475 630,455 S700,470 725,405" fill="none" stroke="#a3896a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity=".38"/>
+    <path d="M130,80 C160,110 200,20 280,45 S370,90 445,60 S570,10 640,65 S730,50 720,108 S770,190 720,220 S680,180 700,228 S650,300 540,310 S440,260 400,278 S310,330 250,290 S200,220 170,248 S120,305 135,355 S130,380 145,400 S200,460 310,465 S400,435 455,442 S550,475 630,455 S700,470 725,405" fill="none" stroke="#c4a882" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".5" stroke-dasharray="10 7"/>
+    <!-- Trees — many more, varied sizes -->
+    <g class="map-trees" opacity=".5">
+      <!-- Top edge -->
+      <circle cx="42" cy="30" r="11" style="fill:var(--mgrass1)"/><circle cx="42" cy="30" r="7" style="fill:var(--mgrass3)"/>
+      <circle cx="70" cy="18" r="7" style="fill:var(--mgrass3)"/><circle cx="70" cy="18" r="4.5" style="fill:var(--mgrass1)"/>
+      <circle cx="230" cy="22" r="8" style="fill:var(--mgrass1)"/><circle cx="230" cy="22" r="5" style="fill:var(--mgrass3)"/>
+      <circle cx="540" cy="18" r="9" style="fill:var(--mgrass3)"/><circle cx="540" cy="18" r="5.5" style="fill:var(--mgrass1)"/>
+      <circle cx="630" cy="30" r="7" style="fill:var(--mgrass1)"/><circle cx="630" cy="30" r="4.5" style="fill:var(--mgrass3)"/>
+      <circle cx="825" cy="42" r="10" style="fill:var(--mgrass3)"/><circle cx="825" cy="42" r="6" style="fill:var(--mgrass1)"/>
+      <circle cx="870" cy="70" r="7" style="fill:var(--mgrass1)"/><circle cx="870" cy="70" r="4.5" style="fill:var(--mgrass3)"/>
+      <!-- Left edge -->
+      <circle cx="30" cy="130" r="9" style="fill:var(--mgrass3)"/><circle cx="30" cy="130" r="5.5" style="fill:var(--mgrass1)"/>
+      <circle cx="55" cy="200" r="7" style="fill:var(--mgrass1)"/><circle cx="55" cy="200" r="4.5" style="fill:var(--mgrass3)"/>
+      <circle cx="35" cy="310" r="10" style="fill:var(--mgrass3)"/><circle cx="35" cy="310" r="6" style="fill:var(--mgrass1)"/>
+      <circle cx="60" cy="370" r="8" style="fill:var(--mgrass1)"/><circle cx="60" cy="370" r="5" style="fill:var(--mgrass3)"/>
+      <circle cx="40" cy="460" r="9" style="fill:var(--mgrass3)"/><circle cx="40" cy="460" r="5.5" style="fill:var(--mgrass1)"/>
+      <!-- Right edge -->
+      <circle cx="860" cy="150" r="8" style="fill:var(--mgrass1)"/><circle cx="860" cy="150" r="5" style="fill:var(--mgrass3)"/>
+      <circle cx="845" cy="260" r="10" style="fill:var(--mgrass3)"/><circle cx="845" cy="260" r="6" style="fill:var(--mgrass1)"/>
+      <circle cx="855" cy="370" r="7" style="fill:var(--mgrass1)"/><circle cx="855" cy="370" r="4.5" style="fill:var(--mgrass3)"/>
+      <circle cx="840" cy="480" r="9" style="fill:var(--mgrass3)"/><circle cx="840" cy="480" r="5.5" style="fill:var(--mgrass1)"/>
+      <!-- Interior scattered -->
+      <circle cx="260" cy="130" r="6" style="fill:var(--mgrass1)"/><circle cx="260" cy="130" r="4" style="fill:var(--mgrass3)"/>
+      <circle cx="560" cy="155" r="8" style="fill:var(--mgrass3)"/><circle cx="560" cy="155" r="5" style="fill:var(--mgrass1)"/>
+      <circle cx="330" cy="340" r="7" style="fill:var(--mgrass1)"/><circle cx="330" cy="340" r="4.5" style="fill:var(--mgrass3)"/>
+      <circle cx="530" cy="380" r="6" style="fill:var(--mgrass3)"/><circle cx="530" cy="380" r="4" style="fill:var(--mgrass1)"/>
+      <circle cx="770" cy="310" r="7" style="fill:var(--mgrass1)"/><circle cx="770" cy="310" r="4.5" style="fill:var(--mgrass3)"/>
+      <circle cx="95" cy="490" r="6" style="fill:var(--mgrass1)"/><circle cx="95" cy="490" r="4" style="fill:var(--mgrass3)"/>
+      <circle cx="780" cy="490" r="8" style="fill:var(--mgrass3)"/><circle cx="780" cy="490" r="5" style="fill:var(--mgrass1)"/>
+      <!-- Bottom -->
+      <circle cx="200" cy="500" r="7" style="fill:var(--mgrass3)"/><circle cx="200" cy="500" r="4.5" style="fill:var(--mgrass1)"/>
+      <circle cx="400" cy="505" r="6" style="fill:var(--mgrass1)"/><circle cx="400" cy="505" r="4" style="fill:var(--mgrass3)"/>
+      <circle cx="600" cy="500" r="8" style="fill:var(--mgrass3)"/><circle cx="600" cy="500" r="5" style="fill:var(--mgrass1)"/>
     </g>
-    <!-- Small flowers -->
-    <g opacity=".25"><circle cx="170" cy="476" r="3" fill="#f472b6"/><circle cx="178" cy="473" r="2.5" fill="#fb923c"/><circle cx="395" cy="388" r="2.5" fill="#a78bfa"/><circle cx="780" cy="442" r="3" fill="#34d399"/><circle cx="960" cy="378" r="2.5" fill="#f472b6"/><circle cx="1350" cy="425" r="2.5" fill="#fbbf24"/></g>
-    <!-- 1. 关键词影院 — 山脚 (terrain ~504) -->
+    <!-- Decorations: flowers, mushrooms, rocks, bushes, butterflies -->
+    <g class="map-decor" opacity=".6">
+      <!-- Flowers — scattered everywhere -->
+      <circle cx="80" cy="120" r="3" fill="#f472b6"/><circle cx="80" cy="120" r="1.5" fill="#fef3c7"/>
+      <circle cx="320" cy="42" r="2.5" fill="#a78bfa"/><circle cx="320" cy="42" r="1.2" fill="#fef3c7"/>
+      <circle cx="575" cy="100" r="3" fill="#fb923c"/><circle cx="575" cy="100" r="1.5" fill="#fef3c7"/>
+      <circle cx="780" cy="175" r="2.5" fill="#f472b6"/><circle cx="780" cy="175" r="1.2" fill="#fef3c7"/>
+      <circle cx="520" cy="320" r="3" fill="#60a5fa"/><circle cx="520" cy="320" r="1.5" fill="#fef3c7"/>
+      <circle cx="300" cy="420" r="2.5" fill="#a78bfa"/><circle cx="300" cy="420" r="1.2" fill="#fef3c7"/>
+      <circle cx="620" cy="460" r="3" fill="#f472b6"/><circle cx="620" cy="460" r="1.5" fill="#fef3c7"/>
+      <circle cx="95" cy="450" r="2.5" fill="#fb923c"/><circle cx="95" cy="450" r="1.2" fill="#fef3c7"/>
+      <circle cx="200" cy="200" r="2" fill="#34d399"/><circle cx="200" cy="200" r="1" fill="#fef3c7"/>
+      <circle cx="840" cy="260" r="2.5" fill="#60a5fa"/><circle cx="840" cy="260" r="1.2" fill="#fef3c7"/>
+      <!-- Extra flowers -->
+      <circle cx="160" cy="160" r="2.5" fill="#34d399"/><circle cx="160" cy="160" r="1.2" fill="#fef3c7"/>
+      <circle cx="450" cy="160" r="3" fill="#f472b6"/><circle cx="450" cy="160" r="1.5" fill="#fef3c7"/>
+      <circle cx="750" cy="350" r="2.5" fill="#a78bfa"/><circle cx="750" cy="350" r="1.2" fill="#fef3c7"/>
+      <circle cx="380" cy="380" r="2" fill="#fb923c"/><circle cx="380" cy="380" r="1" fill="#fef3c7"/>
+      <circle cx="110" cy="330" r="3" fill="#60a5fa"/><circle cx="110" cy="330" r="1.5" fill="#fef3c7"/>
+      <circle cx="650" cy="350" r="2.5" fill="#34d399"/><circle cx="650" cy="350" r="1.2" fill="#fef3c7"/>
+      <circle cx="500" cy="490" r="2" fill="#f472b6"/><circle cx="500" cy="490" r="1" fill="#fef3c7"/>
+      <circle cx="720" cy="480" r="2.5" fill="#a78bfa"/><circle cx="720" cy="480" r="1.2" fill="#fef3c7"/>
+      <!-- Mushrooms -->
+      <g transform="translate(35,290)"><rect x="-1" y="0" width="2" height="5" rx=".5" fill="#d4c5a0" opacity=".5"/><ellipse cx="0" cy="0" rx="4" ry="3" fill="#ef4444" opacity=".35"/><circle cx="-1.5" cy="-1" r=".8" fill="#fef3c7" opacity=".4"/></g>
+      <g transform="translate(850,420)"><rect x="-1" y="0" width="2" height="4" rx=".5" fill="#d4c5a0" opacity=".5"/><ellipse cx="0" cy="0" rx="3.5" ry="2.5" fill="#a78bfa" opacity=".3"/><circle cx="1" cy="-0.5" r=".6" fill="#fef3c7" opacity=".4"/></g>
+      <g transform="translate(250,475)"><rect x="-1" y="0" width="2" height="4" rx=".5" fill="#d4c5a0" opacity=".5"/><ellipse cx="0" cy="0" rx="3.5" ry="2.5" fill="#ef4444" opacity=".3"/></g>
+      <g transform="translate(480,135)"><rect x="-1" y="0" width="2" height="4" rx=".5" fill="#d4c5a0" opacity=".5"/><ellipse cx="0" cy="0" rx="3" ry="2.2" fill="#fb923c" opacity=".3"/><circle cx="1" cy="-.5" r=".5" fill="#fef3c7" opacity=".3"/></g>
+      <g transform="translate(680,390)"><rect x="-1" y="0" width="2" height="4.5" rx=".5" fill="#d4c5a0" opacity=".5"/><ellipse cx="0" cy="0" rx="3.5" ry="2.8" fill="#ef4444" opacity=".3"/><circle cx="-1" cy="-1" r=".6" fill="#fef3c7" opacity=".35"/></g>
+      <!-- Small bushes -->
+      <ellipse cx="185" cy="105" rx="8" ry="5" style="fill:var(--mgrass3)" opacity=".15"/>
+      <ellipse cx="600" cy="200" rx="7" ry="4.5" style="fill:var(--mgrass1)" opacity=".12"/>
+      <ellipse cx="350" cy="450" rx="9" ry="5" style="fill:var(--mgrass3)" opacity=".12"/>
+      <ellipse cx="800" cy="440" rx="7" ry="4" style="fill:var(--mgrass1)" opacity=".1"/>
+      <ellipse cx="90" cy="250" rx="6" ry="4" style="fill:var(--mgrass3)" opacity=".1"/>
+      <!-- Rocks -->
+      <ellipse cx="780" cy="480" rx="6" ry="3.5" fill="#64748b" opacity=".15"/>
+      <ellipse cx="65" cy="470" rx="5" ry="3" fill="#64748b" opacity=".12"/>
+      <ellipse cx="850" cy="120" rx="7" ry="3.5" fill="#64748b" opacity=".1"/>
+      <ellipse cx="30" cy="80" rx="5" ry="2.5" fill="#64748b" opacity=".12"/>
+      <ellipse cx="450" cy="510" rx="5.5" ry="3" fill="#64748b" opacity=".1"/>
+      <ellipse cx="870" cy="500" rx="6" ry="3" fill="#64748b" opacity=".08"/>
+      <ellipse cx="15" cy="420" rx="4" ry="2.5" fill="#64748b" opacity=".1"/>
+      <!-- Butterflies (two dots + connecting line) -->
+      <g opacity=".3"><circle cx="290" cy="190" r="2" fill="#f472b6"/><circle cx="295" cy="187" r="1.8" fill="#a78bfa"/></g>
+      <g opacity=".25"><circle cx="620" cy="130" r="1.8" fill="#fb923c"/><circle cx="624" cy="127" r="1.5" fill="#fbbf24"/></g>
+      <g opacity=".3"><circle cx="470" cy="350" r="2" fill="#60a5fa"/><circle cx="474" cy="347" r="1.6" fill="#34d399"/></g>
+      <!-- Footprints on path -->
+      <g opacity=".06" fill="#78350f">
+        <circle cx="170" cy="95" r="1.5"/><circle cx="173" cy="92" r="1"/>
+        <circle cx="280" cy="35" r="1.5"/><circle cx="283" cy="32" r="1"/>
+        <circle cx="380" cy="70" r="1.5"/><circle cx="383" cy="67" r="1"/>
+        <circle cx="520" cy="30" r="1.5"/><circle cx="523" cy="27" r="1"/>
+        <circle cx="660" cy="60" r="1.5"/><circle cx="663" cy="57" r="1"/>
+        <circle cx="750" cy="170" r="1.5"/><circle cx="747" cy="167" r="1"/>
+        <circle cx="650" cy="260" r="1.5"/><circle cx="647" cy="257" r="1"/>
+        <circle cx="480" cy="300" r="1.5"/><circle cx="477" cy="297" r="1"/>
+        <circle cx="310" cy="290" r="1.5"/><circle cx="307" cy="287" r="1"/>
+        <circle cx="200" cy="260" r="1.5"/><circle cx="197" cy="257" r="1"/>
+        <circle cx="140" cy="340" r="1.5"/><circle cx="143" cy="337" r="1"/>
+        <circle cx="160" cy="430" r="1.5"/><circle cx="163" cy="427" r="1"/>
+        <circle cx="340" cy="460" r="1.5"/><circle cx="343" cy="457" r="1"/>
+        <circle cx="560" cy="455" r="1.5"/><circle cx="563" cy="452" r="1"/>
+        <circle cx="680" cy="465" r="1.5"/><circle cx="683" cy="462" r="1"/>
+      </g>
+    </g>
+    <!-- 1. 关键词影院 (130,80) — rounded cinema screen + colored dots -->
     <g class="map-building unlocked" data-target="hero">
-      <ellipse cx="130" cy="504" rx="46" ry="6" fill="rgba(0,0,0,.12)"/>
-      <rect x="90" y="433" width="80" height="71" rx="5" fill="#4338ca"/><rect x="90" y="433" width="80" height="10" rx="5" fill="#6366f1"/>
-      <rect x="99" y="450" width="62" height="38" rx="2" fill="#312e81"/>
-      <circle cx="98" cy="439" r="1.8" fill="#fbbf24"/><circle cx="109" cy="439" r="1.8" fill="#f87171"/><circle cx="120" cy="439" r="1.8" fill="#34d399"/><circle cx="131" cy="439" r="1.8" fill="#60a5fa"/><circle cx="142" cy="439" r="1.8" fill="#fbbf24"/><circle cx="153" cy="439" r="1.8" fill="#f87171"/>
-      <text x="130" y="530" class="map-label" data-i18n="map-b-hero">关键词影院</text>
+      <rect x="102" y="48" width="56" height="40" rx="6" fill="#4338ca" stroke="#6366f1" stroke-width="1.5"/>
+      <rect x="109" y="57" width="42" height="22" rx="3" fill="#312e81"/>
+      <circle cx="113" cy="53" r="1.5" fill="#fbbf24"/><circle cx="118" cy="53" r="1.5" fill="#f87171"/><circle cx="123" cy="53" r="1.5" fill="#34d399"/>
+      <rect x="102" y="48" width="56" height="40" rx="6" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="130" y="114" class="map-label" data-i18n="map-b-hero">关键词影院</text>
     </g>
-    <!-- 2. 兴趣游乐场 — 山腰 (terrain ~426) -->
+    <!-- 2. 兴趣游乐场 (445,60) — ferris wheel of colored dots -->
     <g class="map-building" data-target="interest">
-      <rect x="270" y="349" width="80" height="80" fill="transparent"/>
-      <circle cx="310" cy="389" r="37" fill="none" stroke="#ec4899" stroke-width="3" opacity=".7"/>
-      <circle cx="310" cy="389" r="3.5" fill="#fbbf24"/><circle cx="310" cy="352" r="5.8" fill="#f472b6"/><circle cx="347" cy="389" r="5.8" fill="#a78bfa"/><circle cx="310" cy="426" r="5.8" fill="#34d399"/><circle cx="273" cy="389" r="5.8" fill="#60a5fa"/>
-      <text x="310" y="454" class="map-label" data-i18n="map-b-interest">兴趣游乐场</text>
+      <circle cx="445" cy="55" r="28" fill="none" stroke="#ec4899" stroke-width="2.5" opacity=".75"/>
+      <circle cx="445" cy="55" r="3" fill="#fbbf24"/>
+      <circle cx="445" cy="30" r="4.5" fill="#f472b6"/><circle cx="470" cy="55" r="4.5" fill="#a78bfa"/><circle cx="445" cy="80" r="4.5" fill="#34d399"/><circle cx="420" cy="55" r="4.5" fill="#60a5fa"/>
+      <circle cx="445" cy="55" r="28" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="445" y="108" class="map-label" data-i18n="map-b-interest">兴趣游乐场</text>
     </g>
-    <!-- 3. 事业大楼 — 山顶 (terrain ~320) -->
+    <!-- 3. 事业大楼 (720,108) — tall rounded building with windows + dome top -->
     <g class="map-building" data-target="career">
-      <ellipse cx="500" cy="320" rx="39" ry="5" fill="rgba(0,0,0,.1)"/>
-      <rect x="468" y="222" width="64" height="98" rx="3" fill="#d97706"/><rect x="468" y="222" width="64" height="98" rx="3" fill="rgba(255,255,255,.06)"/>
-      <polygon points="500,200 481,222 519,222" fill="#b45309"/><circle cx="500" cy="211" r="4.6" fill="#fbbf24" opacity=".65"/>
-      <rect x="476" y="232" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="493" y="232" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="510" y="232" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/>
-      <rect x="476" y="250" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="493" y="250" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="510" y="250" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/>
-      <rect x="476" y="268" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/><rect x="493" y="268" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="510" y="268" width="10" height="10" rx="1" fill="rgba(254,243,199,.3)"/>
-      <rect x="476" y="286" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/><rect x="493" y="286" width="10" height="10" rx="1" fill="rgba(254,243,199,.25)"/><rect x="510" y="286" width="10" height="10" rx="1" fill="rgba(254,243,199,.2)"/>
-      <rect x="492" y="302" width="16" height="18" rx="8" fill="rgba(120,53,15,.45)"/>
-      <text x="500" y="350" class="map-label" data-i18n="map-b-career">事业大楼</text>
+      <rect x="700" y="68" width="40" height="56" rx="6" fill="#d97706" stroke="#b45309" stroke-width="1.5"/>
+      <rect x="700" y="62" width="40" height="12" rx="6" fill="#b45309"/>
+      <circle cx="720" cy="62" r="5" fill="#fbbf24" opacity=".35"/>
+      <rect x="707" y="79" width="8" height="8" rx="2" fill="rgba(254,243,199,.3)"/><rect x="719" y="79" width="8" height="8" rx="2" fill="rgba(254,243,199,.2)"/>
+      <rect x="707" y="93" width="8" height="8" rx="2" fill="rgba(254,243,199,.2)"/><rect x="719" y="93" width="8" height="8" rx="2" fill="rgba(254,243,199,.3)"/>
+      <rect x="713" y="109" width="14" height="15" rx="7" fill="rgba(120,53,15,.3)"/>
+      <rect x="697" y="58" width="46" height="66" rx="6" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="720" y="154" class="map-label" data-i18n="map-b-career">事业大楼</text>
     </g>
-    <!-- 4. 知识湖 — 山谷 dock/pier (terrain ~465) -->
+    <!-- 4. 知识湖 (690,228) — lake + dock + lantern as one icon -->
     <g class="map-building" data-target="study">
-      <rect x="645" y="420" width="115" height="60" fill="transparent"/>
-      <!-- Wooden dock platform (starts on shore, extends over water) -->
-      <rect x="674" y="460" width="62" height="7" rx="2" fill="#92400e" opacity=".85"/>
-      <rect x="674" y="460" width="62" height="2.5" rx="1" fill="#b45309" opacity=".5"/>
-      <!-- Plank lines -->
-      <line x1="686" y1="460" x2="686" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
-      <line x1="697" y1="460" x2="697" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
-      <line x1="708" y1="460" x2="708" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
-      <line x1="719" y1="460" x2="719" y2="467" stroke="#78350f" stroke-width=".7" opacity=".4"/>
-      <!-- Dock support posts into water -->
-      <rect x="678" y="465" width="5" height="16" rx="1.2" fill="#78350f" opacity=".6"/>
-      <rect x="728" y="465" width="5" height="16" rx="1.2" fill="#78350f" opacity=".6"/>
-      <!-- Lamp post on dock -->
-      <rect x="736" y="434" width="3.5" height="26" rx="1.2" fill="#78350f" opacity=".7"/>
-      <circle cx="737.75" cy="430" r="6" fill="#fbbf24" opacity=".35"/><circle cx="737.75" cy="430" r="3.5" fill="#fde68a" opacity=".6"/>
-      <!-- Rope railing -->
-      <path d="M680,457 Q710,451 738,457" fill="none" stroke="#a16207" stroke-width="1.2" opacity=".4" stroke-dasharray="2.5 1.5"/>
-      <!-- Small book on dock -->
-      <rect x="692" y="455" width="10" height="6" rx="1" fill="#4338ca" opacity=".6"/><rect x="693" y="456" width="8" height="4" rx=".5" fill="#6366f1" opacity=".5"/>
-      <text x="706" y="502" class="map-label" data-i18n="map-b-study">知识湖</text>
+      <!-- Lake water -->
+      <ellipse cx="690" cy="235" rx="55" ry="24" fill="url(#mwater2)"/>
+      <ellipse cx="690" cy="235" rx="42" ry="16" fill="rgba(56,189,248,.12)"/>
+      <ellipse cx="690" cy="235" rx="25" ry="8" fill="rgba(56,189,248,.06)"/>
+      <!-- Dock / pier -->
+      <rect x="665" y="220" width="44" height="6" rx="3" fill="#92400e" opacity=".8"/>
+      <rect x="668" y="225" width="5" height="10" rx="2" fill="#78350f" opacity=".55"/>
+      <rect x="700" y="225" width="5" height="10" rx="2" fill="#78350f" opacity=".55"/>
+      <!-- Lantern -->
+      <rect x="710" y="202" width="4" height="20" rx="2" fill="#78350f" opacity=".6"/>
+      <circle cx="712" cy="198" r="6" fill="#fbbf24" opacity=".3"/><circle cx="712" cy="198" r="3.5" fill="#fde68a" opacity=".55"/>
+      <!-- Fish in lake -->
+      <g opacity=".2"><ellipse cx="672" cy="242" rx="5" ry="2.2" fill="#38bdf8"/><ellipse cx="665" cy="242" rx="2.5" ry="1.5" fill="#38bdf8"/></g>
+      <g opacity=".15"><ellipse cx="706" cy="248" rx="4" ry="1.8" fill="#0ea5e9"/><ellipse cx="712" cy="248" rx="2" ry="1.2" fill="#0ea5e9"/></g>
+      <!-- Hit area covers entire lake + dock -->
+      <ellipse cx="690" cy="232" rx="58" ry="30" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="690" y="278" class="map-label" data-i18n="map-b-study">知识湖</text>
     </g>
-    <!-- 5. 故事杂货铺 — 半山腰 (terrain ~393) -->
+    <!-- 5. 故事杂货铺 (400,278) — rounded shop with awning + globe -->
     <g class="map-building" data-target="worldmap">
-      <ellipse cx="900" cy="393" rx="33" ry="5" fill="rgba(0,0,0,.1)"/>
-      <rect x="873" y="349" width="55" height="44" rx="3" fill="#047857"/>
-      <path d="M868,349 L933,349 L929,337 L873,337 Z" fill="#059669"/><path d="M873,337 C883,332 893,342 900,337 C907,332 917,342 929,337" fill="none" stroke="#34d399" stroke-width="1.8"/>
-      <rect x="879" y="358" width="42" height="18" rx="1" fill="rgba(209,250,229,.15)"/><text x="900" y="372" text-anchor="middle" font-size="8" fill="rgba(209,250,229,.5)" font-weight="700">MAPS</text>
-      <rect x="893" y="379" width="14" height="14" rx="7" fill="rgba(2,120,87,.4)"/>
-      <text x="900" y="424" class="map-label" data-i18n="map-b-worldmap">故事杂货铺</text>
+      <rect x="376" y="258" width="48" height="36" rx="6" fill="#047857" stroke="#059669" stroke-width="1.5"/>
+      <rect x="374" y="252" width="52" height="10" rx="5" fill="#059669"/>
+      <circle cx="380" cy="257" r="2" fill="#34d399" opacity=".5"/><circle cx="388" cy="257" r="2" fill="#34d399" opacity=".35"/><circle cx="396" cy="257" r="2" fill="#34d399" opacity=".5"/><circle cx="404" cy="257" r="2" fill="#34d399" opacity=".35"/><circle cx="412" cy="257" r="2" fill="#34d399" opacity=".5"/><circle cx="420" cy="257" r="2" fill="#34d399" opacity=".35"/>
+      <circle cx="400" cy="275" r="10" fill="rgba(209,250,229,.12)" stroke="rgba(209,250,229,.2)" stroke-width="1"/>
+      <ellipse cx="400" cy="275" rx="4" ry="10" fill="none" stroke="rgba(209,250,229,.15)" stroke-width=".8"/>
+      <rect x="394" y="285" width="12" height="9" rx="4.5" fill="rgba(2,120,87,.3)"/>
+      <rect x="374" y="252" width="52" height="42" rx="6" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="400" y="322" class="map-label" data-i18n="map-b-worldmap">故事杂货铺</text>
     </g>
-    <!-- 6. 经历钟楼 — 山顶 (terrain ~310) -->
+    <!-- 6. 经历钟楼 (170,248) — tall rounded tower with clock face -->
     <g class="map-building" data-target="timelines">
-      <ellipse cx="1100" cy="310" rx="35" ry="5" fill="rgba(0,0,0,.1)"/>
-      <rect x="1071" y="239" width="58" height="71" rx="3" fill="#5b21b6"/>
-      <polygon points="1100,213 1087,239 1113,239" fill="#7c3aed"/>
-      <circle cx="1100" cy="268" r="18" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1.8"/>
-      <line x1="1100" y1="268" x2="1100" y2="254" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/>
-      <line x1="1100" y1="268" x2="1111" y2="273" stroke="#e0e7ff" stroke-width="1.2" stroke-linecap="round"/>
-      <circle cx="1100" cy="268" r="2.3" fill="#fbbf24"/>
-      <rect x="1092" y="294" width="16" height="16" rx="2" fill="rgba(91,33,182,.45)"/>
-      <text x="1100" y="342" class="map-label" data-i18n="map-b-timelines">经历钟楼</text>
+      <rect x="149" y="215" width="42" height="52" rx="6" fill="#5b21b6" stroke="#7c3aed" stroke-width="1.5"/>
+      <rect x="149" y="208" width="42" height="14" rx="6" fill="#7c3aed"/>
+      <circle cx="170" cy="213" r="4" fill="#a78bfa" opacity=".35"/>
+      <circle cx="170" cy="240" r="14" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1.5"/>
+      <line x1="170" y1="240" x2="170" y2="229" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="170" y1="240" x2="178" y2="244" stroke="#e0e7ff" stroke-width="1" stroke-linecap="round"/>
+      <circle cx="170" cy="240" r="2" fill="#fbbf24"/>
+      <rect x="162" y="254" width="16" height="13" rx="8" fill="rgba(91,33,182,.4)"/>
+      <rect x="147" y="206" width="46" height="61" rx="6" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="170" y="296" class="map-label" data-i18n="map-b-timelines">经历钟楼</text>
     </g>
-    <!-- 7. 技能花园 — 半山腰 (terrain ~395) -->
+    <!-- 7. 技能花园 (145,400) — rounded bush cluster with apple dots -->
     <g class="map-building" data-target="skills">
-      <rect x="1243" y="328" width="80" height="70" fill="transparent"/>
-      <rect x="1277" y="370" width="12" height="25" rx="2.5" fill="#78350f" opacity=".7"/>
-      <circle cx="1283" cy="348" r="28" fill="#166534" opacity=".65"/><circle cx="1264" cy="358" r="20" fill="#15803d" opacity=".55"/><circle cx="1302" cy="354" r="22" fill="#14532d" opacity=".55"/><circle cx="1283" cy="332" r="17" fill="#22c55e" opacity=".35"/>
-      <circle cx="1268" cy="350" r="4" fill="#fbbf24" opacity=".6"/><circle cx="1298" cy="343" r="3.5" fill="#f87171" opacity=".6"/><circle cx="1280" cy="335" r="3" fill="#fbbf24" opacity=".5"/>
-      <text x="1283" y="428" class="map-label" data-i18n="map-b-skills">技能花园</text>
+      <circle cx="145" cy="386" r="24" fill="#166534" opacity=".6"/>
+      <circle cx="130" cy="394" r="16" fill="#15803d" opacity=".5"/>
+      <circle cx="160" cy="391" r="18" fill="#14532d" opacity=".5"/>
+      <circle cx="145" cy="374" r="13" fill="#22c55e" opacity=".3"/>
+      <circle cx="135" cy="384" r="3.5" fill="#dc2626" opacity=".7"/><circle cx="155" cy="379" r="3" fill="#ef4444" opacity=".7"/><circle cx="145" cy="371" r="2.5" fill="#dc2626" opacity=".6"/>
+      <circle cx="145" cy="388" r="28" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="145" y="438" class="map-label" data-i18n="map-b-skills">技能花园</text>
+    </g>
+    <!-- 8. 邮局 (455,442) — rounded building with letter slot + dots -->
+    <g class="map-building" data-target="takeaway">
+      <rect x="431" y="418" width="48" height="40" rx="6" fill="#0369a1" stroke="#0284c7" stroke-width="1.5"/>
+      <rect x="431" y="412" width="48" height="12" rx="6" fill="#0284c7"/>
+      <circle cx="443" cy="417" r="2" fill="#7dd3fc" opacity=".4"/><circle cx="455" cy="417" r="2" fill="#7dd3fc" opacity=".3"/><circle cx="467" cy="417" r="2" fill="#7dd3fc" opacity=".4"/>
+      <rect x="439" y="430" width="30" height="18" rx="4" fill="rgba(186,230,253,.2)"/>
+      <rect x="447" y="435" width="14" height="8" rx="3" fill="rgba(186,230,253,.15)" stroke="rgba(224,242,254,.25)" stroke-width="1"/>
+      <rect x="449" y="450" width="10" height="8" rx="5" fill="rgba(3,105,161,.4)"/>
+      <rect x="429" y="410" width="52" height="48" rx="6" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="455" y="484" class="map-label" data-i18n="map-b-takeaway">邮局</text>
+    </g>
+    <!-- 9. 终点 (725,405) — rounded flag on pole -->
+    <g class="map-building" data-target="ending">
+      <rect x="722" y="375" width="4" height="38" rx="2" fill="#94a3b8" opacity=".6"/>
+      <rect x="726" y="375" width="22" height="16" rx="4" fill="#fbbf24"/>
+      <circle cx="737" cy="383" r="4" fill="#fef3c7" opacity=".4"/>
+      <circle cx="724" cy="375" r="3" fill="#fbbf24" opacity=".5"/>
+      <rect x="719" y="373" width="32" height="42" rx="4" fill="transparent" stroke="transparent" class="map-hit"/>
+      <text x="737" y="438" class="map-label" data-i18n="map-b-ending">终点</text>
     </g>
   </svg>
   </div>
@@ -815,27 +998,28 @@
 
 <!-- ═══════════ MINIMAP ═══════════ -->
 <div id="map-btn">
-  <svg viewBox="0 0 130 58" width="130" height="58" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="mms" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--msky1)"/><stop offset="60%" style="stop-color:var(--msky2)"/><stop offset="100%" style="stop-color:var(--msky3)"/></linearGradient></defs>
-    <rect width="130" height="58" rx="6" fill="url(#mms)"/>
-    <g class="map-star"><circle cx="11" cy="5" r=".5" fill="#fbbf24" opacity=".5"/><circle cx="48" cy="6" r=".5" fill="#fbbf24" opacity=".6"/><circle cx="88" cy="4" r=".5" fill="#fbbf24" opacity=".5"/><circle cx="121" cy="5" r=".5" fill="#fbbf24" opacity=".5"/><circle cx="28" cy="3" r=".4" fill="#fff" opacity=".3"/><circle cx="68" cy="2" r=".4" fill="#fff" opacity=".3"/><circle cx="107" cy="3" r=".4" fill="#fff" opacity=".4"/></g>
-    <g class="map-sun"><circle cx="112" cy="7" r="3.5" fill="#FFF9C4" opacity=".3"/><circle cx="112" cy="7" r="2.2" fill="#FFD54F" opacity=".85"/></g>
-    <!-- Rolling hills (matching big map — gentle curves) -->
-    <path d="M0,49 C6,48 10,47 15,46 C21,44 27,40 33,38 C40,35 43,32 46,30 C50,28 53,30 57,35 C61,39 64,43 67,44 C69,43 73,40 78,38 C83,37 87,36 90,34 C94,32 97,30 102,29 C106,28 112,31 116,35 C121,38 126,40 130,41 L130,58 L0,58 Z" style="fill:var(--mgrass1)"/>
-    <path d="M0,52 C7,51 13,49 20,47 C29,45 38,40 46,35 C52,32 57,36 63,42 C67,45 69,44 74,41 C80,39 86,37 91,35 C97,33 101,31 102,30 C107,29 113,34 119,37 C124,39 128,42 130,43 L130,58 L0,58 Z" style="fill:var(--mgrass3)" opacity=".35"/>
-    <ellipse cx="67" cy="45" rx="7" ry="1.5" fill="#38bdf8" opacity=".3"/>
-    <path d="M6,47 C12,46 18,43 25,40 C32,37 40,33 46,30 C50,28 54,31 58,36 C63,41 66,44 67,44 C70,42 76,39 82,37 C88,36 93,33 100,30 C106,28 112,32 118,36 C122,38 127,41 130,42" fill="none" stroke="rgba(212,175,116,.18)" stroke-width=".4" stroke-dasharray="1.2 .8"/>
-    <!-- Decorative trees -->
-    <circle cx="18" cy="44" r=".8" style="fill:var(--mgrass1)" opacity=".3"/><circle cx="40" cy="34" r=".6" style="fill:var(--mgrass3)" opacity=".3"/><circle cx="78" cy="39" r=".6" style="fill:var(--mgrass1)" opacity=".3"/>
-    <!-- Mini buildings (scaled ~15% larger, aligned to terrain) -->
-    <g class="mini-bld" data-target="hero"><rect x="8.5" y="40" width="7" height="7" rx=".6" fill="#4338ca"/><rect x="8.5" y="40" width="7" height="1" rx=".4" fill="#6366f1"/></g>
-    <g class="mini-bld" data-target="interest"><circle cx="29" cy="36.5" r="3.3" fill="none" stroke="#ec4899" stroke-width=".5"/></g>
-    <g class="mini-bld" data-target="career"><rect x="43.5" y="21" width="6" height="9" rx=".4" fill="#d97706"/><polygon points="46.5,19 44,21 49,21" fill="#b45309"/></g>
-    <g class="mini-bld" data-target="study"><rect x="61.5" y="42" width="6" height=".9" rx=".3" fill="#92400e"/><rect x="62" y="42.5" width=".6" height="2" fill="#78350f" opacity=".6"/><rect x="66.5" y="42.5" width=".6" height="2" fill="#78350f" opacity=".6"/><circle cx="68" cy="41" r=".7" fill="#fde68a" opacity=".6"/></g>
-    <g class="mini-bld" data-target="worldmap"><rect x="80.5" y="32.5" width="5.5" height="4.5" rx=".4" fill="#047857"/><path d="M80,32.5 L87,32.5 L86.5,31 L80.5,31 Z" fill="#059669"/></g>
-    <g class="mini-bld" data-target="timelines"><rect x="99" y="22" width="6" height="7" rx=".4" fill="#5b21b6"/><circle cx="102" cy="25" r="1.9" fill="#1e1b4b" stroke="#a78bfa" stroke-width=".3"/></g>
-    <g class="mini-bld" data-target="skills"><rect x="117.5" y="33.5" width="1.2" height="3" fill="#78350f" opacity=".7"/><circle cx="118.2" cy="32" r="2.7" fill="#166534" opacity=".7"/><circle cx="116.5" cy="33.2" r="1.9" fill="#15803d" opacity=".6"/><circle cx="120" cy="32.5" r="2" fill="#14532d" opacity=".6"/></g>
-    <g opacity=".4"><line x1="5" y1="10" x2="125" y2="10" stroke="var(--muted)" stroke-width=".3" stroke-dasharray="1 2"/><text x="65" y="12" text-anchor="middle" font-size="5" style="fill:var(--muted)" font-weight="600" letter-spacing="4" font-family="Inter,sans-serif">EXPLORE</text></g>
+  <svg viewBox="0 0 100 68" width="100" height="68" xmlns="http://www.w3.org/2000/svg">
+    <!-- Flat grass background -->
+    <rect width="100" height="68" rx="6" style="fill:var(--mgrass2)"/>
+    <defs><pattern id="mgrid2" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M6,0 L0,0 0,6" fill="none" stroke="rgba(255,255,255,.05)" stroke-width=".3"/></pattern></defs>
+    <rect width="100" height="68" rx="6" fill="url(#mgrid2)" opacity=".3"/>
+    <!-- Lake -->
+    <ellipse cx="77" cy="31" rx="6" ry="2.8" fill="#38bdf8" opacity=".2"/>
+    <!-- Smooth S-curve path (matching main map) -->
+    <path d="M15,11 C18,15 23,3 31,6 S42,12 50,8 S63,2 71,9 S82,7 80,14 S86,25 80,29 S76,24 78,30 S73,40 60,39 S49,34 45,37 S35,44 28,38 S23,28 19,33 S14,42 15,48 S15,50 16,53 S23,61 35,60 S45,56 51,59 S62,62 72,58 S79,62 81,53" fill="none" stroke="#a3896a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".38"/>
+    <path d="M15,11 C18,15 23,3 31,6 S42,12 50,8 S63,2 71,9 S82,7 80,14 S86,25 80,29 S76,24 78,30 S73,40 60,39 S49,34 45,37 S35,44 28,38 S23,28 19,33 S14,42 15,48 S15,50 16,53 S23,61 35,60 S45,56 51,59 S62,62 72,58 S79,62 81,53" fill="none" stroke="#c4a882" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity=".45" stroke-dasharray="1.5 1"/>
+    <!-- Mini buildings (all rounded, matching main map style) -->
+    <g class="mini-bld" data-target="hero"><rect x="11" y="7" width="7" height="5" rx=".8" fill="#4338ca"/><rect x="12.5" y="8.5" width="4" height="2.5" rx=".5" fill="#312e81"/></g>
+    <g class="mini-bld" data-target="interest"><circle cx="50" cy="8" r="3.2" fill="none" stroke="#ec4899" stroke-width=".5"/><circle cx="50" cy="8" r=".8" fill="#fbbf24"/></g>
+    <g class="mini-bld" data-target="career"><rect x="78" y="9" width="5" height="7" rx=".8" fill="#d97706"/><rect x="78" y="8" width="5" height="2" rx=".8" fill="#b45309"/></g>
+    <g class="mini-bld" data-target="study"><ellipse cx="77" cy="31" rx="6" ry="3" fill="#38bdf8" opacity=".2"/><ellipse cx="77" cy="31" rx="4" ry="1.8" fill="#38bdf8" opacity=".1"/><rect x="74" y="29.5" width="5" height="1" rx=".5" fill="#92400e"/><circle cx="79" cy="28.5" r=".8" fill="#fde68a" opacity=".5"/></g>
+    <g class="mini-bld" data-target="worldmap"><rect x="42" y="34" width="5.5" height="4" rx=".8" fill="#047857"/><rect x="41.5" y="33" width="6.5" height="1.5" rx=".8" fill="#059669"/></g>
+    <g class="mini-bld" data-target="timelines"><rect x="16" y="29" width="5" height="6" rx=".8" fill="#5b21b6"/><rect x="16" y="28" width="5" height="2" rx=".8" fill="#7c3aed"/><circle cx="18.5" cy="32.5" r="1.5" fill="#1e1b4b"/></g>
+    <g class="mini-bld" data-target="skills"><circle cx="16" cy="53" r="3" fill="#166534" opacity=".6"/><circle cx="14.5" cy="54" r="2" fill="#15803d" opacity=".5"/><circle cx="17.5" cy="53.5" r="2" fill="#14532d" opacity=".5"/></g>
+    <g class="mini-bld" data-target="takeaway"><rect x="48" y="55" width="5.5" height="4.5" rx=".8" fill="#0369a1"/><rect x="48" y="54" width="5.5" height="2" rx=".8" fill="#0284c7"/></g>
+    <g class="mini-bld" data-target="ending"><rect x="80.5" y="49" width=".7" height="5" rx=".3" fill="#94a3b8" opacity=".5"/><rect x="81.2" y="49" width="3" height="2.2" rx=".6" fill="#fbbf24" opacity=".7"/></g>
+    <!-- EXPLORE label -->
+    <g opacity=".3"><text x="50" y="64" text-anchor="middle" font-size="4.5" style="fill:var(--muted)" font-weight="600" letter-spacing="3" font-family="Inter,sans-serif">EXPLORE</text></g>
   </svg>
 </div>
 
