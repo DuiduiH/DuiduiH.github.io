@@ -52,3 +52,5 @@ build/
 local/
 tmp/
 temp/
+.vercel
+.env*

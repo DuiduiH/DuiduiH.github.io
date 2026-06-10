@@ -32,6 +32,7 @@
 
   var DATA=(window.MODULE_DATA&&window.MODULE_DATA.mapPlaces)||[];
   var LANG_ONLY=(window.MODULE_DATA&&window.MODULE_DATA.langOnlyPlaces)||[];
+  var TEXT=(window.SITE_TEXT&&window.SITE_TEXT.translations)||{};
 
   var VISIT_COLORS={transit:'#bfdbfe',travel:'#93c5fd',short:'#3b82f6',long:'#1d4ed8'};
   var LANG_COLORS={beginner:'#d8b4fe',proficient:'#a78bfa',fluent:'#7c3aed',native:'#4c1d95'};
@@ -93,6 +94,7 @@
   // Keep refs to all markers so we can update open popups in-place
   var visitMarkers=[];
   var langMarkers=[];
+  var currentScope='world';
 
   function buildVisitMarkers(){
     visitGroup.clearLayers();
@@ -169,6 +171,53 @@
     }
   }
 
+  function setModalTitle(scope){
+    var title=document.getElementById('storyMapTitle');
+    if(!title) return;
+    var lang=isEn()?'en':'cn';
+    var key=scope==='china'?'story-map-title-china':'story-map-title-world';
+    title.textContent=(TEXT[key]&&TEXT[key][lang])||(scope==='china'?'中国地图摊开了':'世界地图摊开了');
+  }
+
+  function focusScope(scope){
+    map.closePopup();
+    if(scope==='china'){
+      map.setView([34.5,105],4.25,{animate:false});
+    } else {
+      map.setView([30,20],2.5,{animate:false});
+    }
+  }
+
+  var mapsOpened=new Set();
+
+  function openStoryMap(scope){
+    var modal=document.getElementById('storyMapModal');
+    if(!modal) return;
+    currentScope=scope||'world';
+    mapsOpened.add(currentScope);
+    if(mapsOpened.has('china')&&mapsOpened.has('world')){
+      window.dispatchEvent(new CustomEvent('section-complete',{detail:{id:'worldmap',origin:document.getElementById('storyShop')}}));
+    }
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    setModalTitle(currentScope);
+    setTimeout(function(){
+      map.invalidateSize();
+      focusScope(currentScope);
+    },80);
+  }
+
+  function closeStoryMap(){
+    var modal=document.getElementById('storyMapModal');
+    if(!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  window._openStoryMap=openStoryMap;
+
   var obs=new MutationObserver(function(muts){
     muts.forEach(function(m){
       if(m.attributeName==='data-theme'){
@@ -179,6 +228,7 @@
       if(m.attributeName==='lang'){
         // Update any open popup content in-place, then rebuild for future clicks
         refreshOpenPopups();
+        setModalTitle(currentScope);
       }
     });
   });
@@ -235,6 +285,25 @@
   });
 
   showMode('visit');
+
+  document.querySelectorAll('.shop-scroll[data-map-scope],.shop-map[data-map-scope]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      openStoryMap(btn.dataset.mapScope||'world');
+    });
+  });
+
+  var storyClose=document.getElementById('storyMapClose');
+  if(storyClose) storyClose.addEventListener('click',function(e){e.preventDefault();closeStoryMap();});
+  var storyModal=document.getElementById('storyMapModal');
+  if(storyModal){
+    storyModal.addEventListener('click',function(e){
+      if(e.target===storyModal) closeStoryMap();
+    });
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&storyModal&&storyModal.classList.contains('open')) closeStoryMap();
+  });
 
   document.querySelectorAll('.map-legend-btn').forEach(function(el){
     el.addEventListener('click',function(){

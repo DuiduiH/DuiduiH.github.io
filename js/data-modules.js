@@ -63,16 +63,54 @@ window.MODULE_DATA = {
     {n:'写作',en:'Writing',c:'arts',img:'writing',d:'把脑海里的想法变成文字是一种治愈',dEn:'Turning thoughts into words is a form of healing',i:'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'}
   ],
 
-  // ─── 事业标签 ───
-  careerLabels: {
-    '期货':{cn:'瑞达期货 · 投资研究助理',en:'Ruida Futures · Research Asst'},
-    '律所IPO':{cn:'国枫律所 · IPO助理',en:'Grandway Law · IPO Asst'},
-    '私募':{cn:'戊戌资产 · 投资研究助理',en:'Wuxu Asset · Research Asst'},
-    '券商投行':{cn:'国金证券 · 投行实习生',en:'Sinolink Securities · IB Intern'},
-    '沄视科技':{cn:'沄视科技 · AI产品经理 & CEO助理',en:'Yunshi Tech · AI PM & CEO Asst'},
-    '金融经历':{cn:'金融经历',en:'Finance Experience'},
-    '初创经历':{cn:'初创经历',en:'Startup Experience'}
-  },
+  // ─── 事业大楼 ───
+  careerFloors: [
+    {
+      id:'red',
+      floor:'3F',
+      accent:'#ef4444',
+      icon:'book',
+      label:{cn:'小红书运营作战室',en:'RED Ops Room'},
+      roomLabel:{cn:'3F · 小红书运营作战室',en:'3F · RED OPS ROOM'},
+      hint:{cn:'点点手机、聊天墙和投放屏',en:'Tap the phone, chat wall, and traffic screen'},
+      hotspots:[
+        {id:'campaign',x:'18%',y:'34%',w:'16%',h:'24%',title:{cn:'大促产品落地',en:'Campaign Product'},desc:{cn:'参与“春上新”“66周年庆”，推进宠粉清单、直播间福利券等买手侧策略落地。',en:'Supported Spring Launch and 66 Anniversary, landing creator-side fan lists and livestream coupons.'}},
+        {id:'traffic',x:'38%',y:'32%',w:'16%',h:'24%',title:{cn:'流量与数据复盘',en:'Traffic Review'},desc:{cn:'为100+位买手分配直播、笔记与开屏资源，用RedBI、曙光、鹰眼、苍穹复盘转化与买手健康度。',en:'Allocated traffic for 100+ creators and reviewed conversion plus creator health through RED internal systems.'}},
+        {id:'community',x:'58%',y:'32%',w:'16%',h:'24%',title:{cn:'买手社群运营',en:'Creator Community Ops'},desc:{cn:'维护50+核心买手社群，对接GMV千万级头部买手，建立30分钟响应机制。',en:'Managed 50+ creator communities and worked with top creators at 10M+ GMV scale with a 30-minute response rhythm.'}},
+        {id:'biz',x:'78%',y:'34%',w:'16%',h:'24%',title:{cn:'招商与拉新',en:'Sponsorship & Onboarding'},desc:{cn:'独立产出2篇直播复盘、3位买手招商OnePage；拉新2位高潜买手首月销售额50w+，推进20+次买手与品牌撮合。',en:'Produced 2 livestream reviews and 3 sponsorship one-pagers; onboarded 2 high-potential creators with 500K+ first-month sales and 20+ brand-creator matches.'}},
+      ]
+    },
+    {
+      id:'finance',
+      floor:'2F',
+      accent:'#f59e0b',
+      icon:'handshake',
+      label:{cn:'国金投行会议室',en:'IB Deal Room'},
+      roomLabel:{cn:'2F · 国金投行会议室',en:'2F · IB DEAL ROOM'},
+      hint:{cn:'点点握手、报告和量化屏',en:'Tap the handshake, reports, and quant screen'},
+      hotspots:[
+        {id:'report',x:'18%',y:'34%',w:'16%',h:'24%',title:{cn:'40+页深度报告',en:'40+ Page Report'},desc:{cn:'利用iFind穿透上市公司财报及公告，输出40+页分析报告，覆盖宏观趋势、竞争格局、财务表现与第二增长曲线。',en:'Used iFind to analyze filings and produced a 40+ page report on macro trends, competition, financials, and second-growth curves.'}},
+        {id:'screen',x:'38%',y:'32%',w:'16%',h:'24%',title:{cn:'产业与财务大屏',en:'Industry Dashboard'},desc:{cn:'把行业判断、竞争格局和财务指标放到同一张屏上，辅助战略研究。',en:'Mapped industry judgment, competition, and financial indicators onto one strategic research view.'}},
+        {id:'deal',x:'58%',y:'32%',w:'16%',h:'24%',title:{cn:'资本咨询现场',en:'Capital Advisory'},desc:{cn:'在新兴产业与战略事业资本咨询场景中，参与上市公司和产业链拆解。',en:'Worked in emerging-industry capital advisory, breaking down listed companies and industry chains.'}},
+        {id:'terminal',x:'78%',y:'34%',w:'16%',h:'24%',title:{cn:'Python量化框架',en:'Python Quant Framework'},desc:{cn:'处理1000+交易日数据，检验9大市场因子的有效性和解释力。',en:'Processed 1,000+ trading days and tested 9 market factors for validity and explanatory power.'}}
+      ]
+    },
+    {
+      id:'ai',
+      floor:'1F',
+      accent:'#8b5cf6',
+      icon:'cloud',
+      label:{cn:'沄视AI产品实验室',en:'AI Product Lab'},
+      roomLabel:{cn:'1F · 沄视AI产品实验室',en:'1F · AI PRODUCT LAB'},
+      hint:{cn:'把鼠标移到电脑或物件上查看详情',en:'Hover the computer or objects to learn more'},
+      hotspots:[
+        {id:'lab',x:'18%',y:'34%',w:'16%',h:'24%',title:{cn:'沄视AI产品实验室',en:'WolkenVision AI Lab'},desc:{cn:'用 AI 与大模型做 Scan2BIM，把激光点云变成毫米级工程 BIM 模型，服务建筑与基建数字化。',en:'Scan2BIM AI that turns LiDAR point clouds into millimeter-grade BIM models for construction and infrastructure.'},url:'https://wolkenvision.com',linkText:{cn:'这也是一家很有趣的公司，点击链接来了解一下吧。',en:'This is a really interesting company — tap the link to explore.'}},
+        {id:'rhino',x:'38%',y:'32%',w:'16%',h:'24%',title:{cn:'Rhino建模工作台',en:'Rhino Workstation'},desc:{cn:'围绕客户真实建模场景写PRD、推迭代，让目标场景客户软件使用效率提升50%。',en:'Wrote PRDs around real modeling workflows and shipped iterations that lifted client efficiency by 50%.'}},
+        {id:'annotation',x:'58%',y:'32%',w:'16%',h:'24%',title:{cn:'标注团队管理',en:'Annotation Team'},desc:{cn:'交付截止前8天接手5人标注团队，制定SOP、验收机制与进度监控，新员工上手由1天压缩至2小时。',en:'Took over a 5-person annotation team 8 days before deadline; SOPs and QA cut onboarding from 1 day to 2 hours.'}},
+        {id:'release',x:'78%',y:'34%',w:'16%',h:'24%',title:{cn:'Release Notes',en:'Release Notes'},desc:{cn:'主导3篇产品版本更新说明与客户沟通材料，对齐功能价值、使用边界与上线节奏；并参与海外拓展与客户签约。',en:'Owned 3 release notes and client materials; also supported overseas expansion and enterprise client onboarding.'}}
+      ]
+    }
+  ],
 
   // ─── 知识泡泡 ───
   bubbleTopics: [
@@ -191,15 +229,16 @@ window.MODULE_DATA = {
     {name:'法国 · 法语',en:'France · French',lat:48.86,lng:2.35,lang:'beginner',desc:'"你好"在法语中是"Bonjour"，国际音标 [bɔ̃ʒuʁ]',descEn:'"Hello" in French is "Bonjour", IPA [bɔ̃ʒuʁ]'}
   ],
 
-  // ─── 时间轴 ───
+  // ─── 时间轴（对照 resume/hdd_2606.html，旧条目保留 + 新内容补充） ───
   timeline: [
-    {y:'2026.01 — 2026.03',t:'work',title:'国金证券 · 投行实习生',titleEn:'Sinolink Securities · IB Intern',d:'资本咨询总部（新兴产业与战略事业部）· 上海浦东',dEn:'Capital Advisory HQ (Emerging Industries) · Shanghai Pudong'},
+    {y:'2026.09 — 2027.06',t:'edu',title:'香港中文大学 · 商业分析硕士',titleEn:'CUHK · MSc Business Analytics',d:'课程：商业分析、机器学习、数据挖掘、决策模型与生成式 AI 商业应用',dEn:'Courses: business analytics, ML, data mining, decision models & GenAI for business'},
+    {y:'2026.03 — 2026.06',t:'work',title:'小红书 · 标杆买手运营',titleEn:'Xiaohongshu · Creator Commerce Ops',d:'商业部 · 春上新/66周年庆大促 · 50+买手社群 · 100+买手流量配置 · 2篇复盘+3份OnePage · 拉新2位50w+',dEn:'Commercial · Spring/66 campaigns · 50+ creator groups · 100+ traffic allocations · 2 reviews + 3 one-pagers · 2 new creators 500K+'},
+    {y:'2026.01 — 2026.03',t:'work',title:'国金证券 · 投行部实习生',titleEn:'Sinolink Securities · IB Intern',d:'新兴产业与战略事业资本咨询 · iFind财报分析 · 40+页报告 · Python九因子量化框架',dEn:'Emerging-industry capital advisory · iFind filings · 40+ page report · Python 9-factor framework'},
     {y:'2026.01 — 2026.02',t:'proj',title:'腾讯未来产品经理创造营',titleEn:'Tencent Future PM Camp',d:'产品方法论入门，从0到1了解产品经理，产出20页+笔记',dEn:'PM methodology, built understanding from scratch, 20+ pages of notes'},
     {y:'2025.12 — 至今',t:'proj',title:'复旦大学国际合作处 · 助理管理员',titleEn:'Fudan Intl Cooperation Office · Assistant',d:'负责2026秋季北欧国家校级交换派出协调',dEn:'Coordinating Nordic exchange programs for Fall 2026'},
-    {y:'2025.03 — 2026.01',t:'work',title:'沄视科技 · AI产品经理',titleEn:'Yunshi Tech · AI Product Manager',d:'需求挖掘·MVP团队6人组建·SOP制定·客户效率提升50%',dEn:'Demand discovery · Built 6-person MVP team · SOPs · 50% efficiency boost'},
-    {y:'2025.03 — 2026.01',t:'work',title:'沄视科技 · CEO助理',titleEn:'Yunshi Tech · CEO Assistant',d:'5人标注团队管理·30+小时高层会议·欧洲市场拓展·签约€10万',dEn:'5-person team mgmt · 30+ hrs exec meetings · EU expansion · €100K signed'},
+    {y:'2025.03 — 2025.12',t:'work',title:'沄视科技 · SaaS产品经理',titleEn:'Yunshi Tech · SaaS Product Manager',d:'PRD与迭代·效率+50% · 3篇Release Notes · 5人标注团队SOP · 4场投资人会议 · 欧洲2家签约€100K',dEn:'PRDs & iterations +50% efficiency · 3 release notes · 5-person annotation SOP · 4 investor meetings · 2 EU clients EUR 100K'},
     {y:'2025.03',t:'honor',title:'HREOS环浙步道自行车女子精英组奖金',titleEn:'HREOS Zhejiang Cycling Women\'s Elite Prize',d:'鸿鲸体育',dEn:'HREOS Sports'},
-    {y:'2024.08 — 2024.12',t:'edu',title:'奥斯陆大学 · 人文学院 · 交换',titleEn:'University of Oslo · Humanities · Exchange',d:'挪威 · 奥斯陆',dEn:'Norway · Oslo'},
+    {y:'2024.08 — 2024.12',t:'edu',title:'奥斯陆大学 · 人文学院 · 交换',titleEn:'University of Oslo · Humanities · Exchange',d:'背包走遍13国 · 挪威中国文化与美食协会联创 · 申请500+欧元经费 · 策划3场活动60+人次',dEn:'Solo travel across 13 countries · Co-founded Chinese culture association · EUR 500+ funding · 3 events, 60+ attendees'},
     {y:'2024.05',t:'honor',title:'上海市大学生自行车锦标赛 · 个人计时赛女子组季军',titleEn:'Shanghai University Cycling Championship — Women\'s 3rd',d:'上海市自行车协会',dEn:'Shanghai Cycling Association'},
     {y:'2024.05',t:'honor',title:'优秀共青团员（五月评优）',titleEn:'Outstanding CYL Member (May)',d:'复旦大学团委',dEn:'Fudan CYL Committee'},
     {y:'2024.03 — 2026.06',t:'culture',title:'复旦大学自行车协会 · 宣传部核心成员',titleEn:'Fudan Cycling Club · Publicity Core Member',d:'远征财务总监·无人机航拍·公众号推文·海报绘制',dEn:'Expedition CFO · Drone aerial · WeChat articles · Poster design'},
@@ -212,8 +251,8 @@ window.MODULE_DATA = {
     {y:'2023.05',t:'honor',title:'优秀共青团员（五月评优）',titleEn:'Outstanding CYL Member (May)',d:'复旦大学团委',dEn:'Fudan CYL Committee'},
     {y:'2023.01 — 2023.02',t:'work',title:'国枫律所（西安）· IPO助理',titleEn:'Grandway Law (Xi\'an) · IPO Asst',d:'财务报表分析·20+可视化图表·企业估值·投资建议',dEn:'Financial statements · 20+ charts · Valuation · Investment advice'},
     {y:'2022.07 — 2022.08',t:'work',title:'瑞达期货（陕西）· 投资研究助理',titleEn:'Ruida Futures (Shaanxi) · Research Asst',d:'港股/科创板上市规则·尽职调查·IPO法律意见书',dEn:'HK/STAR Market rules · Due diligence · IPO legal opinions'},
-    {y:'2022.02 — 2026.06',t:'culture',title:'复旦大学Echo合唱团',titleEn:'Fudan Echo Choir',d:'新媒体负责人·女高声部长·30+成员管理·10+场音乐厅演出',dEn:'Media Director · Soprano Lead · 30+ members · 10+ concert hall performances'},
-    {y:'2021.09 — 2026.06',t:'edu',title:'复旦大学 · 汉语言 + 经济学 & 金融学',titleEn:'Fudan University · Chinese Lang + Econ & Finance',d:'中国 · 上海',dEn:'China · Shanghai'},
+    {y:'2022.02 — 2026.06',t:'culture',title:'复旦大学 Echo 合唱团 · 团长',titleEn:'Fudan Echo Choir · President',d:'团长·女高声部长·新媒体 · 30+成员 · 10+场音乐厅/抖音演出 · 2023-2024招新翻番',dEn:'President · Soprano lead · Media · 30+ members · 10+ concerts · 2× recruitment in 2023-24'},
+    {y:'2021.09 — 2026.06',t:'edu',title:'复旦大学 · 汉语言 + 经济学 & 金融学',titleEn:'Fudan University · Chinese Lang + Econ & Finance',d:'语音学/修辞学/方言学/手语 · 微宏观/会计/公司金融/投资学/概率统计',dEn:'Linguistics & dialects · Micro/macro econ, accounting, corp finance, investments, stats'},
     {y:'2018.09 — 2021.06',t:'edu',title:'陕西师范大学附属中学 · 文科',titleEn:'SNNU High School · Liberal Arts',d:'中国 · 陕西 · 西安',dEn:'China · Shaanxi · Xi\'an'}
   ]
 };

@@ -1,32 +1,200 @@
 // ===== App — Unlock, Map, Replay, Quote Overlay, Lang, Theme =====
 (function(){
   var ALL_SECTIONS = ['hero','interest','career','study','worldmap','timelines','skills','takeaway','ending'];
+  var UNLOCK_KEY='duidui-unlocked-sections-v2';
+  var VISITED_KEY='duidui-visited-sections-v1';
 
-  var unlocked = new Set(['hero']);
+  function loadUnlocked(){
+    try{
+      var saved=JSON.parse(localStorage.getItem(UNLOCK_KEY)||'[]');
+      if(Array.isArray(saved)&&saved.length) return new Set(saved.filter(function(id){return ALL_SECTIONS.indexOf(id)>-1;}));
+    }catch(e){}
+    return new Set(['hero']);
+  }
+
+  function loadVisited(){
+    try{
+      var saved=JSON.parse(localStorage.getItem(VISITED_KEY)||'[]');
+      if(Array.isArray(saved)&&saved.length) return new Set(saved.filter(function(id){return ALL_SECTIONS.indexOf(id)>-1;}));
+    }catch(e){}
+    return new Set(['hero']);
+  }
+
+  var unlocked = loadUnlocked();
+  unlocked.add('hero');
+  var visited = loadVisited();
+  visited.add('hero');
   var overlaysShown = new Set();
   var lastScrollY = window.scrollY;
   var scrollingDown = true;
 
   window.addEventListener('scroll',function(){
     scrollingDown = window.scrollY > lastScrollY;
+    if(scrollingDown) scrollIntentSinceUnlock+=Math.max(0,window.scrollY-lastScrollY);
     lastScrollY = window.scrollY;
+    syncMapVisitedUI();
   },{passive:true});
+
+  // Touchpads emit a stream of wheel events for one gesture. Treat each gesture
+  // as a single page turn so a hard swipe never skips several sections.
+  var pageWheelLocked=false;
+  var pageWheelIntent=0;
+  var pageWheelResetTimer=null;
+
+  function getSnapPages(){
+    return Array.from(document.querySelectorAll('.section-page,.section-intro-page,.ending-section'));
+  }
+
+  function getCurrentSnapIndex(pages){
+    var center=window.innerHeight*0.5;
+    var bestIdx=0;
+    var bestDist=Infinity;
+    pages.forEach(function(page,idx){
+      var rect=page.getBoundingClientRect();
+      var pageCenter=rect.top+rect.height*0.5;
+      var dist=Math.abs(pageCenter-center);
+      if(dist<bestDist){
+        bestDist=dist;
+        bestIdx=idx;
+      }
+    });
+    return bestIdx;
+  }
+
+  var scrollIntentSinceUnlock=0;
+  var lastSectionScrollY=window.scrollY;
+
+  function getCurrentSectionId(){
+    var pages=document.querySelectorAll('.section-page,.section-intro-page,.ending-section');
+    var center=window.innerHeight*0.5;
+    var best=null,bestDist=Infinity;
+    pages.forEach(function(page){
+      var id=page.dataset.mapId||page.id;
+      if(!id||ALL_SECTIONS.indexOf(id)<0) return;
+      var rect=page.getBoundingClientRect();
+      var dist=Math.abs(rect.top+rect.height*0.5-center);
+      if(dist<bestDist){bestDist=dist;best=id;}
+    });
+    return best||'hero';
+  }
+
+  function canJumpToSection(target){
+    if(ALL_SECTIONS.indexOf(target)<0) return false;
+    var ci=ALL_SECTIONS.indexOf(getCurrentSectionId());
+    var ti=ALL_SECTIONS.indexOf(target);
+    return ti<=ci;
+  }
+
+  function syncMapVisitedUI(){
+    var ci=ALL_SECTIONS.indexOf(getCurrentSectionId());
+    document.querySelectorAll('.map-building').forEach(function(el){
+      var id=el.dataset.target;
+      if(!id) return;
+      var ti=ALL_SECTIONS.indexOf(id);
+      el.classList.remove('unlocked','map-visited','map-jumpable','map-locked');
+      if(visited.has(id)){
+        el.classList.add('map-visited');
+      }else if(ti>-1&&ti<=ci){
+        el.classList.add('map-jumpable');
+      }else{
+        el.classList.add('map-locked');
+      }
+    });
+    if(window.refreshStarMapMarkers) window.refreshStarMapMarkers();
+  }
+
+  function jumpToSection(target){
+    if(!canJumpToSection(target)) return false;
+    var el=document.getElementById(target)||document.querySelector('[data-map-id="'+target+'"]');
+    if(!el) return false;
+    var targetIdx=ALL_SECTIONS.indexOf(target);
+    if(targetIdx>-1){
+      for(var i=0;i<=targetIdx;i++){
+        if(unlocked.has(ALL_SECTIONS[i])) overlaysShown.add(ALL_SECTIONS[i]);
+      }
+    }
+    document.documentElement.style.scrollSnapType='none';
+    document.documentElement.style.scrollBehavior='auto';
+    setTimeout(function(){
+      el.scrollIntoView({block:'start'});
+      setTimeout(function(){
+        document.documentElement.style.scrollSnapType='';
+        document.documentElement.style.scrollBehavior='';
+        syncMapVisitedUI();
+      },50);
+    },100);
+    return true;
+  }
+
+  window.getCurrentSectionId=getCurrentSectionId;
+  window.canJumpToSection=canJumpToSection;
+  window.isSectionVisited=function(id){return visited.has(id);};
+  window.jumpToSection=jumpToSection;
+
+  function markVisited(id){
+    if(ALL_SECTIONS.indexOf(id)<0||visited.has(id)) return;
+    visited.add(id);
+    try{localStorage.setItem(VISITED_KEY,JSON.stringify(Array.from(visited)));}catch(e){}
+    syncMapVisitedUI();
+  }
+
+  syncMapVisitedUI();
+
+  function canInnerScroll(target,deltaY){
+    var node=target;
+    while(node&&node!==document.body&&node!==document.documentElement){
+      if(node.classList&&(
+        node.classList.contains('tl-wrap')||
+        node.classList.contains('dui-chat-messages')||
+        node.classList.contains('story-map-modal')||
+        node.classList.contains('map-overlay')||
+        node.classList.contains('leaflet-container')
+      )){
+        var style=getComputedStyle(node);
+        var scrollable=/(auto|scroll)/.test(style.overflowY)||node.classList.contains('leaflet-container');
+        if(scrollable&&node.scrollHeight>node.clientHeight){
+          if(deltaY>0&&node.scrollTop+node.clientHeight<node.scrollHeight-2) return true;
+          if(deltaY<0&&node.scrollTop>2) return true;
+        }
+      }
+      node=node.parentElement;
+    }
+    return false;
+  }
+
+  function pageTurn(deltaY){
+    var pages=getSnapPages();
+    if(!pages.length) return;
+    var idx=getCurrentSnapIndex(pages);
+    var targetIdx=Math.max(0,Math.min(pages.length-1,idx+(deltaY>0?1:-1)));
+    if(targetIdx===idx) return;
+    pageWheelLocked=true;
+    scrollingDown=deltaY>0;
+    pages[targetIdx].scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(function(){
+      pageWheelLocked=false;
+      pageWheelIntent=0;
+    },820);
+  }
+
+  window.addEventListener('wheel',function(evt){
+    if(evt.ctrlKey||evt.metaKey) return;
+    if(Math.abs(evt.deltaY)<Math.abs(evt.deltaX)) return;
+    if(canInnerScroll(evt.target,evt.deltaY)) return;
+    evt.preventDefault();
+    if(pageWheelLocked) return;
+    pageWheelIntent+=evt.deltaY;
+    clearTimeout(pageWheelResetTimer);
+    pageWheelResetTimer=setTimeout(function(){pageWheelIntent=0;},180);
+    if(Math.abs(pageWheelIntent)<18) return;
+    pageTurn(pageWheelIntent);
+  },{passive:false});
 
   function unlockDot(id){
     if(unlocked.has(id)) return;
     unlocked.add(id);
-    var bld=document.querySelector('.map-building[data-target="'+id+'"]');
-    if(bld) bld.classList.add('unlocked');
-    var mini=document.querySelector('.mini-bld[data-target="'+id+'"]');
-    if(mini) mini.classList.add('unlocked');
+    try{localStorage.setItem(UNLOCK_KEY,JSON.stringify(Array.from(unlocked)));}catch(e){}
   }
-
-  (function(){
-    var b=document.querySelector('.map-building[data-target="hero"]');
-    if(b) b.classList.add('unlocked');
-    var m=document.querySelector('.mini-bld[data-target="hero"]');
-    if(m) m.classList.add('unlocked');
-  })();
 
   // ——— Unlock overlay ———
   var unlockOv=document.getElementById('unlockOverlay');
@@ -67,14 +235,16 @@
     var nextId=div.dataset.nextId;
     var obs=new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
-        if(entry.isIntersecting&&scrollingDown&&nextId&&!overlaysShown.has(nextId)){
-          overlaysShown.add(nextId);
-          unlockDot(nextId);
-          var label=getSceneLabel(nextId)||div.dataset.nextLabel;
-          if(label) showUnlockOverlay(label,nextId);
-        }
+        if(!entry.isIntersecting||!scrollingDown||!nextId||overlaysShown.has(nextId)||unlocked.has(nextId)) return;
+        if(scrollIntentSinceUnlock<48) return;
+        overlaysShown.add(nextId);
+        unlockDot(nextId);
+        scrollIntentSinceUnlock=0;
+        lastSectionScrollY=window.scrollY;
+        var label=getSceneLabel(nextId)||div.dataset.nextLabel;
+        if(label) showUnlockOverlay(label,nextId);
       });
-    },{threshold:0.1});
+    },{threshold:0.35,rootMargin:'0px 0px -12% 0px'});
     obs.observe(div);
   });
 
@@ -87,7 +257,7 @@
       entries.forEach(function(entry){
         if(entry.isIntersecting&&scrollingDown&&!completionShown){
           completionShown=true;
-          ALL_SECTIONS.forEach(function(id){unlockDot(id);});
+          unlockDot('takeaway');
           completionOv.classList.add('show');
           lockScroll();
         }
@@ -105,46 +275,35 @@
   }
 
   // ——— Map Overlay ———
-  var mapBtn=document.getElementById('map-btn');
   var mapOverlay=document.getElementById('map-overlay');
-  if(mapBtn&&mapOverlay){
+  var mapNoticeTimer=null;
+  function showMapNotice(){
+    var notice=document.querySelector('.map-overlay.open .map-notice')||document.getElementById('mapNotice');
+    if(!notice) return;
+    clearTimeout(mapNoticeTimer);
+    notice.classList.add('show');
+    mapNoticeTimer=setTimeout(function(){notice.classList.remove('show');},1500);
+  }
+  window.showMapNotice=showMapNotice;
+  if(mapOverlay){
     window.toggleMapOverlay=function(){
       mapOverlay.classList.toggle('open');
       if(mapOverlay.classList.contains('open')) lockScroll(); else unlockScroll();
     };
-    mapBtn.addEventListener('click',window.toggleMapOverlay);
     var mapClose=mapOverlay.querySelector('.map-close');
     if(mapClose) mapClose.addEventListener('click',window.toggleMapOverlay);
 
-    // All map buildings are always clickable (no unlock check)
     mapOverlay.querySelectorAll('.map-building').forEach(function(b){
       b.addEventListener('click',function(){
         var target=b.dataset.target;
-        if(target){
-          var el=document.getElementById(target)||document.querySelector('[data-map-id="'+target+'"]');
-          if(el){
-            // Mark all intermediate sections as already shown so they don't trigger overlays
-            var targetIdx=ALL_SECTIONS.indexOf(target);
-            if(targetIdx>-1){
-              for(var i=0;i<=targetIdx;i++){
-                overlaysShown.add(ALL_SECTIONS[i]);
-                unlockDot(ALL_SECTIONS[i]);
-              }
-            }
-            mapOverlay.classList.remove('open');
-            unlockScroll();
-            // Temporarily disable scroll-snap for instant jump, then re-enable
-            document.documentElement.style.scrollSnapType='none';
-            document.documentElement.style.scrollBehavior='auto';
-            setTimeout(function(){
-              el.scrollIntoView({block:'start'});
-              setTimeout(function(){
-                document.documentElement.style.scrollSnapType='';
-                document.documentElement.style.scrollBehavior='';
-              },50);
-            },100);
-          }
+        if(!target) return;
+        if(!canJumpToSection(target)){
+          showMapNotice();
+          return;
         }
+        mapOverlay.classList.remove('open');
+        unlockScroll();
+        jumpToSection(target);
       });
     });
 
@@ -170,14 +329,23 @@
     entries.forEach(function(entry){
       if(entry.isIntersecting){
         var id=entry.target.dataset.mapId;
-        document.querySelectorAll('.mini-bld').forEach(function(b){b.classList.remove('active');});
-        var miniB=document.querySelector('.mini-bld[data-target="'+id+'"]');
-        if(miniB) miniB.classList.add('active');
         if(mapOverlay) mapOverlay.querySelectorAll('.map-building').forEach(function(b){b.classList.toggle('active',b.dataset.target===id);});
       }
     });
   },{threshold:0.2});
   document.querySelectorAll('[data-map-id]').forEach(function(el){sectionObs.observe(el);});
+
+  var visitObs=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting) return;
+      var id=entry.target.dataset.mapId||entry.target.id;
+      if(id) markVisited(id);
+    });
+  },{threshold:0.22});
+  document.querySelectorAll('.section-page,.section-intro-page,.ending-section').forEach(function(el){
+    var id=el.dataset.mapId||el.id;
+    if(id&&ALL_SECTIONS.indexOf(id)>-1) visitObs.observe(el);
+  });
 
   // ——— Nav link click: suppress intermediate unlock overlays ———
   document.querySelectorAll('.nav a[href^="#"]').forEach(function(a){
@@ -251,17 +419,20 @@
     }
   }
 
-  window._openQuote=function(){
+  window._openQuote=function(fromEnding){
     if(quoteOv){
       showQuote(Math.floor(Math.random()*QUOTES.length),true);
       quoteOv.classList.add('show');
       lockScroll();
+      if(fromEnding){
+        window.dispatchEvent(new CustomEvent('section-complete',{detail:{id:'ending',origin:document.getElementById('ending')}}));
+      }
     }
   };
   if(quoteTrigger){
     quoteTrigger.addEventListener('click',function(e){
       e.preventDefault();e.stopPropagation();
-      window._openQuote();
+      window._openQuote(true);
     });
   }
   if(quotePrev) quotePrev.addEventListener('click',function(e){e.stopPropagation();showQuote(quoteIdx-1);});
@@ -283,24 +454,33 @@
     if(quoteOv)quoteOv.classList.remove('show');
     if(completionOv){completionOv.classList.remove('show');completionShown=false;}
     if(mapOverlay)mapOverlay.classList.remove('open');
+    if(window.toggleStarMapOverlay) window.toggleStarMapOverlay(false);
     unlockScroll();
 
     // Reset map buildings and mini buildings
-    document.querySelectorAll('.map-building').forEach(function(b){b.classList.remove('unlocked','active');});
-    document.querySelectorAll('.mini-bld').forEach(function(b){b.classList.remove('unlocked','active');});
-    unlocked=new Set(['hero']);overlaysShown=new Set();
-    var heroBld=document.querySelector('.map-building[data-target="hero"]');
-    if(heroBld) heroBld.classList.add('unlocked');
-    var heroMini=document.querySelector('.mini-bld[data-target="hero"]');
-    if(heroMini) heroMini.classList.add('unlocked');
+    document.querySelectorAll('.map-building').forEach(function(b){
+      b.classList.remove('unlocked','active','map-visited','map-jumpable','map-locked');
+    });
+    unlocked=new Set(['hero']);visited=new Set(['hero']);overlaysShown=new Set();
+    scrollIntentSinceUnlock=0;
+    document.documentElement.setAttribute('data-theme','dark');
+    var themeToggle=document.getElementById('themeToggle');
+    if(themeToggle){
+      themeToggle.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
+    try{localStorage.setItem(UNLOCK_KEY,JSON.stringify(['hero']));}catch(e){}
+    try{localStorage.setItem(VISITED_KEY,JSON.stringify(['hero']));}catch(e){}
+    syncMapVisitedUI();
 
     // Reset career section
-    var mbag=document.getElementById('mbag');if(mbag)mbag.classList.remove('open');
-    var egg=document.getElementById('eggArea');if(egg)egg.classList.remove('cracked');
-    var careerOv=document.getElementById('careerOv');if(careerOv)careerOv.classList.remove('show');
+    if(window._renderCareer) window._renderCareer();
 
     // Reset card game — trigger custom reset if available
     if(window._resetCardGame) window._resetCardGame();
+    if(window._resetSkillGarden) window._resetSkillGarden();
+    if(window._resetLearning) window._resetLearning();
+    if(window.resetStars) window.resetStars();
+    if(window._resetHeroKeywords) window._resetHeroKeywords();
 
     // Reset bubbles overlay
     var spOv=document.getElementById('spOv');if(spOv)spOv.classList.remove('vis');
@@ -309,8 +489,11 @@
     var heroOv=document.getElementById('heroOverlay');if(heroOv)heroOv.classList.remove('show');
 
     // Reset timeline to default (edu)
-    var firstLegend=document.querySelector('.tl-legend-item[data-type="edu"]');
-    if(firstLegend) firstLegend.click();
+    if(window._resetTimeline) window._resetTimeline();
+    else {
+      var firstLegend=document.querySelector('.tl-legend-item[data-type="edu"]');
+      if(firstLegend) firstLegend.click();
+    }
 
     // Scroll to the very top instantly
     document.documentElement.style.scrollBehavior='auto';
@@ -326,7 +509,7 @@
 
   // ——— Theme Toggle ———
   var themeToggle=document.getElementById('themeToggle');
-  if(themeToggle){
+    if(themeToggle){
     themeToggle.addEventListener('click',function(){
       var html=document.documentElement;
       var isLight=html.getAttribute('data-theme')==='light';
@@ -334,6 +517,7 @@
       themeToggle.innerHTML=isLight
         ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
         :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      updateHeroProgress();
     });
   }
 
@@ -384,6 +568,7 @@
     if(quoteOv&&quoteOv.classList.contains('show')&&quoteOvText){
       quoteOvText.textContent=getQuoteText(QUOTES[quoteIdx]);
     }
+    if(window._renderCareer) window._renderCareer();
   }
   if(langToggle) langToggle.addEventListener('click',function(){setLang(currentLang==='cn'?'en':'cn');});
 
@@ -419,8 +604,9 @@
     hint.addEventListener('click',function(e){
       e.preventDefault();
       var parent=hint.closest('.section-intro-page')||hint.closest('.section-page');
-      if(parent&&parent.nextElementSibling){
-        parent.nextElementSibling.scrollIntoView({behavior:'smooth',block:'start'});
+      if(parent){
+        var nextSnap=findNextSnap(parent);
+        if(nextSnap) nextSnap.scrollIntoView({behavior:'smooth',block:'start'});
       }
     });
   });
@@ -443,15 +629,16 @@
     return null;
   }
 
-  // Hero page: click bottom half → scroll to next
+  // Hero page: click bottom half → next section (same as intro pages)
   var heroPage=document.getElementById('hero');
   if(heroPage){
     heroPage.addEventListener('click',function(e){
+      if(e.target.closest('.hkw')) return;
       if(e.target.closest('.scroll-hint')) return;
-      if(e.target.closest('.hkw')) return; // keyword clicks
-      if(e.target.closest('#hero-c')) return;
+      if(e.target.closest('#hero-c h1')) return;
       var rect=heroPage.getBoundingClientRect();
-      if(e.clientY > rect.top+rect.height*0.5){
+      var clickY=e.clientY-rect.top;
+      if(clickY>rect.height*0.65){
         var next=findNextSnap(heroPage);
         if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
       }
