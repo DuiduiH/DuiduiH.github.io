@@ -4,11 +4,9 @@
   var STORAGE_POS = 'duidui-chatbot-position-v1';
   var STORAGE_OPEN = 'duidui-chatbot-open-v1';
   var MAP_IDLE_MS = 3500;
-  var BOT_IDLE_MS = 4200;
   var currentSection = CONFIG.defaultSection || 'hero';
   var conversation = [];
   var root, bubble, panel, messagesEl, chipsEl, inputEl, titleEl, sendBtn;
-  var idleTimer = null;
   var dragState = null;
   var typingTimer = null;
   var pendingReply = 0;
@@ -33,19 +31,33 @@
   function avatarSvg(){
     return ''+
       '<svg class="dui-bot-avatar" viewBox="0 0 100 100" aria-hidden="true">'+
-        '<defs><radialGradient id="duiBlob" cx="38%" cy="30%" r="72%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#ffe8f0"/></radialGradient></defs>'+
-        '<ellipse cx="50" cy="92" rx="26" ry="4.5" fill="#ffb6c1" opacity=".18"/>'+
-        '<circle cx="50" cy="52" r="40" fill="url(#duiBlob)"/>'+
-        '<ellipse cx="50" cy="58" rx="34" ry="30" fill="#fff5f8"/>'+
-        '<path d="M28 36 C32 18 68 18 72 36 C66 30 34 30 28 36 Z" fill="#ffd6e8"/>'+
-        '<circle cx="36" cy="50" r="4.5" fill="#5c4f55"/>'+
-        '<circle cx="64" cy="50" r="4.5" fill="#5c4f55"/>'+
-        '<circle cx="37.5" cy="48.5" r="1.6" fill="#fff"/>'+
-        '<circle cx="65.5" cy="48.5" r="1.6" fill="#fff"/>'+
-        '<ellipse cx="28" cy="58" rx="7" ry="4" fill="#ffb8ca" opacity=".55"/>'+
-        '<ellipse cx="72" cy="58" rx="7" ry="4" fill="#ffb8ca" opacity=".55"/>'+
-        '<path d="M43 62 Q50 67 57 62" stroke="#f08ba8" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
-        '<path d="M44 28 Q50 22 56 28" stroke="#ffc2d8" stroke-width="2" fill="none" stroke-linecap="round"/>'+
+        '<defs>'+
+          '<linearGradient id="duiHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5c4033"/><stop offset="100%" stop-color="#3d2817"/></linearGradient>'+
+          '<linearGradient id="duiFace" x1="0.3" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#fff5f0"/><stop offset="100%" stop-color="#ffe8dc"/></linearGradient>'+
+          '<radialGradient id="duiEyeL" cx="35%" cy="35%"><stop offset="0%" stop-color="#7dd3fc"/><stop offset="100%" stop-color="#2563eb"/></radialGradient>'+
+          '<radialGradient id="duiEyeR" cx="35%" cy="35%"><stop offset="0%" stop-color="#7dd3fc"/><stop offset="100%" stop-color="#2563eb"/></radialGradient>'+
+        '</defs>'+
+        '<ellipse cx="50" cy="92" rx="24" ry="4" fill="#ffb6c1" opacity=".16"/>'+
+        '<path d="M18 58 C18 34 34 18 50 18 C66 18 82 34 82 58 L82 88 C82 92 78 96 74 96 L26 96 C22 96 18 92 18 88 Z" fill="url(#duiFace)" stroke="#e8b4a8" stroke-width="1.2"/>'+
+        '<path d="M18 42 C20 28 34 14 50 14 C66 14 80 28 82 42 C78 30 66 22 50 22 C34 22 22 30 18 42 Z" fill="url(#duiHair)"/>'+
+        '<path d="M14 48 C10 58 12 72 18 82 L22 76 C18 66 17 56 20 46 Z" fill="url(#duiHair)"/>'+
+        '<path d="M86 48 C90 58 88 72 82 82 L78 76 C82 66 83 56 80 46 Z" fill="url(#duiHair)"/>'+
+        '<path d="M34 24 C38 18 46 16 50 16 C54 16 62 18 66 24 C60 20 54 18 50 18 C46 18 40 20 34 24 Z" fill="#6b4c3b" opacity=".55"/>'+
+        '<ellipse cx="36" cy="54" rx="11" ry="13" fill="#fff" stroke="#4a3728" stroke-width="1.6"/>'+
+        '<ellipse cx="64" cy="54" rx="11" ry="13" fill="#fff" stroke="#4a3728" stroke-width="1.6"/>'+
+        '<ellipse cx="36" cy="56" rx="7" ry="8.5" fill="url(#duiEyeL)"/>'+
+        '<ellipse cx="64" cy="56" rx="7" ry="8.5" fill="url(#duiEyeR)"/>'+
+        '<circle cx="33" cy="52" r="2.8" fill="#fff" opacity=".95"/>'+
+        '<circle cx="61" cy="52" r="2.8" fill="#fff" opacity=".95"/>'+
+        '<circle cx="38" cy="58" r="1.4" fill="#fff" opacity=".7"/>'+
+        '<circle cx="66" cy="58" r="1.4" fill="#fff" opacity=".7"/>'+
+        '<path d="M34 48 Q36 46 38 48" stroke="#4a3728" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
+        '<path d="M62 48 Q64 46 66 48" stroke="#4a3728" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
+        '<ellipse cx="28" cy="64" rx="5.5" ry="3.2" fill="#ffb8ca" opacity=".62"/>'+
+        '<ellipse cx="72" cy="64" rx="5.5" ry="3.2" fill="#ffb8ca" opacity=".62"/>'+
+        '<path d="M47 68 Q50 71 53 68" stroke="#e08a9a" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
+        '<path d="M44 74 Q50 78 56 74" stroke="#f08ba8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".85"/>'+
+        '<path d="M48 32 L50 26 L52 32" fill="#ff9ec4" stroke="#ff7eb0" stroke-width=".8" stroke-linejoin="round"/>'+
       '</svg>';
   }
 
@@ -184,9 +196,8 @@
 
   function openPanel(){
     root.classList.add('is-open');
-    root.classList.remove('is-docked');
+    root.classList.remove('is-dragging');
     try{localStorage.setItem(STORAGE_OPEN, '1');}catch(e){}
-    resetIdle();
   }
 
   function closePanel(){
@@ -194,7 +205,6 @@
     setTyping(false);
     root.classList.remove('is-open');
     try{localStorage.setItem(STORAGE_OPEN, '0');}catch(e){}
-    dockBot();
   }
 
   function handleOutsidePointer(e){
@@ -203,28 +213,13 @@
     closePanel();
   }
 
-  function dockBot(){
-    if(root.classList.contains('is-open')) return;
-    root.classList.add('is-docked');
-  }
-
-  function resetIdle(){
-    clearTimeout(idleTimer);
-    if(root.classList.contains('is-open')) return;
-    root.classList.remove('is-docked');
-    idleTimer = setTimeout(dockBot, BOT_IDLE_MS);
-  }
-
-  function savePosition(left, top){
-    try{localStorage.setItem(STORAGE_POS, JSON.stringify({left:left, top:top}));}catch(e){}
-  }
-
   function applySavedPosition(){
     try{
       var pos = JSON.parse(localStorage.getItem(STORAGE_POS) || 'null');
       if(!pos) return;
-      root.style.left = Math.max(0, Math.min(window.innerWidth - 72, pos.left)) + 'px';
-      root.style.top = Math.max(58, Math.min(window.innerHeight - 80, pos.top)) + 'px';
+      var size = root.offsetWidth || 80;
+      root.style.left = Math.max(0, Math.min(window.innerWidth - size, pos.left)) + 'px';
+      root.style.top = Math.max(58, Math.min(window.innerHeight - size, pos.top)) + 'px';
       root.style.bottom = 'auto';
     }catch(e){}
   }
@@ -247,9 +242,10 @@
     var dy = e.clientY - dragState.startY;
     if(Math.abs(dx) + Math.abs(dy) > 5) dragState.moved = true;
     if(!dragState.moved) return;
-    root.classList.remove('is-docked');
-    root.style.left = Math.max(0, Math.min(window.innerWidth - 72, dragState.rootX + dx)) + 'px';
-    root.style.top = Math.max(58, Math.min(window.innerHeight - 80, dragState.rootY + dy)) + 'px';
+    root.classList.add('is-dragging');
+    var size = root.offsetWidth || 80;
+    root.style.left = Math.max(0, Math.min(window.innerWidth - size, dragState.rootX + dx)) + 'px';
+    root.style.top = Math.max(58, Math.min(window.innerHeight - size, dragState.rootY + dy)) + 'px';
     root.style.bottom = 'auto';
   }
 
@@ -257,12 +253,15 @@
     if(!dragState) return;
     var wasMoved = dragState.moved;
     dragState = null;
+    root.classList.remove('is-dragging');
     savePosition(root.offsetLeft, root.offsetTop);
     if(!wasMoved){
       root.classList.contains('is-open') ? closePanel() : openPanel();
-    }else{
-      resetIdle();
     }
+  }
+
+  function savePosition(left, top){
+    try{localStorage.setItem(STORAGE_POS, JSON.stringify({left:left, top:top}));}catch(e){}
   }
 
   function observeSections(){
@@ -344,14 +343,12 @@
     bubble.addEventListener('pointerdown', onPointerDown);
     bubble.addEventListener('pointermove', onPointerMove);
     bubble.addEventListener('pointerup', onPointerUp);
-    bubble.addEventListener('pointercancel', function(){dragState = null;});
+    bubble.addEventListener('pointercancel', function(){dragState = null; root.classList.remove('is-dragging');});
     $('.dui-chat-close', root).addEventListener('click', closePanel);
     $('.dui-chat-form', root).addEventListener('submit', function(e){
       e.preventDefault();
       askCustom();
     });
-    root.addEventListener('pointerenter', resetIdle);
-    root.addEventListener('focusin', resetIdle);
     window.addEventListener('resize', applySavedPosition);
     document.addEventListener('pointerdown', handleOutsidePointer, true);
 
@@ -368,7 +365,7 @@
     sectionChanged(currentSection, true);
     botMessage(getSectionData(currentSection).greeting || (isEn() ? 'Hey! I follow whichever section you\'re on.' : '哇你来啦！我会跟着你正在看的板块聊天。'));
     applySavedPosition();
-    if(localStorage.getItem(STORAGE_OPEN) === '1') openPanel(); else resetIdle();
+    if(localStorage.getItem(STORAGE_OPEN) === '1') openPanel();
     observeSections();
     enhanceMapDock();
   }
