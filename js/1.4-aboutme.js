@@ -15,8 +15,11 @@
 })();
 
 // ===== 1.4 World Map — Separate visit/lang modes with distinct popups =====
-(function(){
-  if(typeof L==='undefined') return;
+(function initWorldMap(attempt){
+  if(typeof L==='undefined'){
+    if((attempt||0)<80) setTimeout(function(){initWorldMap((attempt||0)+1);},250);
+    return;
+  }
   var mapEl=document.getElementById('leafletMap');
   if(!mapEl) return;
 
@@ -312,4 +315,4 @@
       showMode(el.dataset.mode);
     });
   });
-})();
+})(0);

@@ -60,7 +60,7 @@
     rulesEl.innerHTML=rulesHTML();
     rulesEl.style.color='';
     rulesEl.style.fontWeight='';
-    // Bind shuffle trigger inside the rules text
+    // Bind shuffle trigger inside the rules text, if present.
     var link=rulesEl.querySelector('.shuffle-link');
     if(link) link.addEventListener('click',function(e){e.preventDefault();init();});
   }
@@ -74,7 +74,7 @@
     if(!persist){
       revertTimer=setTimeout(function(){
         setRulesDefault();
-      },3000);
+      },1400);
     }
   }
 
@@ -131,8 +131,8 @@
           setStatus(en?('Match! '+matched+'/'+cards.length):('配对成功！'+matched+'/'+cards.length),matchColor,false);
         }
       } else {
-        setStatus(en?'No match, try again':'不匹配，再试一次','',false);
-        setTimeout(function(){a.classList.remove('flipped');b.classList.remove('flipped');flipped=[];canFlip=true;},900);
+        setStatus(en?'Try again':'再试一次','',false);
+        setTimeout(function(){a.classList.remove('flipped');b.classList.remove('flipped');flipped=[];canFlip=true;},650);
       }
     }
   }
@@ -159,7 +159,7 @@
   // Event delegation for shuffle-link inside the rules area (survives innerHTML updates)
   var frame=board.closest('.section-frame');
   if(frame) frame.addEventListener('click',function(e){
-    if(e.target.classList.contains('shuffle-link')){
+    if(e.target.classList.contains('shuffle-link')||e.target.closest('[data-action="shuffle-cards"]')){
       e.preventDefault();
       init();
     }

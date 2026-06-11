@@ -80,6 +80,7 @@
 
   function canJumpToSection(target){
     if(ALL_SECTIONS.indexOf(target)<0) return false;
+    if(visited.has(target)||unlocked.has(target)) return true;
     var ci=ALL_SECTIONS.indexOf(getCurrentSectionId());
     var ti=ALL_SECTIONS.indexOf(target);
     return ti<=ci;
@@ -94,7 +95,7 @@
       el.classList.remove('unlocked','map-visited','map-jumpable','map-locked');
       if(visited.has(id)){
         el.classList.add('map-visited');
-      }else if(ti>-1&&ti<=ci){
+      }else if(unlocked.has(id)||(ti>-1&&ti<=ci)){
         el.classList.add('map-jumpable');
       }else{
         el.classList.add('map-locked');
@@ -129,7 +130,11 @@
   window.getCurrentSectionId=getCurrentSectionId;
   window.canJumpToSection=canJumpToSection;
   window.isSectionVisited=function(id){return visited.has(id);};
+  window.isSectionUnlocked=function(id){return unlocked.has(id);};
   window.jumpToSection=jumpToSection;
+  window.pageTurnFromKey=function(dir){
+    pageTurn(dir>0?120:-120);
+  };
 
   function markVisited(id){
     if(ALL_SECTIONS.indexOf(id)<0||visited.has(id)) return;
@@ -166,6 +171,11 @@
     var pages=getSnapPages();
     if(!pages.length) return;
     var idx=getCurrentSnapIndex(pages);
+    var current=pages[idx];
+    if(deltaY>0&&current&&current.classList.contains('section-page')&&current.id!=='hero'&&!current.classList.contains('ending-section')){
+      pageWheelIntent=0;
+      return;
+    }
     var targetIdx=Math.max(0,Math.min(pages.length-1,idx+(deltaY>0?1:-1)));
     if(targetIdx===idx) return;
     pageWheelLocked=true;
@@ -278,11 +288,18 @@
   var mapOverlay=document.getElementById('map-overlay');
   var mapNoticeTimer=null;
   function showMapNotice(){
-    var notice=document.querySelector('.map-overlay.open .map-notice')||document.getElementById('mapNotice');
+    var starOv=document.getElementById('star-map-overlay');
+    var notice=document.getElementById('mapNotice');
+    if(starOv&&starOv.classList.contains('open')){
+      notice=document.getElementById('starMapNotice');
+    }else if(mapOverlay&&mapOverlay.classList.contains('open')){
+      notice=document.getElementById('mapNotice');
+    }
+    notice=notice||document.getElementById('mapNotice')||document.getElementById('starMapNotice');
     if(!notice) return;
     clearTimeout(mapNoticeTimer);
     notice.classList.add('show');
-    mapNoticeTimer=setTimeout(function(){notice.classList.remove('show');},1500);
+    mapNoticeTimer=setTimeout(function(){notice.classList.remove('show');},2400);
   }
   window.showMapNotice=showMapNotice;
   if(mapOverlay){
@@ -425,6 +442,7 @@
       quoteOv.classList.add('show');
       lockScroll();
       if(fromEnding){
+        if(window.DuiduiDanmaku && window.DuiduiDanmaku.markEndingQuoteOpened) window.DuiduiDanmaku.markEndingQuoteOpened();
         window.dispatchEvent(new CustomEvent('section-complete',{detail:{id:'ending',origin:document.getElementById('ending')}}));
       }
     }
@@ -438,7 +456,11 @@
   if(quotePrev) quotePrev.addEventListener('click',function(e){e.stopPropagation();showQuote(quoteIdx-1);});
   if(quoteNext) quoteNext.addEventListener('click',function(e){e.stopPropagation();showQuote(quoteIdx+1);});
   var quoteClose=document.getElementById('quoteClose');
-  function closeQuote(){quoteOv.classList.remove('show');unlockScroll();}
+  function closeQuote(){
+    quoteOv.classList.remove('show');
+    unlockScroll();
+    if(window.DuiduiDanmaku && window.DuiduiDanmaku.revealAfterQuote) window.DuiduiDanmaku.revealAfterQuote();
+  }
   if(quoteOv){
     quoteOv.addEventListener('click',function(e){
       if(e.target===quoteOv||e.target.classList.contains('quote-ov-dismiss')) closeQuote();
@@ -481,6 +503,7 @@
     if(window._resetLearning) window._resetLearning();
     if(window.resetStars) window.resetStars();
     if(window._resetHeroKeywords) window._resetHeroKeywords();
+    if(window.DuiduiDanmaku && window.DuiduiDanmaku.reset) window.DuiduiDanmaku.reset();
 
     // Reset bubbles overlay
     var spOv=document.getElementById('spOv');if(spOv)spOv.classList.remove('vis');
@@ -557,6 +580,10 @@
       var key=el.dataset.i18nHtml;
       if(TRANSLATIONS[key]&&TRANSLATIONS[key][lang]) el.innerHTML=TRANSLATIONS[key][lang];
     });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+      var key=el.dataset.i18nPlaceholder;
+      if(TRANSLATIONS[key]&&TRANSLATIONS[key][lang]) el.setAttribute('placeholder',TRANSLATIONS[key][lang]);
+    });
     // Update nav tooltip text for icon-only mode
     document.querySelectorAll('[data-tooltip-key]').forEach(function(el){
       var key=el.dataset.tooltipKey;
@@ -597,6 +624,7 @@
   // Re-check after language switch (labels change width)
   var origSetLang=setLang;
   setLang=function(lang){origSetLang(lang);setTimeout(checkNavOverflow,50);};
+  setLang(currentLang);
 
   // Scroll-hint click -> smooth scroll to next section
   document.querySelectorAll('.scroll-hint').forEach(function(hint){
@@ -663,6 +691,8 @@
   document.querySelectorAll('.section-intro-page').forEach(function(intro){
     intro.addEventListener('click',function(e){
       if(e.target.closest('.scroll-hint')) return;
+      if(e.target.closest('a')) return;
+      if(e.target.closest('button')) return;
       var rect=intro.getBoundingClientRect();
       var clickY=e.clientY-rect.top;
       if(clickY < rect.height*0.35){

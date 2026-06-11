@@ -42,7 +42,7 @@ window.MODULE_DATA = {
   // Each hobby has its own SVG icon path (24×24 viewBox), image folder name, and one-line description
   hobbies: [
     {n:'合唱',en:'Choir',c:'music',img:'choir',d:'Echo合唱团的每一次排练都是最好的解压方式',dEn:'Every Echo Choir rehearsal is the best stress reliever',i:'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z'},
-    {n:'钢琴',en:'Piano',c:'music',img:'piano',d:'下班回家后有时间就弹一小会儿',dEn:'Play a little whenever I have time after work',i:'M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12H8V8h4v6zm6 0h-4V8h4v6z'},
+    {n:'钢琴',en:'Piano',c:'music',img:'piano',d:'下班回家后有时间就弹一小会儿',dEn:'Play a little whenever I have time after work',i:'M4 6h16c.55 0 1 .45 1 1v9c0 .55-.45 1-1 1H4c-.55 0-1-.45-1-1V7c0-.55.45-1 1-1zm1.5 2v4.5h2V8h-2zm2.8 0v4.5h1.25V8H8.3zm2.05 0v4.5h2V8h-2zm2.8 0v4.5h1.25V8h-1.25zm2.05 0v4.5h2V8h-2zm-9.7 6v1h13v-1h-13z'},
     {n:'小提琴',en:'Violin',c:'music',img:'violin',d:'正在学习中，期待第一首完整曲子',dEn:'Currently learning, looking forward to my first full piece',i:'M20.7 3.3a1 1 0 0 0-1.4 0L17 5.6l-1.3-1.3-1.4 1.4L15.6 7l-4.3 4.3c-1.4-.7-3.2-.4-4.3.7L5.6 13.4a3 3 0 0 0 0 4.2l1 1a3 3 0 0 0 4.2 0L12.1 17c1.1-1.1 1.4-2.9.7-4.3L17 8.4l1.3 1.3 1.4-1.4L18.4 7l2.3-2.3a1 1 0 0 0 0-1.4z'},
     {n:'音乐剧',en:'Musical',c:'music',img:'musical',d:'沉浸式舞台体验让我无法自拔',dEn:'Immersive stage experiences that captivate me completely',i:'M2 16.1A5 5 0 0 0 11 18V6.83l10-2.5V12a3.5 3.5 0 1 1-2-3.17V2L9 4.5V15a3.5 3.5 0 1 1-2-3.17V8L2 9.5v6.6z'},
     {n:'铁三',en:'Triathlon',c:'sports',img:'triathlon',d:'游泳+骑车+跑步，一次挑战三种极限',dEn:'Swim + bike + run, three limits in one challenge',i:'M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 1.1-5.2C15.3 12 16.1 12 16.5 12c.8 0 1.5-.1 2-.3V6c-.5.2-1.2.3-2 .3-.6 0-1.2-.1-1.7-.3l-2-1-1-1.1L9.8 8.9z'},
@@ -56,10 +56,10 @@ window.MODULE_DATA = {
     {n:'学语言',en:'Languages',c:'experience',img:'languages',d:'Duolingo 25万分+，语言是打开世界的钥匙',dEn:'Duolingo 250K+ points, language is the key to the world',i:'M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z'},
     {n:'美食探店',en:'Foodie',c:'experience',img:'foodie',d:'发现好吃的就是最大的幸福',dEn:'Discovering good food is the greatest happiness',i:'M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z'},
     {n:'KTV',en:'KTV',c:'experience',img:'ktv',d:'麦霸本霸，唱歌使人快乐',dEn:'Born to hold the mic — singing brings joy',i:'M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21c0 .55.45 1 1 1s1-.45 1-1v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z'},
-    {n:'无人机',en:'Drone',c:'experience',img:'drone',d:'上帝视角看世界，航拍是另一种浪漫',dEn:'Seeing the world from God\'s view — aerial shots are a different kind of romance',i:'M22 11V8.8l-2.6-.6c-.1-.4-.3-.7-.5-1l1.1-2.4-1.6-1.6-2.4 1.1c-.3-.2-.6-.4-1-.5L14.4 1h-2.2l-.6 2.6c-.4.1-.7.3-1 .5L8.2 3 6.6 4.6l1.1 2.4c-.2.3-.4.6-.5 1L4.6 8.6V11H2v2h2.6l.6 2.6c.1.4.3.7.5 1L4.6 19l1.6 1.6 2.4-1.1c.3.2.6.4 1 .5l.6 2.6h2.2l.6-2.6c.4-.1.7-.3 1-.5l2.4 1.1 1.6-1.6-1.1-2.4c.2-.3.4-.6.5-1l2.6-.6V13h2v-2h-2.6zM12 16c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z'},
+    {n:'无人机',en:'Drone',c:'experience',img:'drone',d:'上帝视角看世界，航拍是另一种浪漫',dEn:'Seeing the world from God\'s view — aerial shots are a different kind of romance',i:'M11 10h2c1.1 0 2 .9 2 2s-.9 2-2 2h-2c-1.1 0-2-.9-2-2s.9-2 2-2zm-7-6a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm16 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM4 14a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm16 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM7 6h10v2H7V6zm0 10h10v2H7v-2zm-1.6-5.2 3.8 1.2-3.8 1.2-.6-1.2.6-1.2zm13.2 0 .6 1.2-.6 1.2-3.8-1.2 3.8-1.2z'},
     {n:'阅读',en:'Reading',c:'arts',img:'reading',d:'书是最便宜的旅行方式',dEn:'Books are the cheapest way to travel',i:'M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z'},
     {n:'电影',en:'Film',c:'arts',img:'film',d:'好电影是两个小时的人生浓缩',dEn:'A good film is a two-hour condensation of life',i:'M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z'},
-    {n:'主持',en:'Hosting',c:'arts',img:'hosting',d:'舞台上的掌控感让我着迷',dEn:'The sense of control on stage fascinates me',i:'M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21c0 .55.45 1 1 1s1-.45 1-1v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z'},
+    {n:'主持',en:'Hosting',c:'arts',img:'hosting',d:'舞台上的掌控感让我着迷',dEn:'The sense of control on stage fascinates me',i:'M4 6.5h16v9H4v-9zm2 2v5h12v-5H6zm3.2 9h5.6l1.2 2H8l1.2-2zm2.8-7.8l3.2 1.8-3.2 1.8V9.7zM7 20.5h10v1H7v-1z'},
     {n:'写作',en:'Writing',c:'arts',img:'writing',d:'把脑海里的想法变成文字是一种治愈',dEn:'Turning thoughts into words is a form of healing',i:'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'}
   ],
 
@@ -70,8 +70,8 @@ window.MODULE_DATA = {
       floor:'3F',
       accent:'#ef4444',
       icon:'book',
-      label:{cn:'小红书运营作战室',en:'RED Ops Room'},
-      roomLabel:{cn:'3F · 小红书运营作战室',en:'3F · RED OPS ROOM'},
+      label:{cn:'小红书运营房间',en:'Xiaohongshu Ops Room'},
+      roomLabel:{cn:'3F · 小红书运营房间',en:'3F · XIAOHONGSHU OPS ROOM'},
       hint:{cn:'点点手机、聊天墙和投放屏',en:'Tap the phone, chat wall, and traffic screen'},
       hotspots:[
         {id:'campaign',x:'18%',y:'34%',w:'16%',h:'24%',title:{cn:'大促产品落地',en:'Campaign Product'},desc:{cn:'参与“春上新”“66周年庆”，推进宠粉清单、直播间福利券等买手侧策略落地。',en:'Supported Spring Launch and 66 Anniversary, landing creator-side fan lists and livestream coupons.'}},
@@ -85,8 +85,8 @@ window.MODULE_DATA = {
       floor:'2F',
       accent:'#f59e0b',
       icon:'handshake',
-      label:{cn:'国金投行会议室',en:'IB Deal Room'},
-      roomLabel:{cn:'2F · 国金投行会议室',en:'2F · IB DEAL ROOM'},
+      label:{cn:'国金证券研究室',en:'Sinolink Securities Research Room'},
+      roomLabel:{cn:'2F · 国金证券研究室',en:'2F · SINOLINK SECURITIES RESEARCH'},
       hint:{cn:'点点握手、报告和量化屏',en:'Tap the handshake, reports, and quant screen'},
       hotspots:[
         {id:'report',x:'18%',y:'34%',w:'16%',h:'24%',title:{cn:'40+页深度报告',en:'40+ Page Report'},desc:{cn:'利用iFind穿透上市公司财报及公告，输出40+页分析报告，覆盖宏观趋势、竞争格局、财务表现与第二增长曲线。',en:'Used iFind to analyze filings and produced a 40+ page report on macro trends, competition, financials, and second-growth curves.'}},
@@ -98,10 +98,10 @@ window.MODULE_DATA = {
     {
       id:'ai',
       floor:'1F',
-      accent:'#8b5cf6',
+      accent:'#1d4ed8',
       icon:'cloud',
-      label:{cn:'沄视AI产品实验室',en:'AI Product Lab'},
-      roomLabel:{cn:'1F · 沄视AI产品实验室',en:'1F · AI PRODUCT LAB'},
+      label:{cn:'沄视科技 AI 实验室',en:'WolkenVision AI Lab'},
+      roomLabel:{cn:'1F · 沄视科技 AI 实验室',en:'1F · WOLKENVISION AI LAB'},
       hint:{cn:'把鼠标移到电脑或物件上查看详情',en:'Hover the computer or objects to learn more'},
       hotspots:[
         {id:'lab',x:'18%',y:'34%',w:'16%',h:'24%',title:{cn:'沄视AI产品实验室',en:'WolkenVision AI Lab'},desc:{cn:'用 AI 与大模型做 Scan2BIM，把激光点云变成毫米级工程 BIM 模型，服务建筑与基建数字化。',en:'Scan2BIM AI that turns LiDAR point clouds into millimeter-grade BIM models for construction and infrastructure.'},url:'https://wolkenvision.com',linkText:{cn:'这也是一家很有趣的公司，点击链接来了解一下吧。',en:'This is a really interesting company — tap the link to explore.'}},

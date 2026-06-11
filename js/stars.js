@@ -3,14 +3,14 @@
   var KEY='duidui-stars-v1';
   var ORDER=['hero','interest','career','study','worldmap','timelines','skills','ending'];
   var STAR_POS={
-    hero:{x:130,y:96},
-    interest:{x:445,y:94},
-    career:{x:720,y:126},
-    study:{x:690,y:246},
-    worldmap:{x:400,y:296},
-    timelines:{x:170,y:266},
-    skills:{x:145,y:418},
-    ending:{x:725,y:424}
+    hero:{x:130,y:104},
+    interest:{x:445,y:98},
+    career:{x:720,y:142},
+    study:{x:690,y:270},
+    worldmap:{x:400,y:308},
+    timelines:{x:170,y:278},
+    skills:{x:145,y:426},
+    ending:{x:737,y:426}
   };
   var earned=load();
 
@@ -108,7 +108,9 @@
     });
     var markers=document.createElementNS('http://www.w3.org/2000/svg','g');
     markers.setAttribute('id','starMapMarkers');
-    svg.appendChild(markers);
+    var firstBuilding=svg.querySelector('.map-building');
+    if(firstBuilding) svg.insertBefore(markers,firstBuilding);
+    else svg.appendChild(markers);
     starMapWrap.appendChild(svg);
     starMapReady=true;
     updateStarMapMarkers();
@@ -140,15 +142,17 @@
       g.setAttribute('class','star-map-marker');
       g.setAttribute('transform','translate('+p.x+','+p.y+')');
       var glow=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      glow.setAttribute('r','16');
-      glow.setAttribute('fill','rgba(251,191,36,.18)');
+      glow.setAttribute('r','10');
+      glow.setAttribute('fill','rgba(251,191,36,.14)');
       g.appendChild(glow);
       var t=document.createElementNS('http://www.w3.org/2000/svg','text');
       t.setAttribute('x','0');
       t.setAttribute('y','0');
+      t.setAttribute('dy','0.12em');
       t.setAttribute('text-anchor','middle');
-      t.setAttribute('dominant-baseline','middle');
-      t.setAttribute('font-size','20');
+      t.setAttribute('dominant-baseline','central');
+      t.setAttribute('alignment-baseline','central');
+      t.setAttribute('font-size','18');
       t.setAttribute('fill','#fbbf24');
       t.textContent='✦';
       g.appendChild(t);
@@ -202,14 +206,14 @@
 
   function showToast(id){
     var hints={
-      hero:{cn:'探索 6 颗不同的星星关键词',en:'Explore 6 different star keywords'},
+      hero:{cn:'探索 3 颗不同的星星关键词',en:'Explore 3 different star keywords'},
       interest:{cn:'完成全部卡片配对',en:'Match all card pairs'},
-      career:{cn:'三层楼都逛 + 每层悬停一个物件',en:'Visit 3 floors · hover one object each'},
+      career:{cn:'前往 3 个楼层并分别点开 1 个显示屏',en:'Visit all 3 floors and open one monitor on each'},
       study:{cn:'戳开 5 个知识泡泡',en:'Pop 5 knowledge bubbles'},
-      worldmap:{cn:'展开两张卷轴地图',en:'Unroll both scroll maps'},
-      timelines:{cn:'拖动钟楼 · 五个类别都看过',en:'Spin tower · view all 5 categories'},
-      skills:{cn:'走遍 6 片花丛查看技能',en:'Visit all 6 flower beds'},
-      ending:{cn:'打开终点语录彩蛋',en:'Open the ending quote surprise'}
+      worldmap:{cn:'展开 2 张卷轴地图',en:'Unroll both scroll maps'},
+      timelines:{cn:'拖动钟楼转圈 5 个标签都看过',en:'Spin the clock tower and view all 5 categories'},
+      skills:{cn:'走遍 6 片花丛查看技能',en:'Visit all 6 flower beds to view skills'},
+      ending:{cn:'点击查看 收集最后 1 颗星星',en:'Tap to collect the final star'}
     };
     var H=hints[id]||{cn:'',en:''};
     var t=document.createElement('div');
@@ -251,7 +255,10 @@
   }
 
   if(starMapClose){
-    starMapClose.addEventListener('click',function(){toggleStarMap(false);});
+    starMapClose.addEventListener('click',function(e){
+      e.stopPropagation();
+      toggleStarMap(false);
+    });
   }
 
   if(starMapOverlay){

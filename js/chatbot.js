@@ -1,15 +1,15 @@
 // Floating section-aware chat assistant.
 (function(){
   var CONFIG = window.DUIDUI_CHATBOT || {};
-  var STORAGE_POS = 'duidui-chatbot-position-v1';
   var STORAGE_OPEN = 'duidui-chatbot-open-v1';
   var MAP_IDLE_MS = 3500;
   var currentSection = CONFIG.defaultSection || 'hero';
   var conversation = [];
   var root, bubble, panel, messagesEl, chipsEl, inputEl, titleEl, sendBtn;
-  var dragState = null;
   var typingTimer = null;
   var pendingReply = 0;
+  var inputFocused = false;
+  var chipState = {section: null, visible: [], remaining: []};
 
   function $(sel, parent){return (parent || document).querySelector(sel);}
 
@@ -20,8 +20,38 @@
     return pack[key] || '';
   }
 
+  function pickLocalized(val){
+    if(val == null) return '';
+    if(typeof val === 'object' && ('cn' in val || 'en' in val)){
+      return isEn() ? (val.en || val.cn || '') : (val.cn || val.en || '');
+    }
+    return val;
+  }
+
+  function localizeSection(raw){
+    if(!raw) return {};
+    return {
+      title: pickLocalized(raw.title),
+      sectionLabel: pickLocalized(raw.sectionLabel),
+      greeting: pickLocalized(raw.greeting),
+      context: pickLocalized(raw.context),
+      questions: (raw.questions || []).map(pickLocalized),
+      answers: (raw.answers || []).map(pickLocalized)
+    };
+  }
+
   function getSectionData(id){
-    return (CONFIG.sections && CONFIG.sections[id]) || CONFIG.fallback || {};
+    var raw = (CONFIG.sections && CONFIG.sections[id]) || CONFIG.fallback || {};
+    return localizeSection(raw);
+  }
+
+  function fixedIntro(){
+    var pack=CONFIG.introGreeting||{};
+    return isEn()?(pack.en||''):(pack.cn||'');
+  }
+
+  function sectionWelcome(data){
+    return (data&&data.greeting)||(CONFIG.fallback&&CONFIG.fallback.greeting)||'';
   }
 
   function rand(min, max){return min + Math.floor(Math.random() * (max - min + 1));}
@@ -30,43 +60,60 @@
 
   function avatarSvg(){
     return ''+
-      '<svg class="dui-bot-avatar" viewBox="0 0 100 100" aria-hidden="true">'+
+      '<svg class="dui-bot-avatar" viewBox="0 0 80 80" aria-hidden="true">'+
         '<defs>'+
-          '<linearGradient id="duiHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5c4033"/><stop offset="100%" stop-color="#3d2817"/></linearGradient>'+
-          '<linearGradient id="duiFace" x1="0.3" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#fff5f0"/><stop offset="100%" stop-color="#ffe8dc"/></linearGradient>'+
-          '<radialGradient id="duiEyeL" cx="35%" cy="35%"><stop offset="0%" stop-color="#7dd3fc"/><stop offset="100%" stop-color="#2563eb"/></radialGradient>'+
-          '<radialGradient id="duiEyeR" cx="35%" cy="35%"><stop offset="0%" stop-color="#7dd3fc"/><stop offset="100%" stop-color="#2563eb"/></radialGradient>'+
+          '<linearGradient id="duiHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7a472f"/><stop offset="100%" stop-color="#30190f"/></linearGradient>'+
+          '<radialGradient id="duiFace" cx="38%" cy="30%" r="70%"><stop offset="0%" stop-color="#fff7ed"/><stop offset="100%" stop-color="#fed7aa"/></radialGradient>'+
+          '<linearGradient id="duiDress" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f9a8d4"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>'+
         '</defs>'+
-        '<ellipse cx="50" cy="92" rx="24" ry="4" fill="#ffb6c1" opacity=".16"/>'+
-        '<path d="M18 58 C18 34 34 18 50 18 C66 18 82 34 82 58 L82 88 C82 92 78 96 74 96 L26 96 C22 96 18 92 18 88 Z" fill="url(#duiFace)" stroke="#e8b4a8" stroke-width="1.2"/>'+
-        '<path d="M18 42 C20 28 34 14 50 14 C66 14 80 28 82 42 C78 30 66 22 50 22 C34 22 22 30 18 42 Z" fill="url(#duiHair)"/>'+
-        '<path d="M14 48 C10 58 12 72 18 82 L22 76 C18 66 17 56 20 46 Z" fill="url(#duiHair)"/>'+
-        '<path d="M86 48 C90 58 88 72 82 82 L78 76 C82 66 83 56 80 46 Z" fill="url(#duiHair)"/>'+
-        '<path d="M34 24 C38 18 46 16 50 16 C54 16 62 18 66 24 C60 20 54 18 50 18 C46 18 40 20 34 24 Z" fill="#6b4c3b" opacity=".55"/>'+
-        '<ellipse cx="36" cy="54" rx="11" ry="13" fill="#fff" stroke="#4a3728" stroke-width="1.6"/>'+
-        '<ellipse cx="64" cy="54" rx="11" ry="13" fill="#fff" stroke="#4a3728" stroke-width="1.6"/>'+
-        '<ellipse cx="36" cy="56" rx="7" ry="8.5" fill="url(#duiEyeL)"/>'+
-        '<ellipse cx="64" cy="56" rx="7" ry="8.5" fill="url(#duiEyeR)"/>'+
-        '<circle cx="33" cy="52" r="2.8" fill="#fff" opacity=".95"/>'+
-        '<circle cx="61" cy="52" r="2.8" fill="#fff" opacity=".95"/>'+
-        '<circle cx="38" cy="58" r="1.4" fill="#fff" opacity=".7"/>'+
-        '<circle cx="66" cy="58" r="1.4" fill="#fff" opacity=".7"/>'+
-        '<path d="M34 48 Q36 46 38 48" stroke="#4a3728" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
-        '<path d="M62 48 Q64 46 66 48" stroke="#4a3728" stroke-width="1.4" fill="none" stroke-linecap="round"/>'+
-        '<ellipse cx="28" cy="64" rx="5.5" ry="3.2" fill="#ffb8ca" opacity=".62"/>'+
-        '<ellipse cx="72" cy="64" rx="5.5" ry="3.2" fill="#ffb8ca" opacity=".62"/>'+
-        '<path d="M47 68 Q50 71 53 68" stroke="#e08a9a" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
-        '<path d="M44 74 Q50 78 56 74" stroke="#f08ba8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".85"/>'+
-        '<path d="M48 32 L50 26 L52 32" fill="#ff9ec4" stroke="#ff7eb0" stroke-width=".8" stroke-linejoin="round"/>'+
+        '<path d="M18 38c0-17 10-29 22-29s22 12 22 29v17c0 9-7 15-17 15H35c-10 0-17-6-17-15z" fill="url(#duiHair)"/>'+
+        '<path d="M30 58c2-3.5 6.5-5.5 10-5.5s8 2 10 5.5l3.5 9H26.5z" fill="url(#duiDress)"/>'+
+        '<ellipse cx="40" cy="37.5" rx="16.5" ry="17.5" fill="url(#duiFace)" stroke="#e7a47d" stroke-width="1.1"/>'+
+        '<path d="M23 34c1-11 9-18 17-18s16 5 18 17c-4-5-9-8-17-8s-12 3-16 8z" fill="url(#duiHair)"/>'+
+        '<path d="M22 27c2-9 10-15 18-15s16 6 18 15c-4-6-10-9-18-9s-14 3-18 9z" fill="#8a5235"/>'+
+        '<path d="M24 23c5-2 11-3 16-3s11 1 16 3c-3 6-7 9-16 9s-13-3-16-9z" fill="#7a472f"/>'+
+        '<circle cx="33.5" cy="38" r="3.5" fill="#2f1b12"/><circle cx="46.5" cy="38" r="3.5" fill="#2f1b12"/>'+
+        '<circle cx="32.4" cy="36.8" r="1.2" fill="#fff" opacity=".95"/><circle cx="45.4" cy="36.8" r="1.2" fill="#fff" opacity=".95"/>'+
+        '<ellipse cx="28" cy="43.5" rx="3.6" ry="2.2" fill="#fb7185" opacity=".36"/><ellipse cx="52" cy="43.5" rx="3.6" ry="2.2" fill="#fb7185" opacity=".36"/>'+
+        '<path d="M33.5 47.8 Q40 51.8 46.5 47.8" fill="none" stroke="#9f4f4f" stroke-width="1.8" stroke-linecap="round"/>'+
       '</svg>';
   }
 
+  function avatarMarkup(){
+    return avatarSvg() + '<span class="dui-bot-badge" aria-hidden="true">1</span>';
+  }
+
+  function headAvatarSvg(){
+    return avatarSvg().replace('class="dui-bot-avatar"', 'class="dui-chat-head-avatar"');
+  }
+
+  function updateInputPlaceholder(){
+    if(!inputEl) return;
+    inputEl.placeholder = inputFocused ? (ui('focusPlaceholder') || ui('placeholder') || '') : (ui('placeholder') || '');
+  }
+
   function applyUiStrings(){
-    if(titleEl) titleEl.textContent = ui('title') || (isEn() ? 'XXD' : '小小对');
-    if(inputEl) inputEl.placeholder = ui('placeholder') || '';
+    if(titleEl) titleEl.textContent = ui('title') || (isEn() ? 'Little XD' : '小小对');
+    updateInputPlaceholder();
     if(sendBtn) sendBtn.textContent = ui('send') || '';
-    var closeBtn = $('.dui-chat-close', root);
+    if(bubble) bubble.setAttribute('aria-label', ui('open') || (isEn() ? 'Open chat' : '打开聊天'));
+    if(panel) panel.setAttribute('aria-label', ui('chatPanel') || (isEn() ? 'Chat' : '聊天'));
+    var closeBtn = root ? $('.dui-chat-close', root) : null;
     if(closeBtn) closeBtn.setAttribute('aria-label', ui('close') || '');
+  }
+
+  function refreshForLanguage(){
+    applyUiStrings();
+    var data = getSectionData(currentSection);
+    resetChipState(data);
+    renderChips(data);
+    if(!messagesEl) return;
+    pendingReply++;
+    setTyping(false);
+    conversation = [];
+    messagesEl.innerHTML = '';
+    botMessage(fixedIntro());
+    botMessage(sectionWelcome(data));
   }
 
   function botMessage(text){
@@ -112,16 +159,40 @@
     botMessage(text);
   }
 
+  function resetChipState(data){
+    var list = data.questions || [];
+    var indexes = list.map(function(_, idx){return idx;});
+    chipState = {
+      section: currentSection,
+      visible: indexes.slice(0, 3),
+      remaining: indexes.slice(3)
+    };
+  }
+
+  function ensureChipState(data){
+    if(chipState.section !== currentSection) resetChipState(data);
+  }
+
+  function advanceChip(idx){
+    chipState.visible = chipState.visible.filter(function(itemIdx){return itemIdx !== idx;});
+    if(chipState.remaining.length) chipState.visible.push(chipState.remaining.shift());
+  }
+
   function renderChips(data){
+    ensureChipState(data);
     chipsEl.innerHTML = '';
-    (data.questions || []).slice(0, 3).forEach(function(q, idx){
+    chipState.visible.forEach(function(questionIdx){
+      var q = (data.questions || [])[questionIdx];
+      if(!q) return;
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'dui-chat-chip';
       btn.textContent = q;
       btn.addEventListener('click', function(){
         openPanel();
-        askPreset(idx, q);
+        advanceChip(questionIdx);
+        renderChips(data);
+        askPreset(questionIdx, q);
       });
       chipsEl.appendChild(btn);
     });
@@ -130,9 +201,10 @@
   function sectionChanged(id, silent){
     currentSection = id || currentSection;
     var data = getSectionData(currentSection);
+    resetChipState(data);
     renderChips(data);
     if(!silent){
-      botMessage(data.greeting || (CONFIG.fallback && CONFIG.fallback.greeting) || (isEn() ? 'Hey, new section!' : '哇，到新板块啦。'));
+      botMessage(sectionWelcome(data));
     }
   }
 
@@ -179,7 +251,7 @@
             label: data.sectionLabel,
             context: data.context
           },
-          styleGuide: CONFIG.styleGuide || [],
+          styleGuide: isEn() ? (CONFIG.styleGuideEn || CONFIG.styleGuide || []) : (CONFIG.styleGuide || []),
           history: conversation.slice(-8)
         })
       });
@@ -196,7 +268,6 @@
 
   function openPanel(){
     root.classList.add('is-open');
-    root.classList.remove('is-dragging');
     try{localStorage.setItem(STORAGE_OPEN, '1');}catch(e){}
   }
 
@@ -207,61 +278,14 @@
     try{localStorage.setItem(STORAGE_OPEN, '0');}catch(e){}
   }
 
+  function togglePanel(){
+    root.classList.contains('is-open') ? closePanel() : openPanel();
+  }
+
   function handleOutsidePointer(e){
     if(!root || !root.classList.contains('is-open')) return;
     if(root.contains(e.target)) return;
     closePanel();
-  }
-
-  function applySavedPosition(){
-    try{
-      var pos = JSON.parse(localStorage.getItem(STORAGE_POS) || 'null');
-      if(!pos) return;
-      var size = root.offsetWidth || 80;
-      root.style.left = Math.max(0, Math.min(window.innerWidth - size, pos.left)) + 'px';
-      root.style.top = Math.max(58, Math.min(window.innerHeight - size, pos.top)) + 'px';
-      root.style.bottom = 'auto';
-    }catch(e){}
-  }
-
-  function onPointerDown(e){
-    if(e.button !== undefined && e.button !== 0) return;
-    dragState = {
-      startX: e.clientX,
-      startY: e.clientY,
-      rootX: root.offsetLeft,
-      rootY: root.offsetTop,
-      moved: false
-    };
-    bubble.setPointerCapture && bubble.setPointerCapture(e.pointerId);
-  }
-
-  function onPointerMove(e){
-    if(!dragState) return;
-    var dx = e.clientX - dragState.startX;
-    var dy = e.clientY - dragState.startY;
-    if(Math.abs(dx) + Math.abs(dy) > 5) dragState.moved = true;
-    if(!dragState.moved) return;
-    root.classList.add('is-dragging');
-    var size = root.offsetWidth || 80;
-    root.style.left = Math.max(0, Math.min(window.innerWidth - size, dragState.rootX + dx)) + 'px';
-    root.style.top = Math.max(58, Math.min(window.innerHeight - size, dragState.rootY + dy)) + 'px';
-    root.style.bottom = 'auto';
-  }
-
-  function onPointerUp(){
-    if(!dragState) return;
-    var wasMoved = dragState.moved;
-    dragState = null;
-    root.classList.remove('is-dragging');
-    savePosition(root.offsetLeft, root.offsetTop);
-    if(!wasMoved){
-      root.classList.contains('is-open') ? closePanel() : openPanel();
-    }
-  }
-
-  function savePosition(left, top){
-    try{localStorage.setItem(STORAGE_POS, JSON.stringify({left:left, top:top}));}catch(e){}
   }
 
   function observeSections(){
@@ -319,13 +343,15 @@
 
   function init(){
     if(document.getElementById('dui-chatbot')) return;
+    try{localStorage.removeItem('duidui-chatbot-position-v1');}catch(e){}
+
     root = document.createElement('div');
     root.id = 'dui-chatbot';
-    root.className = 'dui-chatbot';
+    root.className = 'corner-dock corner-dock--left';
     root.innerHTML = ''+
-      '<button type="button" class="dui-bot-bubble" aria-label="Open chat">' + avatarSvg() + '<span class="dui-bot-pulse"></span></button>'+
+      '<button type="button" class="dui-bot-bubble corner-bubble" aria-label="Open chat">' + avatarMarkup() + '</button>'+
       '<section class="dui-chat-panel" aria-label="Chat">'+
-        '<div class="dui-chat-head"><div><strong class="dui-chat-title"></strong></div><button type="button" class="dui-chat-close" aria-label="Close">×</button></div>'+
+        '<div class="dui-chat-head"><div class="dui-chat-head-main">' + headAvatarSvg() + '<div><strong class="dui-chat-title"></strong></div></div><button type="button" class="dui-chat-close" aria-label="Close">×</button></div>'+
         '<div class="dui-chat-messages"></div>'+
         '<div class="dui-chat-chips"></div>'+
         '<form class="dui-chat-form"><input class="dui-chat-input" type="text" maxlength="160" autocomplete="off"><button class="dui-chat-send" type="submit"></button></form>'+
@@ -340,34 +366,63 @@
     sendBtn = $('.dui-chat-send', root);
 
     applyUiStrings();
-    bubble.addEventListener('pointerdown', onPointerDown);
-    bubble.addEventListener('pointermove', onPointerMove);
-    bubble.addEventListener('pointerup', onPointerUp);
-    bubble.addEventListener('pointercancel', function(){dragState = null; root.classList.remove('is-dragging');});
+    bubble.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePanel();
+    });
     $('.dui-chat-close', root).addEventListener('click', closePanel);
     $('.dui-chat-form', root).addEventListener('submit', function(e){
       e.preventDefault();
       askCustom();
     });
-    window.addEventListener('resize', applySavedPosition);
+    inputEl.addEventListener('focus', function(){
+      inputFocused = true;
+      root.classList.add('is-input-focused');
+      updateInputPlaceholder();
+      updateViewportVars();
+    });
+    inputEl.addEventListener('blur', function(){
+      inputFocused = false;
+      root.classList.remove('is-input-focused');
+      updateInputPlaceholder();
+      setTimeout(updateViewportVars, 80);
+    });
+    updateViewportVars();
+    window.addEventListener('resize', updateViewportVars);
+    window.addEventListener('orientationchange', function(){setTimeout(updateViewportVars, 120);});
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize', updateViewportVars);
+      window.visualViewport.addEventListener('scroll', updateViewportVars);
+    }
     document.addEventListener('pointerdown', handleOutsidePointer, true);
 
-    var langBtn = document.getElementById('langToggle');
-    if(langBtn){
-      langBtn.addEventListener('click', function(){
-        setTimeout(function(){
-          applyUiStrings();
-          renderChips(getSectionData(currentSection));
-        }, 60);
+    var observedLang = document.documentElement.lang;
+    var langObs = new MutationObserver(function(mutations){
+      mutations.forEach(function(m){
+        if(m.attributeName !== 'lang') return;
+        if(document.documentElement.lang === observedLang) return;
+        observedLang = document.documentElement.lang;
+        refreshForLanguage();
       });
-    }
+    });
+    langObs.observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
 
     sectionChanged(currentSection, true);
-    botMessage(getSectionData(currentSection).greeting || (isEn() ? 'Hey! I follow whichever section you\'re on.' : '哇你来啦！我会跟着你正在看的板块聊天。'));
-    applySavedPosition();
-    if(localStorage.getItem(STORAGE_OPEN) === '1') openPanel();
+    botMessage(fixedIntro());
+    botMessage(sectionWelcome(getSectionData(currentSection)));
     observeSections();
     enhanceMapDock();
+  }
+
+  function updateViewportVars(){
+    var vv = window.visualViewport;
+    var height = vv ? vv.height : window.innerHeight;
+    var keyboardInset = 0;
+    if(vv){
+      keyboardInset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    }
+    document.documentElement.style.setProperty('--dui-vv-height', Math.round(height) + 'px');
+    document.documentElement.style.setProperty('--dui-keyboard-inset', Math.round(keyboardInset) + 'px');
   }
 
   if(document.readyState === 'loading'){

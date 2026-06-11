@@ -12,7 +12,7 @@
   var kwEls=[];
   var DECO_COUNT=48;
   var keywordsSeen=new Set();
-  var KEYWORDS_FOR_STAR=6;
+  var KEYWORDS_FOR_STAR=3;
 
   function maybeHeroStar(origin){
     if(keywordsSeen.size<KEYWORDS_FOR_STAR) return;
@@ -42,14 +42,17 @@
     return {x:x,y:y};
   }
 
-  function addDecoStar(){
+  function addDecoStar(index){
     var pos=pickDecoPosition();
     var starSize=1.2+Math.random()*3.2;
     var starGlow=8+Math.random()*14;
     var twinkle=0.35+Math.random()*0.45;
+    var kw=KW_DATA[index%KW_DATA.length];
     var e=document.createElement('span');
     e.className='hkw hkw-deco';
-    e.setAttribute('aria-hidden','true');
+    e.setAttribute('role','button');
+    e.setAttribute('tabindex','0');
+    e.setAttribute('aria-label',isEn()?kw.wEn:kw.wCn);
     e.style.left=pos.x+'%';
     e.style.top=pos.y+'%';
     e.style.setProperty('--star-size',starSize+'px');
@@ -57,6 +60,18 @@
     e.style.setProperty('--star-opacity',twinkle);
     e.style.animationDelay=(-Math.random()*8)+'s';
     e.style.animationDuration=(5+Math.random()*7)+'s';
+    var label=document.createElement('span');
+    label.className='hkw-label';
+    label.textContent=isEn()?kw.wEn:kw.wCn;
+    e.appendChild(label);
+    e.addEventListener('click',function(evt){openKeyword(evt,kw,e);});
+    e.addEventListener('keydown',function(evt){
+      if(evt.key==='Enter'||evt.key===' '){
+        evt.preventDefault();
+        openKeyword(evt,kw,e);
+      }
+    });
+    kwEls.push({el:e,label:label,data:kw});
     c.appendChild(e);
   }
 
@@ -106,7 +121,7 @@
     c.appendChild(e);
   });
 
-  for(var d=0;d<DECO_COUNT;d++) addDecoStar();
+  for(var d=0;d<DECO_COUNT;d++) addDecoStar(d);
 
   window._resetHeroKeywords=function(){
     keywordsSeen=new Set();
