@@ -530,7 +530,7 @@
     var H=hints[id]||{cn:'',en:''};
     var t=document.createElement('div');
     t.className='star-toast';
-    t.innerHTML='<div class="star-toast-inner"><span class="star-toast-icon">✦</span><div class="star-toast-text">'+
+    t.innerHTML='<div class="star-toast-inner"><div class="star-toast-text"><span class="star-toast-icon">✦</span>'+
       (isEn()?('Star · '+label(id)):('获得星星 · '+label(id)))+
       '</div><span class="star-toast-sub">'+(isEn()?H.en:H.cn)+'</span></div>';
     document.body.appendChild(t);
