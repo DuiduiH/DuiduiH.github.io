@@ -2,7 +2,9 @@
 (function(){
   var CONFIG = window.DUIDUI_CHATBOT || {};
   var STORAGE_OPEN = 'duidui-chatbot-open-v1';
+  var STORAGE_HISTORY = 'duidui-chatbot-history-v1';
   var MAP_IDLE_MS = 3500;
+  var MAX_HISTORY = 48;
   var currentSection = CONFIG.defaultSection || 'hero';
   var conversation = [];
   var root, bubble, panel, messagesEl, chipsEl, inputEl, titleEl, sendBtn;
@@ -10,6 +12,7 @@
   var pendingReply = 0;
   var inputFocused = false;
   var chipState = {section: null, visible: [], remaining: []};
+  var greetedSections = new Set();
 
   function $(sel, parent){return (parent || document).querySelector(sel);}
 
@@ -55,6 +58,16 @@
   }
 
   function rand(min, max){return min + Math.floor(Math.random() * (max - min + 1));}
+
+  function shuffleIndexes(count){
+    var indexes=[];
+    for(var i=0;i<count;i++) indexes.push(i);
+    for(var j=indexes.length-1;j>0;j--){
+      var k=Math.floor(Math.random()*(j+1));
+      var t=indexes[j];indexes[j]=indexes[k];indexes[k]=t;
+    }
+    return indexes;
+  }
 
   function wait(ms){return new Promise(function(resolve){setTimeout(resolve, ms);});}
 
@@ -102,37 +115,182 @@
     if(closeBtn) closeBtn.setAttribute('aria-label', ui('close') || '');
   }
 
-  function refreshForLanguage(){
+  function normalizeRecord(raw){
+    if(!raw || !raw.role) return null;
+    var rec = {
+      role: raw.role === 'user' ? 'user' : 'bot',
+      kind: raw.kind || 'custom',
+      sectionId: raw.sectionId || currentSection,
+      presetIdx: typeof raw.presetIdx === 'number' ? raw.presetIdx : null,
+      cn: String(raw.cn || ''),
+      en: String(raw.en || '')
+    };
+    if(rec.kind === 'custom' && !rec.cn && !rec.en && raw.content){
+      if(isEn()) rec.en = String(raw.content);
+      else rec.cn = String(raw.content);
+    }
+    return rec;
+  }
+
+  function recordText(rec){
+    if(!rec) return '';
+    if(rec.kind === 'intro') return fixedIntro();
+    if(rec.kind === 'section-greeting') return sectionWelcome(getSectionData(rec.sectionId));
+    if(rec.kind === 'preset-user'){
+      var questions = getSectionData(rec.sectionId).questions || [];
+      return questions[rec.presetIdx] || (isEn() ? rec.en : rec.cn) || rec.cn || rec.en || '';
+    }
+    if(rec.kind === 'preset-bot'){
+      var answers = getSectionData(rec.sectionId).answers || [];
+      return answers[rec.presetIdx] || (isEn() ? rec.en : rec.cn) || rec.cn || rec.en || '';
+    }
+    return isEn() ? (rec.en || rec.cn) : (rec.cn || rec.en);
+  }
+
+  function historyForApi(){
+    return conversation.map(function(rec){
+      return {role: rec.role, content: recordText(rec)};
+    }).slice(-8);
+  }
+
+  function saveHistory(){
+    try{localStorage.setItem(STORAGE_HISTORY, JSON.stringify(conversation.slice(-MAX_HISTORY)));}catch(e){}
+  }
+
+  function loadHistory(){
+    try{
+      var parsed = JSON.parse(localStorage.getItem(STORAGE_HISTORY) || '[]');
+      if(!Array.isArray(parsed) || !parsed.length) return null;
+      var list = parsed.map(normalizeRecord).filter(Boolean);
+      return list.length ? list : null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function renderAllMessages(){
+    if(!messagesEl) return;
+    messagesEl.innerHTML = '';
+    conversation.forEach(function(rec){
+      var item = document.createElement('div');
+      item.className = 'dui-chat-msg ' + (rec.role === 'user' ? 'is-user' : 'is-bot');
+      item.textContent = recordText(rec);
+      messagesEl.appendChild(item);
+    });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function pushRecord(rec){
+    conversation.push(rec);
+    if(conversation.length > MAX_HISTORY) conversation = conversation.slice(-MAX_HISTORY);
+    if(!messagesEl) return;
+    var item = document.createElement('div');
+    item.className = 'dui-chat-msg ' + (rec.role === 'user' ? 'is-user' : 'is-bot');
+    item.textContent = recordText(rec);
+    messagesEl.appendChild(item);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    saveHistory();
+  }
+
+  function customRecord(role, text){
+    return {
+      role: role,
+      kind: 'custom',
+      sectionId: currentSection,
+      cn: isEn() ? '' : text,
+      en: isEn() ? text : ''
+    };
+  }
+
+  function seedInitialMessages(){
+    pushRecord({role: 'bot', kind: 'intro', sectionId: currentSection, cn: '', en: ''});
+  }
+
+  function rebuildGreetedFromHistory(){
+    greetedSections = new Set();
+  }
+
+  function syncCurrentSection(){
+    if(!window.getCurrentSectionId) return;
+    var id = window.getCurrentSectionId();
+    if(!id || id === currentSection) return;
+    sectionChanged(id);
+  }
+
+  function sectionChanged(id){
+    if(!id || id === currentSection) return;
+    currentSection = id;
+    if(!root || !root.classList.contains('is-open')) return;
+    var data = getSectionData(currentSection);
+    resetChipState(data, true);
+    renderChips(data);
+  }
+
+  function maybeWelcomeSection(id){
+    if(!id || !root || !root.classList.contains('is-open')) return;
+    if(greetedSections.has(id)) return;
+    greetedSections.add(id);
+    pushRecord({role: 'bot', kind: 'section-greeting', sectionId: id, cn: '', en: ''});
+  }
+
+  async function translateText(text, targetLang){
+    if(!text) return '';
+    try{
+      var prompt = targetLang === 'en'
+        ? 'Translate the following Chinese into natural English. Output ONLY the translation, no quotes or explanation:\n\n' + text
+        : '将以下英文翻译为自然的中文。只输出译文，不要引号或解释：\n\n' + text;
+      var resp = await fetch(CONFIG.apiEndpoint || '/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          sectionId: currentSection,
+          question: prompt,
+          lang: targetLang,
+          section: {title: '', label: '', context: ''},
+          styleGuide: [],
+          history: []
+        })
+      });
+      if(resp.ok){
+        var json = await resp.json();
+        return String(json.answer || '').trim() || text;
+      }
+    }catch(err){}
+    return text;
+  }
+
+  async function translateMissingCustomMessages(){
+    var jobs = [];
+    conversation.forEach(function(rec, idx){
+      if(rec.kind !== 'custom') return;
+      if(isEn() && rec.cn && !rec.en){
+        jobs.push(translateText(rec.cn, 'en').then(function(text){rec.en = text;}));
+      }else if(!isEn() && rec.en && !rec.cn){
+        jobs.push(translateText(rec.en, 'cn').then(function(text){rec.cn = text;}));
+      }
+    });
+    if(jobs.length) await Promise.all(jobs);
+    saveHistory();
+  }
+
+  async function refreshForLanguage(){
     applyUiStrings();
     var data = getSectionData(currentSection);
-    resetChipState(data);
+    resetChipState(data, false);
     renderChips(data);
     if(!messagesEl) return;
     pendingReply++;
     setTyping(false);
-    conversation = [];
-    messagesEl.innerHTML = '';
-    botMessage(fixedIntro());
-    botMessage(sectionWelcome(data));
+    await translateMissingCustomMessages();
+    renderAllMessages();
   }
 
   function botMessage(text){
-    appendMessage('bot', text);
+    pushRecord(customRecord('bot', text));
   }
 
   function userMessage(text){
-    appendMessage('user', text);
-  }
-
-  function appendMessage(role, text){
-    if(!messagesEl) return;
-    var item = document.createElement('div');
-    item.className = 'dui-chat-msg ' + (role === 'user' ? 'is-user' : 'is-bot');
-    item.textContent = text;
-    messagesEl.appendChild(item);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-    conversation.push({role: role, content: text});
-    if(conversation.length > 12) conversation = conversation.slice(-12);
+    pushRecord(customRecord('user', text));
   }
 
   function setTyping(on){
@@ -148,20 +306,12 @@
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  async function replyWithPause(text){
-    var token = ++pendingReply;
-    await wait(rand(700, 1300));
-    if(token !== pendingReply) return;
-    setTyping(true);
-    await wait(rand(1200, 2400));
-    if(token !== pendingReply) return;
-    setTyping(false);
-    botMessage(text);
-  }
-
-  function resetChipState(data){
+  function resetChipState(data, randomize){
     var list = data.questions || [];
-    var indexes = list.map(function(_, idx){return idx;});
+    if(!randomize && chipState.section === currentSection && chipState.visible.length){
+      return;
+    }
+    var indexes = shuffleIndexes(list.length);
     chipState = {
       section: currentSection,
       visible: indexes.slice(0, 3),
@@ -170,7 +320,8 @@
   }
 
   function ensureChipState(data){
-    if(chipState.section !== currentSection) resetChipState(data);
+    if(chipState.section === currentSection) return;
+    resetChipState(data, !!(root && root.classList.contains('is-open')));
   }
 
   function advanceChip(idx){
@@ -189,32 +340,39 @@
       btn.className = 'dui-chat-chip';
       btn.textContent = q;
       btn.addEventListener('click', function(){
-        openPanel();
+        var wasClosed = !root.classList.contains('is-open');
+        if(wasClosed) openPanel(true);
         advanceChip(questionIdx);
-        renderChips(data);
-        askPreset(questionIdx, q);
+        renderChips(getSectionData(currentSection));
+        askPreset(questionIdx);
       });
       chipsEl.appendChild(btn);
     });
   }
 
-  function sectionChanged(id, silent){
-    currentSection = id || currentSection;
+  function askPreset(idx){
     var data = getSectionData(currentSection);
-    resetChipState(data);
-    renderChips(data);
-    if(!silent){
-      botMessage(sectionWelcome(data));
-    }
+    pushRecord({role: 'user', kind: 'preset-user', sectionId: currentSection, presetIdx: idx, cn: '', en: ''});
+    var answer = data.answers && data.answers[idx];
+    var fallback = isEn()
+      ? 'Good question for this page — the short answer is: follow the logic behind each choice here.'
+      : '这个问题很适合这一页。我的短答案是：先看这一页的选择逻辑，再看它证明了什么。';
+    replyWithPresetPause(idx, !!answer, fallback);
   }
 
-  function askPreset(idx, question){
-    var data = getSectionData(currentSection);
-    userMessage(question);
-    var answer = data.answers && data.answers[idx];
-    replyWithPause(answer || (isEn()
-      ? 'Good question for this page — the short answer is: follow the logic behind each choice here.'
-      : '这个问题很适合这一页。我的短答案是：先看这一页的选择逻辑，再看它证明了什么。'));
+  async function replyWithPresetPause(idx, usePresetBot, fallbackText){
+    var token = ++pendingReply;
+    await wait(rand(700, 1300));
+    if(token !== pendingReply) return;
+    setTyping(true);
+    await wait(rand(1200, 2400));
+    if(token !== pendingReply) return;
+    setTyping(false);
+    if(usePresetBot){
+      pushRecord({role: 'bot', kind: 'preset-bot', sectionId: currentSection, presetIdx: idx, cn: '', en: ''});
+    }else{
+      pushRecord(customRecord('bot', fallbackText));
+    }
   }
 
   function buildLocalAnswer(question){
@@ -230,7 +388,7 @@
     var question = (inputEl.value || '').trim();
     if(!question) return;
     inputEl.value = '';
-    userMessage(question);
+    pushRecord(customRecord('user', question));
     var data = getSectionData(currentSection);
     var token = ++pendingReply;
     await wait(rand(700, 1300));
@@ -252,7 +410,7 @@
             context: data.context
           },
           styleGuide: isEn() ? (CONFIG.styleGuideEn || CONFIG.styleGuide || []) : (CONFIG.styleGuide || []),
-          history: conversation.slice(-8)
+          history: historyForApi().slice(0, -1)
         })
       });
       if(resp.ok){
@@ -266,9 +424,25 @@
     botMessage(answerText || buildLocalAnswer(question));
   }
 
-  function openPanel(){
+  function bumpCornerLift(){
+    if(window.DuiduiDanmaku && typeof window.DuiduiDanmaku.syncCornerLift === 'function'){
+      window.DuiduiDanmaku.syncCornerLift();
+      requestAnimationFrame(window.DuiduiDanmaku.syncCornerLift);
+    }
+  }
+
+  function openPanel(userInitiated){
+    var wasOpen = root.classList.contains('is-open');
+    syncCurrentSection();
     root.classList.add('is-open');
     try{localStorage.setItem(STORAGE_OPEN, '1');}catch(e){}
+    var data = getSectionData(currentSection);
+    if(!wasOpen){
+      resetChipState(data, true);
+      renderChips(data);
+    }
+    if(userInitiated) maybeWelcomeSection(currentSection);
+    bumpCornerLift();
   }
 
   function closePanel(){
@@ -276,16 +450,30 @@
     setTyping(false);
     root.classList.remove('is-open');
     try{localStorage.setItem(STORAGE_OPEN, '0');}catch(e){}
+    bumpCornerLift();
   }
 
   function togglePanel(){
-    root.classList.contains('is-open') ? closePanel() : openPanel();
+    root.classList.contains('is-open') ? closePanel() : openPanel(true);
   }
 
   function handleOutsidePointer(e){
     if(!root || !root.classList.contains('is-open')) return;
     if(root.contains(e.target)) return;
     closePanel();
+  }
+
+  function resetChatHistory(){
+    pendingReply++;
+    setTyping(false);
+    conversation = [];
+    greetedSections = new Set();
+    try{localStorage.removeItem(STORAGE_HISTORY);}catch(e){}
+    if(messagesEl) messagesEl.innerHTML = '';
+    seedInitialMessages();
+    var data = getSectionData(currentSection);
+    resetChipState(data, true);
+    renderChips(data);
   }
 
   function observeSections(){
@@ -304,7 +492,7 @@
         }
       });
       if(best && best !== currentSection && bestRatio > 0.12){
-        sectionChanged(best, !root.classList.contains('is-open'));
+        sectionChanged(best);
       }
     }, {threshold: [0.12, 0.25, 0.45, 0.65]});
     document.querySelectorAll('[data-map-id], #hero, #takeaway, #ending').forEach(function(el){
@@ -319,9 +507,9 @@
     var timer = null;
     function sync(){
       var isOpen = starMapOverlay && starMapOverlay.classList.contains('open');
-      cornerDock.classList.toggle('corner-expanded', isOpen);
       if(isOpen){
         clearTimeout(timer);
+        cornerDock.classList.remove('corner-expanded');
       }else{
         clearTimeout(timer);
         timer = setTimeout(function(){cornerDock.classList.remove('corner-expanded');}, MAP_IDLE_MS);
@@ -379,20 +567,37 @@
       inputFocused = true;
       root.classList.add('is-input-focused');
       updateInputPlaceholder();
-      updateViewportVars();
+      if(window.DuiduiMobileKeyboard){
+        window.DuiduiMobileKeyboard.update();
+        window.DuiduiMobileKeyboard.scrollForInput(inputEl);
+      }else{
+        updateViewportVars();
+      }
+      if(messagesEl){
+        setTimeout(function(){messagesEl.scrollTop = messagesEl.scrollHeight;}, 120);
+      }
     });
     inputEl.addEventListener('blur', function(){
       inputFocused = false;
       root.classList.remove('is-input-focused');
       updateInputPlaceholder();
-      setTimeout(updateViewportVars, 80);
+      setTimeout(function(){
+        if(window.DuiduiMobileKeyboard) window.DuiduiMobileKeyboard.update();
+        else updateViewportVars();
+      }, 100);
     });
-    updateViewportVars();
-    window.addEventListener('resize', updateViewportVars);
-    window.addEventListener('orientationchange', function(){setTimeout(updateViewportVars, 120);});
-    if(window.visualViewport){
-      window.visualViewport.addEventListener('resize', updateViewportVars);
-      window.visualViewport.addEventListener('scroll', updateViewportVars);
+    if(window.DuiduiMobileKeyboard){
+      window.addEventListener('duidui:keyboardchange', function(){
+        if(inputFocused && messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+      });
+    }else{
+      updateViewportVars();
+      window.addEventListener('resize', updateViewportVars);
+      window.addEventListener('orientationchange', function(){setTimeout(updateViewportVars, 120);});
+      if(window.visualViewport){
+        window.visualViewport.addEventListener('resize', updateViewportVars);
+        window.visualViewport.addEventListener('scroll', updateViewportVars);
+      }
     }
     document.addEventListener('pointerdown', handleOutsidePointer, true);
 
@@ -407,11 +612,26 @@
     });
     langObs.observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
 
-    sectionChanged(currentSection, true);
-    botMessage(fixedIntro());
-    botMessage(sectionWelcome(getSectionData(currentSection)));
+    var saved = loadHistory();
+    if(saved){
+      conversation = saved;
+      rebuildGreetedFromHistory();
+      renderAllMessages();
+    }else{
+      seedInitialMessages();
+    }
+
+    var data = getSectionData(currentSection);
+    resetChipState(data, false);
+    renderChips(data);
     observeSections();
     enhanceMapDock();
+
+    try{
+      if(localStorage.getItem(STORAGE_OPEN) === '1') openPanel(false);
+    }catch(e){}
+
+    window.DuiduiChatbot = {reset: resetChatHistory};
   }
 
   function updateViewportVars(){
@@ -423,6 +643,7 @@
     }
     document.documentElement.style.setProperty('--dui-vv-height', Math.round(height) + 'px');
     document.documentElement.style.setProperty('--dui-keyboard-inset', Math.round(keyboardInset) + 'px');
+    bumpCornerLift();
   }
 
   if(document.readyState === 'loading'){

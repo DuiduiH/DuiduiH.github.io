@@ -7,11 +7,16 @@
 
   var FLOWER_COLORS=['#ef4444','#f59e0b','#22c55e','#3b82f6','#a855f7','#ec4899'];
   var reviewed=new Set();
-  var activeCluster=null;
+  var displayedCluster=null;
+  var sheetCloseTimer=null;
+  var SHEET_HOLD_MS=2000;
   var walking=false;
   var player={x:1,y:11};
   var layout=null;
   var boardActive=false;
+  var boardEl=null;
+  var avatarEl=null;
+  var flowerEls={};
 
   function isSkillsSectionVisible(){
     if(window.getCurrentSectionId) return window.getCurrentSectionId()==='skills';
@@ -195,6 +200,65 @@
     return fy<=Math.max(3,Math.floor(layout.rows*0.22));
   }
 
+  function isBottomRow(fy){
+    return fy>=layout.rows-1-Math.max(3,Math.floor(layout.rows*0.22));
+  }
+
+  function isLeftCol(fx){
+    return fx<=Math.max(2,Math.floor(layout.cols*0.18));
+  }
+
+  function isRightCol(fx){
+    return fx>=layout.cols-1-Math.max(2,Math.floor(layout.cols*0.18));
+  }
+
+  function sheetPlacementClass(c){
+    var cls='';
+    if(isTopRow(c.fy)&&!isBottomRow(c.fy)) cls+=' sg-top';
+    if(isLeftCol(c.fx)) cls+=' sg-sheet-left';
+    else if(isRightCol(c.fx)) cls+=' sg-sheet-right';
+    return cls;
+  }
+
+  function adjacentPathCells(c){
+    var cells=[];
+    [[0,-1],[0,1],[-1,0],[1,0]].forEach(function(d){
+      var nx=c.fx+d[0],ny=c.fy+d[1];
+      if(inBounds(nx,ny)&&isPath(nx,ny)) cells.push({x:nx,y:ny});
+    });
+    return cells;
+  }
+
+  function nearestTriggerForFlower(c){
+    var adj=adjacentPathCells(c);
+    if(!adj.length) return null;
+    var best=null,bestLen=Infinity;
+    adj.forEach(function(target){
+      var steps=bfs(target);
+      if(!steps) return;
+      if(steps.length<bestLen){
+        bestLen=steps.length;
+        best=target;
+      }
+    });
+    return best;
+  }
+
+  function clearSheetTimer(){
+    if(sheetCloseTimer){
+      clearTimeout(sheetCloseTimer);
+      sheetCloseTimer=null;
+    }
+  }
+
+  function showSheet(idx){
+    clearSheetTimer();
+    if(displayedCluster===idx) return;
+    displayedCluster=idx;
+    markReviewed(idx);
+    updateFlowerStates();
+  }
+
   function adjacentToFlower(c){
     return (Math.abs(player.x-c.fx)+Math.abs(player.y-c.fy))===1;
   }
@@ -229,17 +293,31 @@
   }
 
   function walkPath(steps,cb){
-    if(!steps||!steps.length){if(cb)cb();return;}
+    if(!steps||!steps.length){if(cb)cb();tryOpenAdjacent();return;}
     walking=true;
     var i=0;
     function step(){
-      if(i>=steps.length){walking=false;if(cb)cb();render();return;}
+      if(i>=steps.length){walking=false;if(cb)cb();tryOpenAdjacent();return;}
       player.x=steps[i].x;player.y=steps[i].y;
       i++;
-      render();
+      updatePlayerPos();
+      tryOpenAdjacent();
       setTimeout(step,120);
     }
     step();
+  }
+
+  function walkToFlower(c){
+    if(walking||!c) return;
+    setBoardActive(true);
+    var target=nearestTriggerForFlower(c);
+    if(!target) return;
+    if(target.x===player.x&&target.y===player.y){
+      tryOpenAdjacent();
+      return;
+    }
+    var steps=bfs(target);
+    if(steps) walkPath(steps);
   }
 
   function tryMove(dx,dy){
@@ -247,7 +325,7 @@
     var nx=player.x+dx,ny=player.y+dy;
     if(isPath(nx,ny)){
       player.x=nx;player.y=ny;
-      render();
+      updatePlayerPos();
       tryOpenAdjacent();
     }
   }
@@ -261,14 +339,42 @@
   }
 
   function tryOpenAdjacent(){
+    var found=null;
     layout.clusters.forEach(function(c){
-      if(adjacentToFlower(c)){
-        if(activeCluster!==c.idx){
-          activeCluster=c.idx;
-          markReviewed(c.idx);
-          render();
-        }
-      }
+      if(adjacentToFlower(c)) found=c.idx;
+    });
+    if(found!==null){
+      clearSheetTimer();
+      if(displayedCluster!==found) showSheet(found);
+      else updateFlowerStates();
+      return;
+    }
+    if(displayedCluster!==null&&!sheetCloseTimer){
+      sheetCloseTimer=setTimeout(function(){
+        sheetCloseTimer=null;
+        displayedCluster=null;
+        updateFlowerStates();
+      },SHEET_HOLD_MS);
+    }
+  }
+
+  function updatePlayerPos(){
+    if(!avatarEl) return;
+    avatarEl.style.left=cellX(player.x);
+    avatarEl.style.top=cellY(player.y);
+  }
+
+  function updateFlowerStates(){
+    if(!boardEl) return;
+    layout.clusters.forEach(function(c){
+      var flower=flowerEls[c.idx];
+      if(!flower) return;
+      var isNear=adjacentToFlower(c);
+      var isActive=displayedCluster===c.idx;
+      flower.className='sg-flower'+(reviewed.has(c.idx)?' reviewed':'')+(isNear?' near':'')+(isActive?' open':'')+sheetPlacementClass(c);
+      var sheet=flower.querySelector('.sg-flower-sheet');
+      if(isActive&&!sheet) flower.insertAdjacentHTML('beforeend',buildSheet(c));
+      else if(!isActive&&sheet) sheet.remove();
     });
   }
 
@@ -310,6 +416,9 @@
 
   function render(){
     wrap.innerHTML='';
+    flowerEls={};
+    boardEl=null;
+    avatarEl=null;
     var root=document.createElement('div');
     root.className='sg-root';
     var shell=document.createElement('div');
@@ -318,6 +427,7 @@
     board.className='sg-board'+(isMobile()?' is-portrait':'');
     board.style.setProperty('--sg-cols',layout.cols);
     board.style.setProperty('--sg-rows',layout.rows);
+    boardEl=board;
 
     for(var y=0;y<layout.rows;y++){
       for(var x=0;x<layout.cols;x++){
@@ -331,25 +441,26 @@
     layout.clusters.forEach(function(c){
       var br=BRANCHES[c.idx];
       if(!br) return;
-      var flower=document.createElement('button');
-      flower.type='button';
-      var isNear=adjacentToFlower(c);
-      var isActive=activeCluster===c.idx;
-      flower.className='sg-flower'+(reviewed.has(c.idx)?' reviewed':'')+(isNear?' near':'')+(isActive?' open':'')+(isTopRow(c.fy)?' sg-top':'');
+      var flower=document.createElement('div');
+      flower.className='sg-flower'+(reviewed.has(c.idx)?' reviewed':'')+sheetPlacementClass(c);
       flower.style.setProperty('--fl-color',c.color);
       flower.style.left=cellX(c.fx);
       flower.style.top=cellY(c.fy);
-      flower.setAttribute('aria-label',isEn()?br.en:br.name);
-      flower.innerHTML='<span class="sg-flower-bush" aria-hidden="true">'+flowerVisual()+'</span><span class="sg-flower-label">'+(isEn()?br.en:br.name)+'</span>';
-      if(isActive&&isNear) flower.innerHTML+=buildSheet(c);
+      flower.setAttribute('role','button');
+      flower.setAttribute('tabindex','0');
+      flower.setAttribute('aria-label',(isEn()?br.en:br.name)||'Skill flower');
+      flower.innerHTML='<span class="sg-flower-bush" aria-hidden="true">'+flowerVisual()+'</span>';
       flower.addEventListener('click',function(e){
         e.stopPropagation();
-        if(isNear){
-          activeCluster=c.idx;
-          markReviewed(c.idx);
-          render();
-        }
+        walkToFlower(c);
       });
+      flower.addEventListener('keydown',function(e){
+        if(e.key!=='Enter'&&e.key!==' ') return;
+        e.preventDefault();
+        e.stopPropagation();
+        walkToFlower(c);
+      });
+      flowerEls[c.idx]=flower;
       board.appendChild(flower);
     });
 
@@ -360,6 +471,7 @@
     avatar.style.left=cellX(player.x);
     avatar.style.top=cellY(player.y);
     board.appendChild(avatar);
+    avatarEl=avatar;
 
     root.appendChild(shell);
     shell.appendChild(board);
@@ -368,6 +480,7 @@
       board.classList.add('is-play-active');
       shell.classList.add('is-play-active');
     }
+    updateFlowerStates();
   }
 
   function gridFromEvent(e){
@@ -382,7 +495,6 @@
 
   var lastTap=0;
   wrap.addEventListener('pointerdown',function(e){
-    if(e.target.closest('.sg-flower')) return;
     if(e.target.closest('.sg-board')){
       setBoardActive(true);
       return;
@@ -395,7 +507,7 @@
   });
 
   wrap.addEventListener('click',function(e){
-    if(walking||e.target.closest('.sg-flower')) return;
+    if(walking) return;
     var t=gridFromEvent(e);
     if(!t||t.x===player.x&&t.y===player.y) return;
     var steps=bfs(t);
@@ -446,14 +558,16 @@
 
   window.addEventListener('resize',function(){
     syncLayout();
-    activeCluster=null;
+    clearSheetTimer();
+    displayedCluster=null;
     render();
   });
 
   window._resetSkillGarden=function(){
     syncLayout();
     reviewed=new Set();
-    activeCluster=null;
+    clearSheetTimer();
+    displayedCluster=null;
     walking=false;
     setBoardActive(false);
     render();

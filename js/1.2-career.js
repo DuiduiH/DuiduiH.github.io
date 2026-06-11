@@ -188,11 +188,11 @@
       return;
     }
     var portrait=isPortraitMobile();
-    var topPx=mobile?(portrait?34:42):54;
+    var topPx=mobile?(portrait?30:42):54;
     var sidePx=12;
-    var bottomPx=mobile?(portrait?10+personSize*0.98:6+personSize*0.94):6+personSize*0.94;
+    var bottomPx=mobile?(portrait?6+personSize*0.72:6+personSize*0.94):6+personSize*0.94;
     var personY=(rr.height-personSize-4)/rr.height*VH;
-    var personYOffset=portrait?40:6;
+    var personYOffset=portrait?34:6;
     sceneBounds={
       left:sidePx/rr.width*VW,
       top:topPx/rr.height*VH,
@@ -207,7 +207,7 @@
 
   function monitorSlots(portraitGrid){
     var b=sceneBounds;
-    var bl=6,bt=8,bb=portraitGrid?36:30,br=6;
+    var bl=6,bt=portraitGrid?6:8,bb=portraitGrid?22:30,br=6;
     var safeL=b.left+bl;
     var safeR=b.right-br;
     var safeT=b.top+bt;
@@ -219,18 +219,28 @@
     var outerExtraW=bezelX*2;
     var outerExtraH=bezelTop+12;
     var minMw=portraitGrid?36:32;
-    var minMh=portraitGrid?28:36;
+    var minMh=portraitGrid?44:36;
 
     if(portraitGrid){
-      var gapX=12,gapY=12;
-      var colOuterW=Math.floor((availW-gapX)/2);
+      var gapX=14,gapY=10;
       var rowOuterH=Math.floor((availH-gapY)/2);
-      var mw=Math.max(minMw,colOuterW-outerExtraW);
-      var mh=Math.max(minMh,rowOuterH-outerExtraH);
-      var x0=safeL+bezelX;
-      var x1=safeL+colOuterW+gapX+bezelX;
-      var y0=safeT+bezelTop;
-      var y1=safeT+rowOuterH+gapY+bezelTop;
+      var maxInnerH=Math.max(minMh,rowOuterH-outerExtraH);
+      var maxSlotW=Math.floor((availW-gapX-outerExtraW*2)/2);
+      var maxInnerW=Math.max(minMw,maxSlotW);
+      var aspect=0.78;
+      var mh=maxInnerH;
+      var mw=Math.min(maxInnerW,Math.floor(mh/aspect));
+      if(mw<minMw){
+        mw=minMw;
+        mh=Math.min(maxInnerH,Math.max(minMh,Math.floor(mw*aspect)));
+      }
+      var outerW=mw+outerExtraW;
+      var gridOuterW=outerW*2+gapX;
+      var x0=safeL+(availW-gridOuterW)/2+bezelX;
+      var x1=x0+outerW+gapX;
+      var yPad=Math.max(0,(rowOuterH-outerExtraH-mh)/2);
+      var y0=safeT+bezelTop+yPad;
+      var y1=y0+outerExtraH+mh+gapY;
       return [
         {mx:x0,my:y0,mw:mw,mh:mh},
         {mx:x1,my:y0,mw:mw,mh:mh},

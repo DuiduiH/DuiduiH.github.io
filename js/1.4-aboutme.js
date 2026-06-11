@@ -23,6 +23,9 @@
   var mapEl=document.getElementById('leafletMap');
   if(!mapEl) return;
 
+  var storyModal=document.getElementById('storyMapModal');
+  if(storyModal&&storyModal.parentElement!==document.body) document.body.appendChild(storyModal);
+
   var isEn=function(){return document.documentElement.lang==='en';};
   var isDark=function(){return document.documentElement.getAttribute('data-theme')!=='light';};
 
@@ -298,7 +301,6 @@
 
   var storyClose=document.getElementById('storyMapClose');
   if(storyClose) storyClose.addEventListener('click',function(e){e.preventDefault();closeStoryMap();});
-  var storyModal=document.getElementById('storyMapModal');
   if(storyModal){
     storyModal.addEventListener('click',function(e){
       if(e.target===storyModal) closeStoryMap();

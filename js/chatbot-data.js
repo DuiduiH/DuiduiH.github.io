@@ -265,14 +265,14 @@
           )
         ],
         context: L(
-          '这一页展示语言认证、数据编程、产品能力、AI 工具、创意宣发、工程专业等技能分支。',
-          'This page shows language certs, data and code, product skills, AI tools, creative comms, engineering branches, and more.'
+          '这一页展示语言能力、数据编程、产品能力、AI 工具、创意宣发、工程专业等技能分支。',
+          'This page shows languages, data and code, product skills, AI tools, creative comms, engineering branches, and more.'
         )
       },
       takeaway: {
         title: L('邮局', 'Post Office'),
         sectionLabel: L('联系小对', 'Contact XD'),
-        greeting: L('感谢你的探索。', 'Thanks for exploring.'),
+        greeting: L('欢迎来到邮局。', 'Welcome to the Post Office.'),
         questions: [
           L('什么时候适合联系小对？', 'When is a good time to reach out?'),
           L('和小对聊什么最合适？', 'What\'s best to talk about with XD?'),

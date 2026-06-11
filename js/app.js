@@ -504,6 +504,7 @@
     if(window.resetStars) window.resetStars();
     if(window._resetHeroKeywords) window._resetHeroKeywords();
     if(window.DuiduiDanmaku && window.DuiduiDanmaku.reset) window.DuiduiDanmaku.reset();
+    if(window.DuiduiChatbot && window.DuiduiChatbot.reset) window.DuiduiChatbot.reset();
 
     // Reset bubbles overlay
     var spOv=document.getElementById('spOv');if(spOv)spOv.classList.remove('vis');
@@ -621,9 +622,54 @@
   }
   checkNavOverflow();
   window.addEventListener('resize',checkNavOverflow);
+
+  // ——— Contact list: 3×2 → 2×3 → 1×6 when text would collide ———
+  var contactListEl=document.querySelector('#takeaway .contact-list');
+  function contactRowOverlaps(items,start,cols){
+    for(var c=0;c<cols-1;c++){
+      var idx=start+c;
+      if(idx+1>=items.length) break;
+      var a=items[idx].getBoundingClientRect();
+      var b=items[idx+1].getBoundingClientRect();
+      if(a.right>b.left+2) return true;
+    }
+    return false;
+  }
+  function contactCollides(cols){
+    if(!contactListEl) return true;
+    var items=contactListEl.querySelectorAll('li');
+    contactListEl.classList.remove('contact-cols-3','contact-cols-2','contact-cols-1');
+    contactListEl.classList.add('contact-cols-'+cols);
+    contactListEl.offsetHeight;
+    for(var i=0;i<items.length;i++){
+      var li=items[i];
+      if(li.scrollWidth>li.clientWidth+1) return true;
+      var val=li.querySelector('.contact-value,a');
+      if(val&&val.scrollWidth>val.clientWidth+1) return true;
+    }
+    for(var r=0;r<items.length;r+=cols){
+      if(contactRowOverlaps(items,r,cols)) return true;
+    }
+    return false;
+  }
+  function checkContactLayout(){
+    if(!contactListEl) return;
+    var mode=1;
+    if(!contactCollides(3)) mode=3;
+    else if(!contactCollides(2)) mode=2;
+    else mode=1;
+    contactListEl.classList.remove('contact-cols-3','contact-cols-2','contact-cols-1');
+    contactListEl.classList.add('contact-cols-'+mode);
+  }
+  if(contactListEl){
+    checkContactLayout();
+    window.addEventListener('resize',checkContactLayout);
+    new ResizeObserver(function(){checkContactLayout();}).observe(contactListEl);
+  }
+
   // Re-check after language switch (labels change width)
   var origSetLang=setLang;
-  setLang=function(lang){origSetLang(lang);setTimeout(checkNavOverflow,50);};
+  setLang=function(lang){origSetLang(lang);setTimeout(checkNavOverflow,50);setTimeout(checkContactLayout,50);};
   setLang(currentLang);
 
   // Scroll-hint click -> smooth scroll to next section

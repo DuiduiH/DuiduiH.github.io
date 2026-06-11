@@ -131,7 +131,7 @@ window.MODULE_DATA = {
 
   // ─── 技能树 ───
   skillBranches: [
-    {name:'语言认证',en:'Certifications',color:'#ef4444',skills:[{cn:'CET-4 603',en:'CET-4 603',p:'熟练',pEn:'Proficient',x:145,y:125},{cn:'CET-6 586',en:'CET-6 586',p:'熟练',pEn:'Proficient',x:190,y:165},{cn:'IELTS 7.0',en:'IELTS 7.0',p:'熟练',pEn:'Proficient',x:160,y:200},{cn:'普通话二甲',en:'Mandarin 2A',p:'精通',pEn:'Expert',x:210,y:210}]},
+    {name:'语言能力',en:'Languages',color:'#ef4444',skills:[{cn:'英语',en:'English',p:'熟练（IELTS 7.5）',pEn:'Proficient (IELTS 7.5)'},{cn:'德语',en:'German',p:'基础',pEn:'Basic'},{cn:'挪威语',en:'Norwegian',p:'基础',pEn:'Basic'},{cn:'法语',en:'French',p:'入门',pEn:'Beginner'},{cn:'普通话',en:'Mandarin',p:'母语（二甲）',pEn:'Native (Level 2A)'},{cn:'粤语',en:'Cantonese',p:'入门',pEn:'Beginner'}]},
     {name:'数据编程',en:'Data & Code',color:'#f59e0b',skills:[{cn:'Python',en:'Python',p:'熟练',pEn:'Proficient',x:250,y:100},{cn:'Stata',en:'Stata',p:'掌握',pEn:'Competent',x:300,y:115},{cn:'Excel',en:'Excel',p:'精通',pEn:'Expert',x:270,y:155},{cn:'VSCode',en:'VSCode',p:'熟练',pEn:'Proficient',x:315,y:170}]},
     {name:'产品能力',en:'Product',color:'#22c55e',skills:[{cn:'PRD',en:'PRD',p:'熟练',pEn:'Proficient',x:360,y:85},{cn:'Figma',en:'Figma',p:'掌握',pEn:'Competent',x:400,y:110},{cn:'React',en:'React',p:'入门',pEn:'Beginner',x:370,y:145},{cn:'测试',en:'Testing',p:'掌握',pEn:'Competent',x:420,y:155}]},
     {name:'AI工具',en:'AI Tools',color:'#3b82f6',skills:[{cn:'GPT',en:'GPT',p:'精通',pEn:'Expert',x:460,y:100},{cn:'Gemini',en:'Gemini',p:'精通',pEn:'Expert',x:500,y:130},{cn:'豆包',en:'Doubao',p:'熟练',pEn:'Proficient',x:475,y:165},{cn:'Vibe',en:'Vibe Coding',p:'掌握',pEn:'Competent',x:520,y:175}]},
